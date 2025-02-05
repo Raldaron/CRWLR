@@ -1,77 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Box, SimpleGrid, Text, VStack, Tooltip } from '@chakra-ui/react';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+'use client';
+
+import React from 'react';
+import { Box, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useCharacter } from '@/context/CharacterContext';
 import { Heart, Brain, Zap } from 'lucide-react';
-import RaceSelection from './RaceSelection';
-import type { Race } from '@/types/character';
-import StatCard from './StatCard';
+import RaceSelectionModals from './RaceSelectionModals';
 
+// StatCard interface
+interface StatCardProps {
+  label: string;
+  current: number;
+  max: number;
+  icon: React.ElementType;
+  color: string;
+  formula: string;
+  breakdown: string;
+}
+
+// StatCard component
+const StatCard: React.FC<StatCardProps> = ({ 
+  label, 
+  current, 
+  max, 
+  icon: Icon,
+  color,
+  formula,
+  breakdown
+}) => {
+  return (
+    <Card
+      className="transition-all duration-200 hover:shadow-lg"
+      style={{ borderTop: `4px solid ${color}` }}
+    >
+      <CardContent>
+        <VStack p={4} spacing={3} alignItems="center" minH="150px" justifyContent="center">
+          <Icon size={24} color={color} />
+          <Text fontSize="xl" fontWeight="bold" color="gray.600">
+            {label}
+          </Text>
+          <Text fontSize="3xl" fontWeight="bold">
+            <span style={{ color }}>{current}</span>
+            <span className="text-gray-400">/{max}</span>
+          </Text>
+          <Text fontSize="xs" color="gray.500">
+            {breakdown}
+          </Text>
+        </VStack>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Main Character component
 const Character: React.FC = () => {
-  const [selectedRace, setSelectedRace] = useState<Race | null>(null);
-  const { stats, setStats, skills, setSkills } = useCharacter();
+  const { stats } = useCharacter();
   const characterLevel = 1;
   
-  // Calculate stats including racial bonuses
+  // Calculate stats
   const maxHp = 8 * stats.constitution + characterLevel;
   const maxMp = 5 * stats.intelligence + characterLevel;
   const maxAp = characterLevel * 2;
 
-  // Handle race selection and apply bonuses
-  const handleRaceSelect = (race: Race) => {
-    setSelectedRace(race);
-
-    // Apply stat bonuses
-    setStats(prevStats => {
-      const newStats = { ...prevStats };
-      Object.entries(race.statbonus).forEach(([stat, bonus]) => {
-        const statKey = stat as keyof typeof newStats;
-        if (statKey in newStats) {
-          newStats[statKey] += bonus;
-        }
-      });
-      return newStats;
-    });
-
-    // Apply skill bonuses
-    setSkills(prevSkills => {
-      return prevSkills.map(skill => {
-        const bonus = race.skillbonus[skill.name.toLowerCase()] || 0;
-        return {
-          ...skill,
-          level: skill.level + bonus
-        };
-      });
-    });
-  };
-
   return (
     <Box p={6}>
-      {/* Main character info card */}
-      <Card className="mb-8">
-        <CardHeader>
-          <Text fontSize="3xl" fontWeight="bold">Character Name</Text>
-        </CardHeader>
-        <CardContent>
-          <SimpleGrid columns={3} spacing={6} mb={8}>
-            <Box>
-              <Text color="gray.600">Race</Text>
-              <RaceSelection
-                selectedRace={selectedRace}
-                onRaceSelect={handleRaceSelect}
-              />
-            </Box>
-            <Box>
-              <Text color="gray.600">Class</Text>
-              <Text fontSize="2xl" fontWeight="bold">Class</Text>
-            </Box>
-            <Box>
-              <Text color="gray.600">Level</Text>
-              <Text fontSize="2xl" fontWeight="bold">{characterLevel}</Text>
-            </Box>
-          </SimpleGrid>
-        </CardContent>
-      </Card>
+      {/* Character Creation Section */}
+      <SimpleGrid columns={2} spacing={6} className="mb-8">
+        <Card>
+          <CardContent className="p-4">
+            <Text className="text-lg font-semibold mb-4">Race</Text>
+            <RaceSelectionModals />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <Text className="text-lg font-semibold mb-4">Class</Text>
+            {/* Class selection will be implemented similarly */}
+          </CardContent>
+        </Card>
+      </SimpleGrid>
 
       {/* Resource Cards */}
       <SimpleGrid columns={3} spacing={6}>

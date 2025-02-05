@@ -1,5 +1,8 @@
+'use client';
+
 import React, { createContext, useContext, useState } from 'react';
 import type { CharacterStats, Skill, Trait } from '@/types/character';
+import type { Race } from '@/types/race';
 
 interface CharacterContextType {
   stats: CharacterStats;
@@ -8,7 +11,8 @@ interface CharacterContextType {
   setSkills: React.Dispatch<React.SetStateAction<Skill[]>>;
   traits: Trait[];
   setTraits: React.Dispatch<React.SetStateAction<Trait[]>>;
-  // Add function to reset stats to base values
+  selectedRace: Race | null;  // Add this
+  setSelectedRace: React.Dispatch<React.SetStateAction<Race | null>>;  // Add this
   resetStats: () => void;
 }
 
@@ -30,7 +34,6 @@ const defaultSkills: Skill[] = [
   { id: '1', name: 'Survival', level: 0, description: 'Ability to survive in harsh conditions' },
   { id: '2', name: 'Athletics', level: 0, description: 'Physical fitness and athletic ability' },
   { id: '3', name: 'Persuasion', level: 0, description: 'Ability to convince others' },
-  // Add more default skills as needed
 ];
 
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
@@ -39,12 +42,17 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const [stats, setStats] = useState<CharacterStats>(defaultStats);
   const [skills, setSkills] = useState<Skill[]>(defaultSkills);
   const [traits, setTraits] = useState<Trait[]>([]);
+  const [selectedRace, setSelectedRace] = useState<Race | null>(null);  // Add this
 
   const resetStats = () => {
     setStats(defaultStats);
     setSkills(defaultSkills);
     setTraits([]);
+    setSelectedRace(null);  // Add this
   };
+
+  // Debug log
+  console.log('CharacterContext - selectedRace:', selectedRace);
 
   const value = {
     stats,
@@ -53,6 +61,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     setSkills,
     traits,
     setTraits,
+    selectedRace,  // Add this
+    setSelectedRace,  // Add this
     resetStats
   };
 
