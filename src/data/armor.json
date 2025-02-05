@@ -1,0 +1,1686 @@
+{
+    "armor": {
+        "apothecarybeanie": {
+            "name": "Apothecary Beanie",
+            "description": "Appears to be a small, knitted beanie hat. It boosts all of the wearer's base stats by 3% and allows the wearer to cast the I Need My Personal Space Spell.",
+            "itemtype": "Armor",
+            "armortype": "Head",
+            "rarity": "Uncommon",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {
+                "intelligence": 1,
+                "manipulation": 1,
+                "wit": 1,
+                "dexterity": 1,
+                "stamina": 1,
+                "strength": 1,
+                "charisma": 1,
+                "appearance": 1,
+                "perception": 1
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [
+                "INeedMyPersonalSpace"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 20
+        },
+        "drakeaenchantedkerchiefofdisorder": {
+            "name": "Drakea's Enchanted Kerchief of Disorder",
+            "description": "This handy-dandy, versatile garment can be worn around the neck, in the hair, or on your face if you want to cosplay as a cowboy robbing a bank.",
+            "itemtype": "Armor",
+            "armortype": "Face",
+            "rarity": "Uncommon",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {
+                "detect trap": 5
+            },
+            "abilities": [
+                "Remote Detonator"
+            ],
+            "traits": [],
+            "spellsgranted": [
+                "Tripper"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 20
+        },
+        "enchantedanarchistsbattlerattle": {
+            "name": "Enchanted Anarchist's Battle Rattle",
+            "description": "This sleeveless jacket in its current form only offers meager protections compared to some other items of this caliber. However, its ability to host as many upgrade patches as you can fit makes this one of the best, most upgradeable protection items in the game.",
+            "itemtype": "Armor",
+            "armortype": "Shoulders",
+            "rarity": "Rare",
+            "armorrating": 5,
+            "tankmodifier": 2,
+            "statbonus": {
+                "intelligence": 1,
+                "manipulation": 1,
+                "wit": 1,
+                "dexterity": 1,
+                "stamina": 1,
+                "strength": 1,
+                "charisma": 1,
+                "appearance": 1,
+                "perception": 1
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Upgradeable",
+                "Back Patch Bonus",
+                "Explosive Expertise"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedankletofthefallenoak": {
+            "name": "Enchanted Anklet of the Fallen Oak",
+            "description": "A rare anklet that grants the wearer increased dexterity and Stamina, along with a melee skill buff.",
+            "itemtype": "Armor",
+            "armortype": "Ankle",
+            "rarity": "Rare",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "dexterity": 1,
+                "stamina": 1
+            },
+            "skillbonus": {
+                "melee": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedautobucklerofthepeachpit": {
+            "name": "Enchanted Auto Buckler of the Peach Pit",
+            "description": "Forms a metallic buckler on command. May be triggered via hotlist or by shaking your wrist like you\u2019re thinking of your hot Aunt Lydia. This item is enchanted with Shatter.",
+            "itemtype": "Armor",
+            "armortype": "Arm",
+            "rarity": "Rare",
+            "armorrating": 4,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 2,
+                "perception": 1
+            },
+            "skillbonus": {
+                "block": 2,
+                "parry": 1
+            },
+            "abilities": [],
+            "traits": [
+                "QuickReflexes",
+                "AutoBucklerActivation",
+                "ShatterEnchantment"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 5,
+            "mpbonus": 2
+        },
+        "enchantedbigboidaisydukes": {
+            "name": "Enchanted BigBoi Daisy Dukes",
+            "description": "Size-altering and were-creatures, such as the BigBoi are required to wear enchanted, self-sizing items lest they wish to turn the dungeon into a nudist colony when they transform.",
+            "itemtype": "Armor",
+            "armortype": "Legs",
+            "rarity": "Uncommon",
+            "armorrating": 3,
+            "tankmodifier": 0,
+            "statbonus": {
+                "stamina": 2,
+                "dexterity": 5,
+                "intelligence": 5
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Freeballing"
+            ],
+            "spellsgranted": [
+                "Protective Shell"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedcollarcharmoftheifritbourgeoisie": {
+            "name": "Enchanted Collar Charm of the Ifrit Bourgeoisie",
+            "description": "A collar charm enchanted with the essence of the Ifrit Bourgeoisie, granting the wearer increased dexterity and intelligence, as well as a significant boost to their snitching abilities.",
+            "itemtype": "Armor",
+            "armortype": "Neck",
+            "rarity": "Rare",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "dexterity": 2,
+                "intelligence": 4
+            },
+            "skillbonus": {
+                "persuasion": 10
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedcrownofthesepsiswhore": {
+            "name": "Enchanted Crown of the Sepsis Whore",
+            "description": "'Who\u2019s a dirty girl? You\u2019re a dirty girl! 'This is a Fleeting item! This is a Unique* item! Imbues wearer with +10 Intelligence, grants the user +10 to Manipulation. All attacks, including magical attacks, now have a 15% chance to inflict the Sepsis debuff. Warning! (Seriously though. I\u2019m going to say this again. WARNING! Read this shit before you put it on.) Placing this crown upon your head permanently places you within the royal line of succession for the Blood Sultanate on the ninth floor of the world dungeon. Removing this item will not remove this status. Royal members of the Blood Sultanate will be required to slay the Sultan and all other members of the royal family before descending to the tenth floor. You\u2019ll only want to wear this if you\u2019re a blood-thirsty, raging psychopath.",
+            "itemtype": "Armor",
+            "armortype": "head",
+            "rarity": "Unique",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {
+                "intelligence": 10,
+                "manipulation": 10
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Sepsis Debuff"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedfaescalequadrupedcrupperofthefleet": {
+            "name": "Enchanted Fae Scale Quadruped Crupper of the Fleet",
+            "description": "Light and flexible, this scale armor is made from Fae Steel. While not as strong as Elven mail or even good Orcish steel, it's the strongest alloy that fairy folk can wear.",
+            "itemtype": "Armor",
+            "armortype": "Waist",
+            "rarity": "Rare",
+            "armorrating": 6,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 6
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantednecklaceofhautebourgeoisie": {
+            "name": "Enchanted Necklace of Haute Bourgeoisie",
+            "description": "The second smallest of the chains of leadership, it is still considered a great honor to be the custodian of this burden. Each jewel encrusted upon this charm represents a settlement owned and controlled by the bearer. If one still maintains a settlement\u2019s jewel upon the collapse of the level, the holder of this necklace will permanently receive a tax stipend every ten days from that settlement based on size and population. In addition, each gem will impart additional benefits based on the town.\n\nIn order to upgrade this necklace, one must first conquer a Large-sized Settlement. Upgraded necklaces will also upgrade all existing gems.\nOne Attached Gem:\nPoor Sapphire. Medium Skyfowl Settlement (Third Floor).\n+5 to dexterity.\nTalon Strike (Level 5)\nTaxes received: 432 Gold every 10 days.\nMay you be a kind and just leader.",
+            "itemtype": "Armor",
+            "armortype": "Neck",
+            "rarity": "Unique",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "dexterity": 5
+            },
+            "skillbonus": {},
+            "abilities": [
+                "TalonStrike"
+            ],
+            "traits": [
+                "TaxStipend"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantednightwyrmsringofdivinesuffering": {
+            "name": "Enchanted Night Wyrm's Ring of Divine Suffering",
+            "description": "A legendary ring imbued with the suffering of the Night Wyrm, offering unique and powerful abilities to its wearer.",
+            "itemtype": "Armor",
+            "armortype": "Finger",
+            "rarity": "Legendary",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "strength": 2,
+                "dexterity": 2,
+                "stamina": 2,
+                "intelligence": 2,
+                "perception": 2,
+                "wit": 2,
+                "charisma": 2,
+                "manipulation": 2,
+                "appearance": 2
+            },
+            "skillbonus": {
+                "tracking": 3
+            },
+            "abilities": [
+                "MarkedforDeath"
+            ],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantednightgauntcloakofstoutness": {
+            "name": "Enchanted Nightgaunt Cloak of Stoutness",
+            "description": "The wearer of this cloak gains +4 to Stamina and becomes resistant to poison and ice-based attacks. In addition, the cloak adds Anti-Piercing resistance to all worn armor. It also makes you look like a dollar store Batman.",
+            "itemtype": "Armor",
+            "armortype": "Shoulders",
+            "rarity": "Rare",
+            "armorrating": 4,
+            "tankmodifier": 0,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Poison Resistance",
+                "Ice Resistance",
+                "Piercing Resistance"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantednippleringofthedefiler": {
+            "name": "Enchanted Nipple Ring of the Defiler",
+            "description": "A legendary nipple ring that marks the wearer for death by a god, granting unique abilities and traits.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "ReligiousAffiliationDetection",
+                "ShrineDestruction",
+                "DamageBoost"
+            ],
+            "spellsgranted": [
+                "BlackNimbus"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantednippleringofthesuperiorfiredemonshandmaiden": {
+            "name": "Enchanted Nipple Ring of the Superior Fire Demon\u2019s Hand Maiden",
+            "description": "This may only be equipped on a quadruped.\nThis may only be equipped on a female.\nAll nipple rings must be manually affixed the first time they are equipped.\nOh boy. Let me tell you about Superior fire demons. These bitches are crazy. Worse than the minor demons. I know, I know. That sounds chauvinistic and rude. You can\u2019t get away with saying shit like that anymore. Here\u2019s the thing. These bitches are godsdamned crazy. Full stop. You look that shit up in Wikipedia, and it\u2019ll be the first line. It\u2019ll say \u201cThese bitches are three pugs short of a grumble.\u201d It\u2019s not an opinion, but an absolute fact.\nWe have a whole matriarchal hierarchy of demons who exist and fight and vie for control of the fifteenth level, and these Superior Demon nutjobs are always causing the most chaos, which is saying a lot.\nYou got the lesser demons, who are generally normal, though I wouldn\u2019t break up with one over text or call her fat or anything like that. Then you got the more powerful minor demons. Those bitches are something else, but they\u2019re nothing compared to Superior fire demons. These ladies are so batshit, the demon lords and queens require all of them to be \u201cchaperoned\u201d by hellspawn familiars everywhere they go, whose job it is to protect them from each other and themselves. It\u2019s Sheol\u2019s version of a Xanax. Or maybe a restraining order.\nThese familiars need to be protected from the superior demons. This nipple ring is one of the items they utilize.\n\nWearing this nipple ring offers the following benefits:\nAllows the removal of cursed items.\nUser is impervious to natural fire.\nUser is impervious to lava attacks.\nUser is resistant to fire-based spells.\nUser will not lose health while inside Sheol.\nAll spells with a fire attack now deal (Intelligence)% more damage.\nAll demon worshippers are visible and marked on your map.\nUser may cast Bitch, What? Once a day.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Unique",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "RemoveCursedItems",
+                "FireImmunity",
+                "LavaImmunity",
+                "FireResistance",
+                "SheolHealth",
+                "FireSpellBoost",
+                "DemonWorshipperDetection"
+            ],
+            "spellsgranted": [
+                "BitchWhat"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedobsidianbraceletoftheragglerouser": {
+            "name": "Enchanted Obsidian Bracelet of the Raggle Rouser",
+            "description": "This item has been upgraded three times. Warning: this item has a 50% chance to permanently break if it's upgraded again. This murky bracelet is light and kinda stylish if you're one of those sad sacks who always wears black and complains about how nobody ever understands you. It's made of obsidian glass, which is a type of rock that only forms under extreme, lava-based circumstances. And interestingly enough, this is what you'll turn into if you don't treat this item with the respect it deserves.",
+            "itemtype": "Armor",
+            "armortype": "Wrist",
+            "rarity": "Exceedingly Rare",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {
+                "stamina": 8,
+                "dexterity": 5
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Minor Fire Resistance"
+            ],
+            "spellsgranted": [
+                "Fireball"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedpaupersringofthesteadfastemberus": {
+            "name": "Enchanted Paupers Ring of the Steadfast Emberus",
+            "description": "Ah, Emberus. Wholly sane, reasonable Emberus. I'm sure any jewelry that bears his name will be a perfectly fine, normal piece of magical gear.\nWhen working properly, this ring will remove most health-seeping and disease-based debuff effects. Has a variable numbing effect on various other debuff types. This will not remove the debuff itself. Too many active detraits of any kind may temporarily mute or overheat this ring.\nWarning: This ring may only be worn by a worshipper of Emberus. This will turn into a cursed item if worn by a non-worshipper.\nWarning: This ring's true nature may only be seen by a worshipper of Emberus. It is disguised as an enchanted Strength ring.\nWarning: This ring has a debt attached to it. You may not sell this ring while this debt is attached. If you lose this ring, the loan payment will be accelerated. If you are expelled from the church while you are wearing this ring, the curse effect will activate.\nWarning: This ring carries a curse effect. Non-worshippers who attempt to wear this ring will find themselves infected with every debuff suffered by anyone within 50 meters of this ring. That's... that's a bad one.",
+            "itemtype": "Armor",
+            "armortype": "Finger",
+            "rarity": "Unique",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "RemoveDebuffs"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedsilverbraceletoftheabsolar": {
+            "name": "Enchanted Silver Bracelet of the Ab-solar",
+            "description": "AnD SO The lioN fEll iN lOVe WiTh The LaMB. I\u2019m actually quite fond of the Twilight novels. Plus, I would never stoop so low as to disparage the work of an over-imaginative and obviously undersexed artist who managed to become a brazilianaire from barely-disguised erotica targeted at adolescent girls. However, I would like to take this opportunity to point out that your culture\u2019s obsession with fictional underaged heroes was absolutely misguided. Paul Atreides was fifteen years old. Harry Potter was just eleven in the beginning of the first book. The kids from Stranger Things were all tweens. Kid \u2018n Play were (portrayed to be) high schoolers when they threw that epic party. Fairy tales. Myths. Lies. Spoiler alert. Kids are all idiots, and when they\u2019re forced into a life or death situation, they overwhelmingly make stupid decisions and get themselves killed. Like, almost right away. They\u2019re like that rabbit you see sitting on the side of the road that decides to dart in front of your car at the worst possible moment. They\u2019re so efficient at getting themselves squished, you can\u2019t help but wonder if they're doing it on purpose. Go ahead. Complain. Tell me I\u2019m wrong. Trust me on this one. I\u2019ve done some pretty extensive and conclusive research on the matter. This apotropaic talisman looks like something a goth teenaged girl would shoplift from a Hot Topic. A girl who dreams about one day meeting a hundred-year-old predator and making him fall in love with her. Remember, it\u2019s not a crime if he\u2019s handsome or rich or looks like a teenager. Anyway, this bracelet imbues the following effects: \u2022 Protection against Vampirism. \u2022 Protection against Lycanthropy. \u2022 +25% Magical damage against all sapient undead.",
+            "itemtype": "Armor",
+            "armortype": "Wrist",
+            "rarity": "Rare",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Vampirism Protection",
+                "Lycanthropy Protection",
+                "Undead Slayer"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedspikedkneepadsoftheshadegnollriotforces": {
+            "name": "Enchanted Spiked Kneepads of the Shade Gnoll Riot Forces",
+            "description": "Made of skin and fur and the spiky things from the back of Thorn Cadavers, these kneepads are both good protection and they're stylish. Stylish, that is, if your knees are cosplaying as hedgehogs.",
+            "itemtype": "Armor",
+            "armortype": "Legs",
+            "rarity": "Uncommon",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "DamageReflect",
+                "MomentumCancel"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedtiaraofmanagenita": {
+            "name": "Enchanted Tiara of Mana Genita",
+            "description": "A crystal tiara fit for royalty. Made in honor of all the lost children of the world. Because nothing helps sooth the tears of grieving parents like watching someone else dress up all fancy.",
+            "itemtype": "Armor",
+            "armortype": "head",
+            "rarity": "Rare",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {
+                "intelligence": 3
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "ManaGenita's Favor",
+                "Enhanced Mob Detection"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedtiaraoftheinebriateddragonfly": {
+            "name": "Enchanted Tiara of the Inebriated Dragonfly",
+            "description": "There's a children's story out there about a dragonfly who gets so drunk that his wife won't let him come home, so he hovers in the air above their nest, waiting for her to go to sleep, so he can get to bed. The thing is, the wife knows he's out there, and she ain't moving. So the dragonfly either hovers all night or moves to the highest point, sitting on a leaf, overlooking his home, waiting for his wife to turn the light back on to signify he's out of the doghouse. This tiara has been made to honor that poor Dragonfly with the angry wife.",
+            "itemtype": "Armor",
+            "armortype": "head",
+            "rarity": "Rare",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {
+                "intelligence": 10
+            },
+            "skillbonus": {
+                "acrobatics": 10
+            },
+            "abilities": [
+                "Hover"
+            ],
+            "traits": [
+                "PotionMaster",
+                "PoisonImmunity",
+                "Steady Drinker"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedtoeringoftheleprousbandit": {
+            "name": "Enchanted Toe Ring of the Leprous Bandit",
+            "description": "A unique toe ring that grants the wearer the ability to walk on non-horizontal surfaces and spread an active debuff to a target.",
+            "itemtype": "Armor",
+            "armortype": "toe",
+            "rarity": "Unique",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [
+                "StickyFeet",
+                "SuperSpreader"
+            ],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedtoeringofthesplatterskunk": {
+            "name": "Enchanted Toe Ring of the Splatter Skunk",
+            "description": "Imbues wearer with +3 Strength and gives +3 to the Powerful Strike buff. Also, it\u2019s a toe ring. It\u2019s probably uncomfortable and it makes you look like one of those hippie assholes who sit around in a field juggling and hula-hooping all day.",
+            "itemtype": "Armor",
+            "armortype": "toe",
+            "rarity": "Rare",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "strength": 3
+            },
+            "skillbonus": {
+                "bare knuckle": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedtrollskinshirtofpummeling": {
+            "name": "Enchanted Trollskin Shirt of Pummeling",
+            "description": "The shirt is also quite stylish. Maybe a little too stylish. Unlike most monster-skin apparel items, this shirt will not grant a negative reaction amongst trolls. In fact, lady trolls might just want to haul you away for some one-on-one time if they see you in this",
+            "itemtype": "Armor",
+            "armortype": "Torso",
+            "rarity": "Exceedingly Rare",
+            "armorrating": 7,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Regeneration",
+                "Melee Immunity"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "enchantedwrestlingbeltofthegreatgorgo": {
+            "name": "Enchanted Wrestling Belt of the Great Gorgo",
+            "description": "While you'll never be as amazing as the greatest, most beautiful wrestler of all time---Christopher Alan Pallies---you will look pretty snazzy when you wrap this bad boy around your waist.",
+            "itemtype": "Armor",
+            "armortype": "Waist",
+            "rarity": "Rare",
+            "armorrating": 6,
+            "tankmodifier": 0,
+            "statbonus": {
+                "strength": 6,
+                "stamina": 6
+            },
+            "skillbonus": {},
+            "abilities": [
+                "Avalanche"
+            ],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "prismindustriescapacitatingandfocusinggoggles": {
+            "name": "Prism Industries Capacitating and Focusing Goggles",
+            "description": "Prism Industries Capacitating and Focusing Goggles. Special High-Fashion Edition. \"The Princess Lauren.\"",
+            "itemtype": "Armor",
+            "armortype": "Face",
+            "rarity": "Unique",
+            "armorrating": 1,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Environmental Protection",
+                "Enhanced Vision",
+                "Spell Focus"
+            ],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "ringofwaterbreathing": {
+            "name": "Ring of Water Breathing",
+            "description": "If you wear this ring, you can breathe underwater. You can still breathe on land, too. That makes you an amphibian. Did you know that all amphibians swallow their prey whole? That\u2019s such an interesting fact.\n-1 Charisma",
+            "itemtype": "Armor",
+            "armortype": "Finger",
+            "rarity": "Uncommon",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {
+                "charisma": -1
+            },
+            "skillbonus": {},
+            "abilities": [
+                "WaterBreathing"
+            ],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "rockardsringofsniping": {
+            "name": "Rockard's Ring of Sniping",
+            "description": "This amber-stoned ring is named after Rockard, one of the dungeon\u2019s most infamous crawlers. This orcish warrior was known for his uncanny ability to swoop in at the last moment and steal glory from other crawlers, gaining the best loot and experience. Everybody hated him. It was great!\nFun fact. This guy led his season\u2019s top 10 list until he was knifed in his sleep by his own mother. Luckily for you, crawlers can\u2019t be killed by other crawlers in saferooms anymore. A shame, really.\nWearing this ring imbues the following benefits:\nThe Ripe Benefit.\nThe Loaded benefit.",
+            "itemtype": "Armor",
+            "armortype": "Finger",
+            "rarity": "Rare",
+            "armorrating": 0,
+            "tankmodifier": 0,
+            "statbonus": {},
+            "skillbonus": {},
+            "abilities": [
+                "Ripe",
+                "Loaded"
+            ],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "upgradedbigboishorts": {
+            "name": "Upgraded BigBoi Shorts",
+            "description": "All right, you already know the description of this item. Something something Incredible Hulk, blah, blah, blah. Now you want to know how this item has been upgraded. Right? So here are the original benefits of these naughty little undies: + 2 to Stamina, Wearer may cast a level 15 Protective Shell once every 30 hours. That\u2019s some good shit right there. But we can do better than that. Here\u2019s a few additional benefits: + 5 to dexterity, + 5 to Intelligence, + 5 to Stamina, + 6 AR, + The Freeballing Buff.",
+            "itemtype": "Armor",
+            "armortype": "Legs",
+            "rarity": "Heirloom",
+            "armorrating": 6,
+            "tankmodifier": 5,
+            "statbonus": {
+                "stamina": 5,
+                "dexterity": 5,
+                "intelligence": 5
+            },
+            "skillbonus": {},
+            "abilities": [],
+            "traits": [
+                "Freeballing"
+            ],
+            "spellsgranted": [
+                "Protective Shell"
+            ],
+            "hpbonus": 0,
+            "mpbonus": 0
+        },
+        "masterworkleatherjacketarmor": {
+            "name": "Masterwork Leather Jacket",
+            "description": "Finest leather jacket crafted by expert artisans, offering maximum protection.",
+            "itemtype": "Armor",
+            "armortype": "Light",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "stealth": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 0
+        },
+        "elitekevlararmor": {
+            "name": "Elite Kevlar",
+            "description": "Top-tier kevlar vest used by elite forces, providing superior protection.",
+            "itemtype": "Armor",
+            "armortype": "Light",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 3
+            },
+            "skillbonus": {
+                "firearms": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 0
+        },
+        "elitebodysuitarmor": {
+            "name": "Elite Bodysuit",
+            "description": "Top-of-the-line bodysuit providing maximum protection and flexibility.",
+            "itemtype": "Armor",
+            "armortype": "Light",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 3
+            },
+            "skillbonus": {
+                "acrobatics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 12,
+            "mpbonus": 5
+        },
+        "phantomcloakarmor": {
+            "name": "Phantom Cloak",
+            "description": "Cloak with the highest grade of stealth technology, making the wearer almost completely invisible.",
+            "itemtype": "Armor",
+            "armortype": "Light",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "stealth": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 10
+        },
+        "elitechainmailarmor": {
+            "name": "Elite Chainmail",
+            "description": "Finest chainmail crafted with the best materials and techniques.",
+            "itemtype": "Armor",
+            "armortype": "Medium",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 3
+            },
+            "skillbonus": {
+                "resilience": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 0
+        },
+        "eliteharnessarmor": {
+            "name": "Elite Harness",
+            "description": "Elite combat harness providing the best protection and utility for military operations.",
+            "itemtype": "Armor",
+            "armortype": "Medium",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "tactics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 5
+        },
+        "elitecoatarmor": {
+            "name": "Elite Coat",
+            "description": "Top-of-the-line traveler\u2019s coat providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Medium",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 3
+            },
+            "skillbonus": {
+                "survival": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 0
+        },
+        "tacticalnanoweavearmor": {
+            "name": "Tactical Nanoweave",
+            "description": "Nanoweave armor with excellent quality, providing superior protection.",
+            "itemtype": "Armor",
+            "armortype": "Medium",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "dexterity": 3
+            },
+            "skillbonus": {
+                "i": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 5
+        },
+        "masterworkcompositearmor": {
+            "name": "Masterwork Composite",
+            "description": "Ultimate nanoweave armor providing maximum protection and flexibility.",
+            "itemtype": "Armor",
+            "armortype": "Medium",
+            "rarity": "Legendary",
+            "armorrating": 7,
+            "tankmodifier": 7,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "i": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 5
+        },
+        "eliteplatearmor": {
+            "name": "Elite Plate",
+            "description": "Top-of-the-line plate armor providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 9,
+            "tankmodifier": 9,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "intimidatic": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 25,
+            "mpbonus": 0
+        },
+        "tacticalpowerarmorarmor": {
+            "name": "Tactical Power Armor",
+            "description": "Power armor with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 9,
+            "tankmodifier": 9,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "i": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 30,
+            "mpbonus": 5
+        },
+        "elitepowerarmorarmor": {
+            "name": "Elite Power Armor",
+            "description": "Top-tier power armor providing maximum strength and protection.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 10,
+            "tankmodifier": 10,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "i": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 35,
+            "mpbonus": 10
+        },
+        "eliteballisticarmor": {
+            "name": "Elite Ballistic",
+            "description": "Top-of-the-line ballistic armor providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 8,
+            "tankmodifier": 8,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "firearms": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 25,
+            "mpbonus": 0
+        },
+        "tacticalexosuitarmor": {
+            "name": "Tactical Exosuit",
+            "description": "Exosuit with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 10,
+            "tankmodifier": 10,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "i": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 30,
+            "mpbonus": 5
+        },
+        "eliteexosuitarmor": {
+            "name": "Elite Exosuit",
+            "description": "Top-tier exosuit providing maximum protection and combat capability.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 11,
+            "tankmodifier": 11,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "i": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 35,
+            "mpbonus": 10
+        },
+        "tacticaltitaniumarmor": {
+            "name": "Tactical Titanium",
+            "description": "Titanium armor with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 8,
+            "tankmodifier": 8,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "resilience": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 25,
+            "mpbonus": 0
+        },
+        "elitetitaniumarmor": {
+            "name": "Elite Titanium",
+            "description": "Top-of-the-line titanium armor providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Heavy",
+            "rarity": "Legendary",
+            "armorrating": 9,
+            "tankmodifier": 9,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "resilience": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 30,
+            "mpbonus": 5
+        },
+        "masterworkleathercaparmor": {
+            "name": "Masterwork Leather Cap",
+            "description": "Finest leather cap crafted by expert artisans, offering maximum protection.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "dexterity": 3
+            },
+            "skillbonus": {
+                "enchantment": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 0
+        },
+        "elitehelmetarmor": {
+            "name": "Elite Helmet",
+            "description": "Top-tier tactical helmet providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "i": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "masterworkvisoredhelmarmor": {
+            "name": "Masterwork Visored Helm",
+            "description": "Finest visored helm crafted by expert artisans, offering maximum protection.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "strength": 3
+            },
+            "skillbonus": {
+                "intimidatic": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 12,
+            "mpbonus": 0
+        },
+        "tacticalreconhelmetarmor": {
+            "name": "Tactical Recon Helmet",
+            "description": "Recon helmet with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "perception": 4
+            },
+            "skillbonus": {
+                "stealth": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "elitereconhelmetarmor": {
+            "name": "Elite Recon Helmet",
+            "description": "Top-tier recon helmet providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "perception": 5
+            },
+            "skillbonus": {
+                "stealth": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 10
+        },
+        "tacticalcombathelmetarmor": {
+            "name": "Tactical Combat Helmet",
+            "description": "Combat helmet with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "tactics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 5
+        },
+        "elitecombathelmetarmor": {
+            "name": "Elite Combat Helmet",
+            "description": "Top-tier combat helmet providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Helmet",
+            "rarity": "Legendary",
+            "armorrating": 7,
+            "tankmodifier": 7,
+            "statbonus": {
+                "stamina": 5
+            },
+            "skillbonus": {
+                "tactics": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 22,
+            "mpbonus": 10
+        },
+        "masterworkwoodenshieldarmor": {
+            "name": "Masterwork Wooden Shield",
+            "description": "Finest wooden shield crafted by expert artisans, offering maximum protection.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "strength": 3
+            },
+            "skillbonus": {
+                "block": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 0
+        },
+        "tacticalenergyshieldarmor": {
+            "name": "Tactical Energy Shield",
+            "description": "Energy shield with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "block": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "eliteenergyshieldarmor": {
+            "name": "Elite Energy Shield",
+            "description": "Top-tier energy shield providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "dexterity": 5
+            },
+            "skillbonus": {
+                "block": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 10
+        },
+        "elitebucklerarmor": {
+            "name": "Elite Buckler",
+            "description": "Top-tier steel buckler providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "block": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 0
+        },
+        "tacticalkineticbarrierarmor": {
+            "name": "Tactical Kinetic Barrier",
+            "description": "Kinetic barrier with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "block": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 5
+        },
+        "elitekineticbarrierarmor": {
+            "name": "Elite Kinetic Barrier",
+            "description": "Top-tier kinetic barrier providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 7,
+            "tankmodifier": 7,
+            "statbonus": {
+                "dexterity": 5
+            },
+            "skillbonus": {
+                "block": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 10
+        },
+        "elitecompositeshieldarmor": {
+            "name": "Elite Composite Shield",
+            "description": "Top-tier composite shield providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "block": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 0
+        },
+        "masterworkleatherbracersarmor": {
+            "name": "Masterwork Leather Bracers",
+            "description": "Finest leather bracers crafted by expert artisans, offering maximum protection.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "dexterity": 3
+            },
+            "skillbonus": {
+                "acrobatics": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 0
+        },
+        "eliteelbowpadsarmor": {
+            "name": "Elite Elbow Pads",
+            "description": "Top-tier elbow pads providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "acrobatics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 12,
+            "mpbonus": 5
+        },
+        "elitegreavesarmor": {
+            "name": "Elite Greaves",
+            "description": "Top-tier greaves providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "athletics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "tacticalexo-legsarmor": {
+            "name": "Tactical Exo-Legs",
+            "description": "Exo-legs with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "athletics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 5
+        },
+        "eliteexo-legsarmor": {
+            "name": "Elite Exo-Legs",
+            "description": "Top-tier exo-legs providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 7,
+            "tankmodifier": 7,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "athletics": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 10
+        },
+        "tacticalcarbonfiberguardsarmor": {
+            "name": "Tactical Carbon Fiber Guards",
+            "description": "Carbon fiber guards with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "strength": 4
+            },
+            "skillbonus": {
+                "acrobatics": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 12,
+            "mpbonus": 5
+        },
+        "elitecarbonfiberguardsarmor": {
+            "name": "Elite Carbon Fiber Guards",
+            "description": "Top-tier carbon fiber guards providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "arm",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "strength": 5
+            },
+            "skillbonus": {
+                "acrobatics": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 10
+        },
+        "masterworkutilitybeltarmor": {
+            "name": "Masterwork Utility Belt",
+            "description": "Finest utility belt crafted by expert artisans, offering maximum utility and protection.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 3,
+            "tankmodifier": 3,
+            "statbonus": {
+                "stamina": 2
+            },
+            "skillbonus": {
+                "engineerin": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 8,
+            "mpbonus": 0
+        },
+        "masterworkcombatglovesarmor": {
+            "name": "Masterwork Combat Gloves",
+            "description": "Finest combat gloves crafted by expert artisans, offering maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "strength": 3
+            },
+            "skillbonus": {
+                "melee": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 10,
+            "mpbonus": 0
+        },
+        "masterworkrebreathermaskarmor": {
+            "name": "Masterwork Rebreather Mask",
+            "description": "Finest rebreather mask crafted by expert artisans, offering maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "stamina": 3
+            },
+            "skillbonus": {
+                "resilience": 3
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 12,
+            "mpbonus": 0
+        },
+        "tacticalnightvisiongogglesarmor": {
+            "name": "Tactical Night Vision Goggles",
+            "description": "Night vision goggles with excellent quality and integrated tactical systems.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "perception": 4
+            },
+            "skillbonus": {
+                "stealth": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "masterworknightvisiongogglesarmor": {
+            "name": "Masterwork Night Vision Goggles",
+            "description": "Finest night vision goggles crafted by expert artisans, offering maximum performance.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "perception": 5
+            },
+            "skillbonus": {
+                "stealth": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 10
+        },
+        "enhancedradiationsuitarmor": {
+            "name": "Enhanced Radiation Suit",
+            "description": "High-grade radiation suit providing superior protection.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "resilience": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 0
+        },
+        "eliteradiationsuitarmor": {
+            "name": "Elite Radiation Suit",
+            "description": "Top-tier radiation suit providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "Accessory",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 5
+            },
+            "skillbonus": {
+                "resilience": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 25,
+            "mpbonus": 0
+        },
+        "tacticalcamouflagearmorarmor": {
+            "name": "Tactical Camouflage Armor",
+            "description": "High-grade camouflage armor with excellent stealth capabilities.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "stealth": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "masterworkcamouflagearmorarmor": {
+            "name": "Masterwork Camouflage Armor",
+            "description": "Finest camouflage armor crafted by expert artisans, offering maximum stealth and utility.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "dexterity": 5
+            },
+            "skillbonus": {
+                "stealth": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 10
+        },
+        "tacticalhazardsuitarmor": {
+            "name": "Tactical Hazard Suit",
+            "description": "High-grade hazard suit providing superior protection.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "resilience": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 20,
+            "mpbonus": 0
+        },
+        "elitehazardsuitarmor": {
+            "name": "Elite Hazard Suit",
+            "description": "Top-tier hazard suit providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 6,
+            "tankmodifier": 6,
+            "statbonus": {
+                "stamina": 5
+            },
+            "skillbonus": {
+                "resilience": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 25,
+            "mpbonus": 0
+        },
+        "eliteexplorer\u2019spackarmor": {
+            "name": "Elite Explorer\u2019s Pack",
+            "description": "Top-tier explorer\u2019s pack providing maximum utility and protection.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "stamina": 4
+            },
+            "skillbonus": {
+                "survival": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 0
+        },
+        "elitehunter\u2019sgeararmor": {
+            "name": "Elite Hunter\u2019s Gear",
+            "description": "Top-tier hunter\u2019s gear providing maximum protection and utility.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "tracking": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 5
+        },
+        "tacticalstealthsuitarmor": {
+            "name": "Tactical Stealth Suit",
+            "description": "High-grade stealth suit with excellent stealth capabilities.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 4,
+            "tankmodifier": 4,
+            "statbonus": {
+                "dexterity": 4
+            },
+            "skillbonus": {
+                "stealth": 4
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 15,
+            "mpbonus": 5
+        },
+        "elitestealthsuitarmor": {
+            "name": "Elite Stealth Suit",
+            "description": "Top-tier stealth suit providing maximum stealth and utility.",
+            "itemtype": "Armor",
+            "armortype": "torso",
+            "rarity": "Legendary",
+            "armorrating": 5,
+            "tankmodifier": 5,
+            "statbonus": {
+                "dexterity": 5
+            },
+            "skillbonus": {
+                "stealth": 5
+            },
+            "abilities": [],
+            "traits": [],
+            "spellsgranted": [],
+            "hpbonus": 18,
+            "mpbonus": 10
+        }
+    }
+}
