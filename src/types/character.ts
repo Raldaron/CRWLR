@@ -3,15 +3,13 @@
 export interface CharacterStats {
   strength: number;
   dexterity: number;
-  constitution: number;
+  stamina: number;
   intelligence: number;
-  wisdom: number;
+  wit: number;
+  perception: number;
   charisma: number;
-  appearance?: number;
-  manipulation?: number;
-  perception?: number;
-  wit?: number;
-  stamina?: number;
+  appearance: number;
+  manipulation: number;
 }
 
 export interface Skill {

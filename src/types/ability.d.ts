@@ -1,0 +1,19 @@
+export interface Ability {
+    name: string;
+    description: string;
+    effect: string;
+    range: string;
+    damage: string;
+    damagetype: string;
+    scaling: {
+      [key: string]: string;
+    };
+    abilitypointcost: number;
+    cooldown: string;
+  }
+  
+  export interface AbilitiesData {
+    abilities: {
+      [key: string]: Ability;
+    };
+  }

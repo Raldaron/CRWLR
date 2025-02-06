@@ -1,33 +1,42 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { CharacterStats, Skill, Trait } from '@/types/character';
 import type { Race } from '@/types/race';
+import type { Class } from '@/types/class';
+
+interface AbilityLevels {
+  [key: string]: number;
+}
 
 interface CharacterContextType {
-  stats: CharacterStats;
-  setStats: React.Dispatch<React.SetStateAction<CharacterStats>>;
-  skills: Skill[];
-  setSkills: React.Dispatch<React.SetStateAction<Skill[]>>;
+  baseStats: CharacterStats;
+  currentStats: CharacterStats;
+  setBaseStats: React.Dispatch<React.SetStateAction<CharacterStats>>;
+  baseSkills: Skill[];
+  currentSkills: Skill[];
+  setBaseSkills: React.Dispatch<React.SetStateAction<Skill[]>>;
   traits: Trait[];
   setTraits: React.Dispatch<React.SetStateAction<Trait[]>>;
-  selectedRace: Race | null;  // Add this
-  setSelectedRace: React.Dispatch<React.SetStateAction<Race | null>>;  // Add this
-  resetStats: () => void;
+  selectedRace: Race | null;
+  setSelectedRace: React.Dispatch<React.SetStateAction<Race | null>>;
+  selectedClass: Class | null;
+  setSelectedClass: React.Dispatch<React.SetStateAction<Class | null>>;
+  abilityLevels: AbilityLevels;
+  setAbilityLevel: (abilityName: string, level: number) => void;
+  resetCharacter: () => void;
 }
 
 const defaultStats: CharacterStats = {
   strength: 10,
   dexterity: 10,
-  constitution: 10,
+  stamina: 10,
   intelligence: 10,
-  wisdom: 10,
-  charisma: 10,
-  appearance: 10,
-  manipulation: 10,
   perception: 10,
   wit: 10,
-  stamina: 10
+  charisma: 10,
+  manipulation: 10,
+  appearance: 10
 };
 
 const defaultSkills: Skill[] = [
@@ -39,31 +48,107 @@ const defaultSkills: Skill[] = [
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
-  const [stats, setStats] = useState<CharacterStats>(defaultStats);
-  const [skills, setSkills] = useState<Skill[]>(defaultSkills);
+  // Stats management
+  const [baseStats, setBaseStats] = useState<CharacterStats>(defaultStats);
+  const [currentStats, setCurrentStats] = useState<CharacterStats>(defaultStats);
+  
+  // Skills management
+  const [baseSkills, setBaseSkills] = useState<Skill[]>(defaultSkills);
+  const [currentSkills, setCurrentSkills] = useState<Skill[]>(defaultSkills);
+  
+  // Other state
   const [traits, setTraits] = useState<Trait[]>([]);
-  const [selectedRace, setSelectedRace] = useState<Race | null>(null);  // Add this
+  const [selectedRace, setSelectedRace] = useState<Race | null>(null);
+  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [abilityLevels, setAbilityLevels] = useState<AbilityLevels>({});
 
-  const resetStats = () => {
-    setStats(defaultStats);
-    setSkills(defaultSkills);
-    setTraits([]);
-    setSelectedRace(null);  // Add this
+  // Update stats and skills when race or class changes
+  useEffect(() => {
+    // Start with base stats
+    const newStats = { ...baseStats };
+    const newSkills = baseSkills.map(skill => ({ ...skill }));
+    const newAbilityLevels = { ...abilityLevels };
+
+    // Apply race bonuses if a race is selected
+    if (selectedRace) {
+      Object.entries(selectedRace.statbonus).forEach(([stat, bonus]) => {
+        if (stat in newStats) {
+          newStats[stat as keyof CharacterStats] += bonus;
+        }
+      });
+
+      newSkills.forEach(skill => {
+        const raceBonus = selectedRace.skillbonus[skill.name.toLowerCase()] || 0;
+        skill.level += raceBonus;
+      });
+
+      selectedRace.abilities.forEach(abilityName => {
+        if (!newAbilityLevels[abilityName]) {
+          newAbilityLevels[abilityName] = 1;
+        }
+      });
+    }
+
+    // Apply class bonuses if a class is selected
+    if (selectedClass) {
+      Object.entries(selectedClass.statbonus).forEach(([stat, bonus]) => {
+        if (stat in newStats) {
+          newStats[stat as keyof CharacterStats] += bonus;
+        }
+      });
+
+      newSkills.forEach(skill => {
+        const classBonus = selectedClass.skillbonus[skill.name.toLowerCase()] || 0;
+        skill.level += classBonus;
+      });
+
+      selectedClass.abilities.forEach(abilityName => {
+        if (!newAbilityLevels[abilityName]) {
+          newAbilityLevels[abilityName] = 1;
+        }
+      });
+    }
+
+    setCurrentStats(newStats);
+    setCurrentSkills(newSkills);
+    setAbilityLevels(newAbilityLevels);
+    
+  }, [selectedRace, selectedClass, baseStats, baseSkills]);
+
+  const setAbilityLevel = (abilityName: string, level: number) => {
+    setAbilityLevels(prev => ({
+      ...prev,
+      [abilityName]: level
+    }));
   };
 
-  // Debug log
-  console.log('CharacterContext - selectedRace:', selectedRace);
+  const resetCharacter = () => {
+    setBaseStats(defaultStats);
+    setCurrentStats(defaultStats);
+    setBaseSkills(defaultSkills);
+    setCurrentSkills(defaultSkills);
+    setTraits([]);
+    setSelectedRace(null);
+    setSelectedClass(null);
+    setAbilityLevels({});
+  };
 
   const value = {
-    stats,
-    setStats,
-    skills,
-    setSkills,
+    baseStats,
+    currentStats,
+    setBaseStats,
+    baseSkills,
+    currentSkills,
+    setBaseSkills,
     traits,
     setTraits,
-    selectedRace,  // Add this
-    setSelectedRace,  // Add this
-    resetStats
+    selectedRace,
+    setSelectedRace,
+    selectedClass,
+    setSelectedClass,
+    abilityLevels,
+    setAbilityLevel,
+    resetCharacter
   };
 
   return (

@@ -1,34 +1,58 @@
 import React from 'react';
-import { Box, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import { Box, SimpleGrid, Text, VStack, Tooltip } from '@chakra-ui/react';
 import { Card } from '@/components/ui/card';
+import { useCharacter } from '@/context/CharacterContext';
 
-// This defines what information each skill has
 interface Skill {
   name: string;
   attribute: string;
   level: number;
 }
 
-// This is a single skill card component
-const SkillCard = ({ skill }: { skill: Skill }) => (
-  <Card>
-    <VStack p={4} spacing={2} alignItems="center">
-      <Text fontSize="lg" fontWeight="bold">
-        {skill.name}
-      </Text>
-      <Text fontSize="sm" color="gray.600">
-        ({skill.attribute})
-      </Text>
-      <Text fontSize="2xl" fontWeight="bold">
-        {skill.level}
-      </Text>
-    </VStack>
-  </Card>
-);
+interface SkillCardProps {
+  skill: Skill;
+  raceBonus?: number;
+  classBonus?: number;
+}
+
+const SkillCard: React.FC<SkillCardProps> = ({ skill, raceBonus = 0, classBonus = 0 }) => {
+  const totalBonus = raceBonus + classBonus;
+  
+  return (
+    <Tooltip
+      label={
+        totalBonus > 0 
+          ? `Base: ${skill.level} + Race: ${raceBonus} + Class: ${classBonus}`
+          : undefined
+      }
+      placement="top"
+    >
+      <Card>
+        <VStack p={4} spacing={2} alignItems="center">
+          <Text fontSize="lg" fontWeight="bold">
+            {skill.name}
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            ({skill.attribute})
+          </Text>
+          <Text fontSize="2xl" fontWeight="bold">
+            {skill.level + totalBonus}
+            {totalBonus > 0 && (
+              <Text as="span" color="green.500" fontSize="md">
+                {' '}(+{totalBonus})
+              </Text>
+            )}
+          </Text>
+        </VStack>
+      </Card>
+    </Tooltip>
+  );
+};
 
 const Skills = () => {
-  // List of all skills with their associated attributes
-  const skills: Skill[] = [
+  const { selectedRace, selectedClass } = useCharacter();
+
+  const baseSkills: Skill[] = [
     { name: "Abjuration", attribute: "Intelligence", level: 0 },
     { name: "Acrobatics", attribute: "Dexterity", level: 0 },
     { name: "Alchemy", attribute: "Intelligence", level: 0 },
@@ -79,9 +103,19 @@ const Skills = () => {
   return (
     <Box p={4}>
       <SimpleGrid columns={[2, 3, 4, 5]} spacing={4}>
-        {skills.map((skill) => (
-          <SkillCard key={skill.name} skill={skill} />
-        ))}
+        {baseSkills.map((skill) => {
+          const raceBonus = selectedRace?.skillbonus?.[skill.name.toLowerCase()] || 0;
+          const classBonus = selectedClass?.skillbonus?.[skill.name.toLowerCase()] || 0;
+          
+          return (
+            <SkillCard 
+              key={skill.name} 
+              skill={skill} 
+              raceBonus={raceBonus}
+              classBonus={classBonus}
+            />
+          );
+        })}
       </SimpleGrid>
     </Box>
   );

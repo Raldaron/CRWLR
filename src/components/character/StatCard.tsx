@@ -1,27 +1,29 @@
 import React from 'react';
-import { Box, Text, VStack, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Text,
+  Tooltip,
+  VStack,
+} from '@chakra-ui/react';
 import { Card, CardContent } from '@/components/ui/card';
-import { LucideIcon } from 'lucide-react';
 
-interface StatCardProps {
+interface CompactStatCardProps {
   label: string;
   current: number;
   max: number;
-  icon: LucideIcon;
   color: string;
   formula: string;
   breakdown: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({
+const CompactStatCard = ({
   label,
   current,
   max,
-  icon: Icon,
   color,
   formula,
   breakdown,
-}) => {
+}: CompactStatCardProps) => {
   return (
     <Tooltip
       label={
@@ -32,22 +34,15 @@ const StatCard: React.FC<StatCardProps> = ({
       }
       placement="top"
     >
-      <Card
-        className="transition-all duration-200 hover:shadow-lg"
-        style={{ borderTop: `4px solid ${color}` }}
-      >
+      <Card className="transition-all duration-200 hover:shadow-md">
         <CardContent>
-          <VStack p={4} spacing={3} alignItems="center" minH="150px" justifyContent="center">
-            <Icon size={24} color={color} />
-            <Text fontSize="xl" fontWeight="bold" color="gray.600">
+          <VStack p={2} spacing={1} alignItems="center" minH="80px" justifyContent="center">
+            <Text fontSize="md" fontWeight="semibold" color="gray.600">
               {label}
             </Text>
-            <Text fontSize="3xl" fontWeight="bold">
+            <Text fontSize="xl" fontWeight="bold">
               <span style={{ color }}>{current}</span>
               <span className="text-gray-400">/{max}</span>
-            </Text>
-            <Text fontSize="xs" color="gray.500">
-              {breakdown}
             </Text>
           </VStack>
         </CardContent>
@@ -56,4 +51,4 @@ const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-export default StatCard;
+export default CompactStatCard;

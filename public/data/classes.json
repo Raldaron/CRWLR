@@ -14,7 +14,7 @@
         "traits": [],
         "armorrating": -2
     },
-    "agony_urchin": {
+    "agonyurchin": {
         "name": "Agony Urchin",
         "description": "Agony Urchin, the embodiment of that small, persistent pain you can't quite locate or explain. This prickly character thrives on discomfort, both physical and emotional, making them a foe no one wants to confront. Their presence alone is enough to make armor chafe and boots pinch, proving that sometimes the smallest irritants are the most effective.",
         "archetype": "Monk",
@@ -34,16 +34,16 @@
             "survival": 2
         },
         "abilities": [
-            "Prickly Aura",
-            "Agonizing Touch"
+            "pricklyaura",
+            "agonizingtouch"
         ],
         "traits": [
-            "Persistent Irritant",
-            "Pain Tolerance"
+            "persistentirritant",
+            "paintolerance"
         ],
         "armorrating": 1
     },
-    "alley_cat_brawler": {
+    "alleycatbrawler": {
         "name": "Alley Cat Brawler",
         "description": "Alley Cat Brawler, because who needs martial arts when you've got street smarts and a mean right hook? This class thrives in the back alleys and shadowy corners of the world, turning every encounter into a rough-and-tumble scrap. They fight dirty, but they fight to win.",
         "archetype": "Barbarian",
@@ -63,16 +63,16 @@
             "intimidation": 2
         },
         "abilities": [
-            "Dirty Fighting",
-            "Nine Lives"
+            "dirtyfighting",
+            "ninelives"
         ],
         "traits": [
-            "Street Smarts",
-            "Nimble Escape"
+            "streetsmarts",
+            "nimbleescape"
         ],
         "armorrating": 0
     },
-    "animal_test_subject": {
+    "animaltestsubject": {
         "name": "Animal Test Subject",
         "description": "Animal Test Subject, the class for those who've endured every experimental potion, device, and spell, emerging with unpredictable abilities and a justifiable wariness of scientists. Sometimes they'll sprout wings; other times, they might breathe fire. It's a bit of a gamble, but they're living proof that what doesn't kill you makes you weirder.",
         "archetype": "Barbarian",
@@ -92,12 +92,12 @@
             "medicine": 2
         },
         "abilities": [
-            "Mutagen Surge",
-            "Adaptive Physiology"
+            "mutagensurge",
+            "adaptivephysiology"
         ],
         "traits": [
-            "Unpredictable Biology",
-            "Experimental Resistance"
+            "unpredictablebiology",
+            "experimentalresistance"
         ],
         "armorrating": -1
     },
@@ -121,16 +121,16 @@
             "athletics": 2
         },
         "abilities": [
-            "Pinpoint Accuracy",
-            "Rapid Fire"
+            "pinpointaccuracy",
+            "rapidfire"
         ],
         "traits": [
-            "Eagle Eye",
-            "Quickdraw"
+            "eagleeye",
+            "quickdraw"
         ],
         "armorrating": 0
     },
-    "black_inquisitor_general": {
+    "blackinquisitorgeneral": {
         "name": "Black Inquisitor General",
         "description": "The Black Inquisitor General, the terror of heretics, and party poopers everywhere. This class is for those who thought Torquemada had some good ideas but lacked pizzazz. Specializing in rooting out deception and enforcing dogma, they're like the medieval FBI, but with a much worse dress code. Expect a lot of fire, brimstone, and uncomfortable questions about your last confession.",
         "archetype": "Cleric",
@@ -150,12 +150,12 @@
             "sense deception": 2
         },
         "abilities": [
-            "Righteous Judgement",
-            "Confessional Interrogation"
+            "righteousjudgement",
+            "confessionalinterrogation"
         ],
         "traits": [
-            "Truth Seeker",
-            "Fearsome Presence"
+            "truthseeker",
+            "fearsomepresence"
         ],
         "armorrating": 1
     },
@@ -179,16 +179,16 @@
             "survival": 2
         },
         "abilities": [
-            "Frostbite Blast",
-            "Ice Wall"
+            "frostbiteblast",
+            "icewall"
         ],
         "traits": [
-            "Cold Immunity",
-            "Frozen Aura"
+            "coldimmunity",
+            "frozenaura"
         ],
         "armorrating": -1
     },
-    "blood_assassin": {
+    "bloodassassin": {
         "name": "Blood Assassin",
         "description": "The Blood Assassin, because why simply assassinate someone when you can also make it look like a horror show? These are the artists who paint in shades of crimson, turning their kills into a spectacle of gore. Not for the faint of heart, or stomach, they're the reason why \"overkill\" is just starting to get interesting. They take \"bleeding edge technology\" a bit too literally, but hey, no one's complaining\u2014mostly because they're, well, dead.",
         "archetype": "Rogue",
@@ -208,12 +208,12 @@
             "intimidation": 2
         },
         "abilities": [
-            "Crimson Strike",
-            "Blood Mist"
+            "crimsonstrike",
+            "bloodmist"
         ],
         "traits": [
-            "Bloodsense",
-            "Gruesome Display"
+            "bloodsense",
+            "gruesomedisplay"
         ],
         "armorrating": 2
     },
@@ -237,16 +237,16 @@
             "performance": 2
         },
         "abilities": [
-            "Heroic Surge",
-            "Epic Feat"
+            "heroicsurge",
+            "epicfeat"
         ],
         "traits": [
-            "Legendary Strength",
-            "Inspiring Presence"
+            "legendarystrength",
+            "inspiringpresence"
         ],
         "armorrating": 2
     },
-    "boring_ol_fighter": {
+    "boringolfighter": {
         "name": "Boring Ol' Fighter",
         "description": "The Boring Ol' Fighter, because sometimes you just need a guy with a sword who can take a hit. These are the bread and butter of any adventure, the vanilla ice cream of combat\u2014reliable, straightforward, and surprisingly effective. They're the proof that sometimes, all you need to solve a complex problem is a good swing and a can-do attitude. They're not fancy, but they get the job done.",
         "archetype": "Fighter",
@@ -277,16 +277,16 @@
             "explosives-handling": 2
         },
         "abilities": [
-            "Combat Rhythm",
-            "Adaptive Resilience"
+            "combatrhythm",
+            "adaptiveresilience"
         ],
         "traits": [
-            "Unbreakable",
-            "Weapon Mastery"
+            "unbreakable",
+            "weaponmastery"
         ],
         "armorrating": 2
     },
-    "boring_ol_mage": {
+    "boringolmage": {
         "name": "Boring Ol' Mage",
         "description": "And then there's the Boring Ol' Mage, the classic spell-slinger who decided that robes are forever in fashion and that fireball solves most of life's problems. They're the ones who spend more time in libraries than is socially acceptable, emerging only to incinerate, levitate, or transform. They're the quintessential \"nerds with power,\" proving that knowledge really is power\u2014especially when it's used to summon a meteor shower.",
         "archetype": "Wizard",
@@ -306,12 +306,12 @@
             "nature": 2
         },
         "abilities": [
-            "Arcane Recovery",
-            "Spell Mastery"
+            "arcanerecovery",
+            "spellmastery"
         ],
         "traits": [
-            "Arcane Insight",
-            "Spell Sculptor"
+            "arcaneinsight",
+            "spellsculptor"
         ],
         "armorrating": -2
     },
@@ -335,16 +335,16 @@
             "close combat": 2
         },
         "abilities": [
-            "Flamb\u00e9 Fury",
-            "Culinary Critique"
+            "flamb\u00e9fury",
+            "culinarycritique"
         ],
         "traits": [
-            "Heat Resistant",
-            "Iron Stomach"
+            "heatresistant",
+            "ironstomach"
         ],
         "armorrating": 0
     },
-    "d_bag_geek": {
+    "dbaggeek": {
         "name": "D-Bag Geek",
         "description": "D-Bag Geek, because every party needs its comic relief, and nothing says \"I'm here to help, but also annoy you\" quite like this class. Armed with arcane knowledge, an arsenal of gadgets, and a personality that's an acquired taste, they're like the internet troll turned unlikely hero. They'll save the day, but they'll also make sure you never hear the end of it.",
         "archetype": "Wizard",
@@ -364,16 +364,16 @@
             "persuasion": 2
         },
         "abilities": [
-            "Trolling Mastery",
-            "Gadget Overload"
+            "trollingmastery",
+            "gadgetoverload"
         ],
         "traits": [
-            "Actually...",
-            "Social Media Savvy"
+            "actually...",
+            "socialmediasavvy"
         ],
         "armorrating": -1
     },
-    "demigod_attendant": {
+    "demigodattendant": {
         "name": "Demigod Attendant",
         "description": "Demigod Attendant, the divine intern of the celestial realm. Serving under a demigod, they're part PA, part disciple, and all about that divine intervention life. They learn the ropes of omnipotence on the job, handling tasks that range from smiting to fetching divine dry cleaning. It's not always glamorous, but hey, the benefits are heavenly.",
         "archetype": "Cleric",
@@ -393,16 +393,16 @@
             "lore": 2
         },
         "abilities": [
-            "Divine Favor",
-            "Celestial Bureaucracy"
+            "divinefavor",
+            "celestialbureaucracy"
         ],
         "traits": [
-            "Heavenly Connections",
-            "Divine Protection"
+            "heavenlyconnections",
+            "divineprotection"
         ],
         "armorrating": 1
     },
-    "earth_mover": {
+    "earthmover": {
         "name": "Earth Mover",
         "description": "Enter the Earth Mover, because why walk around an obstacle when you can just make the obstacle move? These terraformers take landscaping to a whole new level, shifting mountains, opening chasms, and occasionally causing seismic events by accident. They're the ultimate in \"making an entrance,\" ensuring that the battlefield conforms to their vision of it\u2014preferably flat and enemy-free.",
         "archetype": "Wizard",
@@ -422,16 +422,16 @@
             "survival": 2
         },
         "abilities": [
-            "Tectonic Shift",
-            "Stone Shaper"
+            "tectonicshift",
+            "stoneshaper"
         ],
         "traits": [
-            "One with Earth",
-            "Rocky Hide"
+            "onewithearth",
+            "rockyhide"
         ],
         "armorrating": 2
     },
-    "feral_cat_berserker": {
+    "feralcatberserker": {
         "name": "Feral Cat Berserker",
         "description": "Feral Cat Berserker, because when you need something clawed to pieces with reckless abandon, accept no substitutes. This warrior channels the spirit of every alley cat who ever hissed at a human, fought a dog, or knocked things off a shelf for no reason. They're unpredictable, unmanageable, and utterly terrifying to anyone with allergies.",
         "archetype": "Barbarian",
@@ -451,16 +451,16 @@
             "stealth": 2
         },
         "abilities": [
-            "Feline Fury",
-            "Nine Lives"
+            "felinefury",
+            "ninelives"
         ],
         "traits": [
-            "Cat-like Reflexes",
-            "Night Vision"
+            "cat-likereflexes",
+            "nightvision"
         ],
         "armorrating": 0
     },
-    "fire_spiritualist": {
+    "firespiritualist": {
         "name": "Fire Spiritualist",
         "description": "The Fire Spiritualist is like the weird cousin of the pyromancer who decided that playing with fire wasn't enough; they wanted to be in a relationship with it. They talk to flames like old friends, and their idea of a candlelit dinner involves summoning a fire elemental as the third wheel. Warm-hearted, hot-headed, and occasionally setting their surroundings ablaze with spiritual fervor, they're the life of the party\u2014until the fire department shows up.",
         "archetype": "Sorcerer",
@@ -480,12 +480,12 @@
             "survival": 2
         },
         "abilities": [
-            "Flame Whisperer",
-            "Inferno Summon"
+            "flamewhisperer",
+            "infernosummon"
         ],
         "traits": [
-            "Fire Affinity",
-            "Passionate Aura"
+            "fireaffinity",
+            "passionateaura"
         ],
         "armorrating": -1
     },
@@ -509,16 +509,16 @@
             "performance": 2
         },
         "abilities": [
-            "Explosive Personality",
-            "Dazzling Display"
+            "explosivepersonality",
+            "dazzlingdisplay"
         ],
         "traits": [
-            "Short Fuse",
-            "Blast Resistant"
+            "shortfuse",
+            "blastresistant"
         ],
         "armorrating": -1
     },
-    "football_hooligan": {
+    "footballhooligan": {
         "name": "Football Hooligan",
         "description": "Football Hooligan, bringing team spirit\u2014and a bit of mayhem\u2014to the fray. More than just fans, these warriors turn their passion for the game into a combat strategy, proving that loyalty can indeed be a weapon. Just don't ask them to play fair.",
         "archetype": "Barbarian",
@@ -538,16 +538,16 @@
             "persuasion": 2
         },
         "abilities": [
-            "Rally Cry",
-            "Crowd Surge"
+            "rallycry",
+            "crowdsurge"
         ],
         "traits": [
-            "Mob Mentality",
-            "Unbreakable Spirit"
+            "mobmentality",
+            "unbreakablespirit"
         ],
         "armorrating": 1
     },
-    "forsaken_aerialist": {
+    "forsakenaerialist": {
         "name": "Forsaken Aerialist",
         "description": "The Forsaken Aerialist, for those who said, \"Circus life is too tame; let's add more despair.\" Combining the elegance of flight with the emo aesthetic of the eternally damned, these performers bring a touch of grace and a lot of doom to any encounter. Think of them as the goth ballerinas of the air, pirouetting on the edge of oblivion. Just don't expect them to smile during the performance.",
         "archetype": "Rogue",
@@ -575,16 +575,16 @@
             "alchemy": 2
         },
         "abilities": [
-            "Boom Boom Bouquet",
-            "Oopsie-Daisy Deadfall"
+            "boomboombouquet",
+            "oopsie-daisydeadfall"
         ],
         "traits": [
-            "Gravity Defiance",
-            "Aura of Gloom"
+            "gravitydefiance",
+            "auraofgloom"
         ],
         "armorrating": 0
     },
-    "freelance_psychiatrist": {
+    "freelancepsychiatrist": {
         "name": "Freelance Psychiatrist",
         "description": "Freelance Psychiatrist, because dungeon crawling can be mentally taxing, and someone needs to listen to all those adventurer woes. With a couch that magically fits in their backpack, they're ready to unpack your issues anywhere, from the depths of a dragon's lair to the middle of a goblin ambush. They're the reason why \"I slay, therefore I am\" is both a battle cry and a breakthrough in therapy.",
         "archetype": "Sorcerer",
@@ -604,12 +604,12 @@
             "medicine": 2
         },
         "abilities": [
-            "Therapeutic Breakthrough",
-            "Mind Palace"
+            "therapeuticbreakthrough",
+            "mindpalace"
         ],
         "traits": [
-            "Insightful",
-            "Calming Presence"
+            "insightful",
+            "calmingpresence"
         ],
         "armorrating": -1
     },
@@ -633,16 +633,16 @@
             "sleight of hand": 2
         },
         "abilities": [
-            "Vanishing Act",
-            "Quick Disguise"
+            "vanishingact",
+            "quickdisguise"
         ],
         "traits": [
-            "Always Prepared",
-            "Suspicious Mind"
+            "alwaysprepared",
+            "suspiciousmind"
         ],
         "armorrating": 0
     },
-    "glass_cannon": {
+    "glasscannon": {
         "name": "Glass Cannon",
         "description": "Glass Cannon, because who needs defense when you can obliterate everything in sight? This class is all about high risk, high reward, and an allergy to anything resembling armor. They can dish out tremendous damage but shatter at the first counterattack, proving that sometimes the best defense is a good, overwhelming offense\u2014and a solid escape plan.",
         "archetype": "Wizard",
@@ -662,16 +662,16 @@
             "dodge": 2
         },
         "abilities": [
-            "Overwhelming Barrage",
-            "Evasive Maneuvers"
+            "overwhelmingbarrage",
+            "evasivemaneuvers"
         ],
         "traits": [
-            "Fragile Power",
-            "Quick Reflexes"
+            "fragilepower",
+            "quickreflexes"
         ],
         "armorrating": -2
     },
-    "gut_rearranger": {
+    "gutrearranger": {
         "name": "Gut Rearranger",
         "description": "Gut Rearranger, a title that sounds more like a threat than a profession. This class takes the concept of \"internal medicine\" to a whole new, literal level. Specializing in close combat that's a bit too close for comfort, they're experts in ensuring that any enemy they meet might need a very specialized surgeon. They're the reason why \"gut feeling\" can be more of a diagnosis than intuition.",
         "archetype": "Necromancer",
@@ -691,12 +691,12 @@
             "intimidation": 2
         },
         "abilities": [
-            "Visceral Strike",
-            "Anatomical Precision"
+            "visceralstrike",
+            "anatomicalprecision"
         ],
         "traits": [
-            "Surgical Strikes",
-            "Gut Instinct"
+            "surgicalstrikes",
+            "gutinstinct"
         ],
         "armorrating": 1
     },
@@ -720,16 +720,16 @@
             "athletics": 2
         },
         "abilities": [
-            "Forge Mastery",
-            "Thunderous Strike"
+            "forgemastery",
+            "thunderousstrike"
         ],
         "traits": [
-            "Heat Resistance",
-            "Master Craftsman"
+            "heatresistance",
+            "mastercraftsman"
         ],
         "armorrating": 2
     },
-    "holistic_healer": {
+    "holistichealer": {
         "name": "Holistic Healer",
         "description": "Holistic Healer, because why use boring old magic or medicine when you can use crystals, herbs, and a touch of wishful thinking? These healers believe that every potion starts with a good intention, and they're all about that natural remedy life. Side effects may include unexpected bouts of enlightenment, sudden veganism, or an unexplained affinity for patchouli. They're the ones you call when you want to be healed body, soul, and spirit\u2014just don't ask for a timeline.",
         "archetype": "Cleric",
@@ -749,16 +749,16 @@
             "persuasion": 2
         },
         "abilities": [
-            "Chakra Alignment",
-            "Herbal Infusion"
+            "chakraalignment",
+            "herbalinfusion"
         ],
         "traits": [
-            "Aura Reading",
-            "Power of Belief"
+            "aurareading",
+            "powerofbelief"
         ],
         "armorrating": -1
     },
-    "imperial_soldier": {
+    "imperialsoldier": {
         "name": "Imperial Soldier",
         "description": "The Imperial Soldier: disciplined, loyal, and equipped with a sense of superiority that's been honed alongside their blade. These are the guys who march into battle with matching uniforms and a game plan. They're like the fantasy version of \"leave no man behind,\" except it's \"leave no man unless ordered by the emperor.\" Efficiency and obedience are their watchwords, which they follow to the letter\u2014unless the plot demands otherwise.",
         "archetype": "Fighter",
@@ -778,12 +778,12 @@
             "athletics": 2
         },
         "abilities": [
-            "Formation Fighting",
-            "Imperial Mandate"
+            "formationfighting",
+            "imperialmandate"
         ],
         "traits": [
-            "Unyielding Loyalty",
-            "Regimented Training"
+            "unyieldingloyalty",
+            "regimentedtraining"
         ],
         "armorrating": 2
     },
@@ -807,16 +807,16 @@
             "persuasion": 2
         },
         "abilities": [
-            "Charging Lance",
-            "Mounted Combat Master"
+            "charginglance",
+            "mountedcombatmaster"
         ],
         "traits": [
-            "Saddle Sure",
-            "Honor Bound"
+            "saddlesure",
+            "honorbound"
         ],
         "armorrating": 1
     },
-    "knife_sharpener": {
+    "knifesharpener": {
         "name": "Knife Sharpener",
         "description": "Knife Sharpener, the class for those who believe that the pen might be mightier than the sword, but a well-sharpened knife beats both. These meticulous folks can turn a dull butter knife into a weapon of mass destruction with just a few swipes. Their motto? \"A sharp knife is a happy knife, and a happy knife makes for an unhappy enemy.\" They're like barbers, but for blades, and a whole lot more lethal.",
         "archetype": "Rogue",
@@ -836,12 +836,12 @@
             "sleight of hand": 2
         },
         "abilities": [
-            "Razor's Edge",
-            "Blade Dance"
+            "razor'sedge",
+            "bladedance"
         ],
         "traits": [
-            "Keen Edge",
-            "Weapon Whisperer"
+            "keenedge",
+            "weaponwhisperer"
         ],
         "armorrating": 0
     },
@@ -865,16 +865,16 @@
             "persuasion": 2
         },
         "abilities": [
-            "Rally the Troops",
-            "Tactical Maneuver"
+            "rallythetroops",
+            "tacticalmaneuver"
         ],
         "traits": [
-            "Voice of Authority",
-            "Inspiring Presence"
+            "voiceofauthority",
+            "inspiringpresence"
         ],
         "armorrating": 2
     },
-    "legendary_diva": {
+    "legendarydiva": {
         "name": "Legendary Diva",
         "description": "Legendary Diva, because why fight when you can simply outshine your opponents? This class wields the power of performance, captivating friends and foes alike with a voice that can soothe, inspire, or devastate. They're the centerpiece of any battle, not just for their combat prowess but for their unmatched ability to hit those high notes in the heat of battle.",
         "archetype": "Bard",
@@ -894,16 +894,16 @@
             "dodge": 2
         },
         "abilities": [
-            "Shattering Crescendo",
-            "Aria of Inspiration"
+            "shatteringcrescendo",
+            "ariaofinspiration"
         ],
         "traits": [
-            "Center Stage",
-            "Perfect Pitch"
+            "centerstage",
+            "perfectpitch"
         ],
         "armorrating": -1
     },
-    "master_telephone_psychic": {
+    "mastertelephonepsychic": {
         "name": "Master Telephone Psychic",
         "description": "The Master Telephone Psychic, because why face your problems when you can have someone on a hotline tell you everything's going to be okay\u2014for a small fee per minute? Armed with an uncanny ability to \"sense\" things (and a quick internet search), they provide guidance, vague predictions, and a sympathetic ear, all without ever having to leave their chair.",
         "archetype": "Sorcerer",
@@ -923,16 +923,16 @@
             "perception": 2
         },
         "abilities": [
-            "Vague Premonition",
-            "Cold Reading"
+            "vaguepremonition",
+            "coldreading"
         ],
         "traits": [
-            "Psychic Hotline",
-            "Uncanny Intuition"
+            "psychichotline",
+            "uncannyintuition"
         ],
         "armorrating": -2
     },
-    "nimblefoot_enforcer": {
+    "nimblefootenforcer": {
         "name": "Nimblefoot Enforcer",
         "description": "The Nimblefoot Enforcer, for when you absolutely, positively need someone kicked in the face discreetly and with style. These agile warriors are part acrobat, part ass-kicker, specializing in making sure their foes are too embarrassed to admit how they got those bruises. \"Stepped on a banana peel\" takes on a whole new meaning with them around, combining stealth, speed, and a bit of slapstick to the battlefield.",
         "archetype": "Rogue",
@@ -952,16 +952,16 @@
             "close combat": 2
         },
         "abilities": [
-            "Swift Strike",
-            "Acrobatic Dodge"
+            "swiftstrike",
+            "acrobaticdodge"
         ],
         "traits": [
-            "Light-footed",
-            "Embarrassing Strikes"
+            "light-footed",
+            "embarrassingstrikes"
         ],
         "armorrating": 0
     },
-    "nine_tails": {
+    "ninetails": {
         "name": "Nine Tails",
         "description": "Nine Tails, the mystical fox spirit with more tricks than tails. This enchanting class wields magic and cunning in equal measure, bewitching friends and foes alike. Their charm is as potent as their spells, proving that sometimes, what you see is definitely not what you get.",
         "archetype": "Sorcerer",
@@ -981,16 +981,16 @@
             "stealth": 2
         },
         "abilities": [
-            "Foxfire",
-            "Shapeshifter's Guile"
+            "foxfire",
+            "shapeshifter'sguile"
         ],
         "traits": [
-            "Vulpine Charm",
-            "Illusory Escape"
+            "vulpinecharm",
+            "illusoryescape"
         ],
         "armorrating": -1
     },
-    "pest_exterminator": {
+    "pestexterminator": {
         "name": "Pest Exterminator",
         "description": "Pest Exterminator, because no quest is too small and no creature too insignificant. Armed with an array of traps, poisons, and a deeply ingrained disdain for vermin, they're the final word in pest control. They're the reason why \"sleep tight, don't let the bedbugs bite\" is more than just a saying.",
         "archetype": "Ranger",
@@ -1010,12 +1010,12 @@
             "stealth": 2
         },
         "abilities": [
-            "Vermin Bane",
-            "Trap Mastery"
+            "verminbane",
+            "trapmastery"
         ],
         "traits": [
-            "Pest Sense",
-            "Toxin Resistance"
+            "pestsense",
+            "toxinresistance"
         ],
         "armorrating": 0
     },
@@ -1039,16 +1039,16 @@
             "sleight of hand": 2
         },
         "abilities": [
-            "Miraculous Remedy",
-            "Battlefield Triage"
+            "miraculousremedy",
+            "battlefieldtriage"
         ],
         "traits": [
-            "Anatomical Expertise",
-            "Plague Doctor"
+            "anatomicalexpertise",
+            "plaguedoctor"
         ],
         "armorrating": 1
     },
-    "pit_fighter": {
+    "pitfighter": {
         "name": "Pit Fighter",
         "description": "Pit Fighter, the class for those who like their battles up close, personal, and preferably in an arena with cheering fans. These gladiators turn combat into spectacle, proving their worth in blood and sand. They're as charismatic as they are deadly, and they know how to put on a good show\u2014even if it's their last.",
         "archetype": "Fighter",
@@ -1068,16 +1068,16 @@
             "performance": 2
         },
         "abilities": [
-            "Crowd Pleaser",
-            "Brutal Finisher"
+            "crowdpleaser",
+            "brutalfinisher"
         ],
         "traits": [
-            "Arena Veteran",
-            "Showmanship"
+            "arenaveteran",
+            "showmanship"
         ],
         "armorrating": 2
     },
-    "poet_laureate": {
+    "poetlaureate": {
         "name": "Poet Laureate",
         "description": "The Poet Laureate: because nothing terrifies the enemy more than a well-crafted sonnet about their impending doom. This class wields words with the precision of a scalpel, cutting deeper than any sword. They can inspire allies to greatness and reduce foes to existential crises, proving that the pen (or quill) is indeed mightier than the sword\u2014especially if it's enchanted.",
         "archetype": "Bard",
@@ -1097,12 +1097,12 @@
             "lore": 2
         },
         "abilities": [
-            "Verse of Inspiration",
-            "Rhyme of Despair"
+            "verseofinspiration",
+            "rhymeofdespair"
         ],
         "traits": [
-            "Silver Tongue",
-            "Lyrical Memory"
+            "silvertongue",
+            "lyricalmemory"
         ],
         "armorrating": -1
     },
@@ -1126,12 +1126,12 @@
             "athletics": 2
         },
         "abilities": [
-            "Swift Scout",
-            "Tactical Insight"
+            "swiftscout",
+            "tacticalinsight"
         ],
         "traits": [
-            "First Strike",
-            "Terrain Mastery"
+            "firststrike",
+            "terrainmastery"
         ],
         "armorrating": 1
     },
@@ -1155,12 +1155,12 @@
             "survival": 2
         },
         "abilities": [
-            "Aerial Assault",
-            "Lupine Senses"
+            "aerialassault",
+            "lupinesenses"
         ],
         "traits": [
-            "Wings of Freedom",
-            "Predator's Instinct"
+            "wingsoffreedom",
+            "predator'sinstinct"
         ],
         "armorrating": 0
     },
@@ -1184,16 +1184,16 @@
             "nature": 2
         },
         "abilities": [
-            "Favored Enemy",
-            "Natural Explorer"
+            "favoredenemy",
+            "naturalexplorer"
         ],
         "traits": [
-            "Beast Whisperer",
-            "Camouflage Expert"
+            "beastwhisperer",
+            "camouflageexpert"
         ],
         "armorrating": 0
     },
-    "riot_forces_support": {
+    "riotforcessupport": {
         "name": "Riot Forces Support",
         "description": "Riot Forces Support, the backbone of any protest turned skirmish. Equipped with shields, batons, and an unwavering sense of duty, they're here to keep the peace\u2014or at least, keep the rioters at bay. They're the reason why \"bringing a knife to a gunfight\" is still better than facing them unarmed.",
         "archetype": "Cleric",
@@ -1213,16 +1213,16 @@
             "perception": 2
         },
         "abilities": [
-            "Shield Wall",
-            "Crowd Control"
+            "shieldwall",
+            "crowdcontrol"
         ],
         "traits": [
-            "Unbreakable Line",
-            "Crowd Dispersal"
+            "unbreakableline",
+            "crowddispersal"
         ],
         "armorrating": 2
     },
-    "roller_derby_jammer": {
+    "rollerderbyjammer": {
         "name": "Roller Derby Jammer",
         "description": "Roller Derby Jammer, skating into combat with the grace of a gazelle and the aggression of a grizzly bear. These warriors bring the rink to the battlefield, using speed, agility, and a healthy disregard for personal safety to outmaneuver and outstrike their foes. Elbows are sharp, and so is their strategy.",
         "archetype": "Monk",
@@ -1242,16 +1242,16 @@
             "intimidation": 2
         },
         "abilities": [
-            "Whip It Good",
-            "Hip Check"
+            "whipitgood",
+            "hipcheck"
         ],
         "traits": [
-            "Skate or Die",
-            "Crowd Favorite"
+            "skateordie",
+            "crowdfavorite"
         ],
         "armorrating": 1
     },
-    "sacred_paladin": {
+    "sacredpaladin": {
         "name": "Sacred Paladin",
         "description": "Sacred Paladin, the holy warrior who's as righteous as they are armored. They're on a divine mission to smite evil, heal the innocent, and occasionally give long-winded speeches about virtue. With a shield in one hand and a holy symbol in the other, they're ready to face darkness, or at least lecture it into submission.",
         "archetype": "Cleric",
@@ -1271,12 +1271,12 @@
             "medicine": 2
         },
         "abilities": [
-            "Divine Smite",
-            "Lay on Hands"
+            "divinesmite",
+            "layonhands"
         ],
         "traits": [
-            "Aura of Protection",
-            "Divine Health"
+            "auraofprotection",
+            "divinehealth"
         ],
         "armorrating": 2
     },
@@ -1300,12 +1300,12 @@
             "survival": 2
         },
         "abilities": [
-            "Spirit Communion",
-            "Curse of the Ancestors"
+            "spiritcommunion",
+            "curseoftheancestors"
         ],
         "traits": [
-            "Spiritual Conduit",
-            "Ritual Master"
+            "spiritualconduit",
+            "ritualmaster"
         ],
         "armorrating": -1
     },
@@ -1329,16 +1329,16 @@
             "sleight of hand": 2
         },
         "abilities": [
-            "Controlled Demolition",
-            "Trap Mastery"
+            "controlleddemolition",
+            "trapmastery"
         ],
         "traits": [
-            "Demolitions Expert",
-            "Danger Sense"
+            "demolitionsexpert",
+            "dangersense"
         ],
         "armorrating": 0
     },
-    "sergeant_at_arms": {
+    "sergeantatarms": {
         "name": "Sergeant-at-Arms",
         "description": "Sergeant-at-Arms, the one who ensures that order is not just a concept but a practice\u2014especially when it involves bashing a few heads together. Think of them as the ultimate party planner, if the party is a battlefield and the guests need a good thrashing. Their leadership style is a mix of motivational speaking and threat of bodily harm, surprisingly effective in keeping the ranks.",
         "archetype": "Fighter",
@@ -1358,12 +1358,12 @@
             "tactics": 2
         },
         "abilities": [
-            "Rallying Cry",
-            "Disciplinary Action"
+            "rallyingcry",
+            "disciplinaryaction"
         ],
         "traits": [
-            "Voice of Authority",
-            "Unbreakable Formation"
+            "voiceofauthority",
+            "unbreakableformation"
         ],
         "armorrating": 2
     },
@@ -1387,12 +1387,12 @@
             "persuasion": 2
         },
         "abilities": [
-            "Flock Guardian",
-            "Soothing Presence"
+            "flockguardian",
+            "soothingpresence"
         ],
         "traits": [
-            "One with Nature",
-            "Protective Instinct"
+            "onewithnature",
+            "protectiveinstinct"
         ],
         "armorrating": 0
     },
@@ -1416,16 +1416,16 @@
             "close combat": 2
         },
         "abilities": [
-            "Shield Wall",
-            "Deflective Strike"
+            "shieldwall",
+            "deflectivestrike"
         ],
         "traits": [
-            "Unbreakable",
-            "Guardian's Presence"
+            "unbreakable",
+            "guardian'spresence"
         ],
         "armorrating": 2
     },
-    "shotgun_messenger": {
+    "shotgunmessenger": {
         "name": "Shotgun Messenger",
         "description": "Finally, the Shotgun Messenger, because why deliver a message with words when you can use buckshot? These are the postal workers of the apocalypse, ensuring that every delivery is both prompt and explosive. Their motto? \"When it absolutely, positively has to be destroyed overnight.\" They're the reason why \"shooting the messenger\" is not only a bad idea but potentially fatal.",
         "archetype": "Fighter",
@@ -1445,16 +1445,16 @@
             "survival": 2
         },
         "abilities": [
-            "Special Delivery",
-            "Rapid Reload"
+            "specialdelivery",
+            "rapidreload"
         ],
         "traits": [
-            "Neither Snow Nor Rain",
-            "Return to Sender"
+            "neithersnownorrain",
+            "returntosender"
         ],
         "armorrating": 1
     },
-    "slave_driver": {
+    "slavedriver": {
         "name": "Slave Driver",
         "description": "The Slave Driver, because nothing says \"team motivation\" quite like the crack of a whip. This class is all about leadership through fear, and their idea of team building involves chains and a lot of shouting. They excel in efficiency, ensuring every dungeon crawl is both swift and miserable. They're like the worst project managers, but with more leather and less concern for HR policies.",
         "archetype": "Barbarian",
@@ -1474,12 +1474,12 @@
             "persuasion": 2
         },
         "abilities": [
-            "Cracking Command",
-            "Forced March"
+            "crackingcommand",
+            "forcedmarch"
         ],
         "traits": [
-            "Iron Will",
-            "Taskmaster"
+            "ironwill",
+            "taskmaster"
         ],
         "armorrating": 1
     },
@@ -1503,16 +1503,16 @@
             "investigation": 2
         },
         "abilities": [
-            "Master of Disguise",
-            "Coded Message"
+            "masterofdisguise",
+            "codedmessage"
         ],
         "traits": [
-            "Paranoia",
-            "Infiltrator"
+            "paranoia",
+            "infiltrator"
         ],
         "armorrating": -1
     },
-    "staunch_barrier": {
+    "staunchbarrier": {
         "name": "Staunch Barrier",
         "description": "Staunch Barrier, the immovable object in a world of unstoppable forces. This defender stands tall in the face of danger, a living bulwark against all who would do harm. They're the reason why \"you shall not pass\" is more than just a meme\u2014it's a promise.",
         "archetype": "Fighter",
@@ -1532,12 +1532,12 @@
             "perception": 2
         },
         "abilities": [
-            "Unyielding Stance",
-            "Protective Aura"
+            "unyieldingstance",
+            "protectiveaura"
         ],
         "traits": [
-            "Immovable",
-            "Living Shield"
+            "immovable",
+            "livingshield"
         ],
         "armorrating": 2
     },
@@ -1561,16 +1561,16 @@
             "close combat": 2
         },
         "abilities": [
-            "Daring Leap",
-            "Silver Tongue"
+            "daringleap",
+            "silvertongue"
         ],
         "traits": [
-            "Nimble Defense",
-            "Natural Charmer"
+            "nimbledefense",
+            "naturalcharmer"
         ],
         "armorrating": 0
     },
-    "trebuchet_commander": {
+    "trebuchetcommander": {
         "name": "Trebuchet Commander",
         "description": "Trebuchet Commander, because sometimes the best way to solve a problem is by hurling a 90kg projectile over 300 meters. This class combines engineering prowess with a love of destruction from a distance, proving that sometimes, the old ways are the best ways\u2014especially when it comes to siege warfare.",
         "archetype": "Fighter",
@@ -1590,12 +1590,12 @@
             "perception": 2
         },
         "abilities": [
-            "Siege Master",
-            "Projectile Trajectory"
+            "siegemaster",
+            "projectiletrajectory"
         ],
         "traits": [
-            "Long-Range Expert",
-            "Structural Weakness"
+            "long-rangeexpert",
+            "structuralweakness"
         ],
         "armorrating": 1
     },
@@ -1619,16 +1619,16 @@
             "performance": 2
         },
         "abilities": [
-            "Chaos Weaver",
-            "Misdirection"
+            "chaosweaver",
+            "misdirection"
         ],
         "traits": [
-            "Master of Disguise",
-            "Lucky Break"
+            "masterofdisguise",
+            "luckybreak"
         ],
         "armorrating": 0
     },
-    "vape_shop_counter_jockey": {
+    "vapeshopcounterjockey": {
         "name": "Vape Shop Counter Jockey",
         "description": "Vape Shop Counter Jockey, because even adventurers need a place to chill and discuss their next quest over some artisanal fog. This class masters the art of concocting mystical vapors that can heal, invigorate, or just set the mood. They're the laid-back, cloud-producing heart of the social scene, proving that sometimes, the penultimate weapon is flavor.",
         "archetype": "Wizard",
@@ -1648,16 +1648,16 @@
             "sleight of hand": 2
         },
         "abilities": [
-            "Cloud Conjuring",
-            "Flavor Mastery"
+            "cloudconjuring",
+            "flavormastery"
         ],
         "traits": [
-            "Vape Resistance",
-            "Social Lubricant"
+            "vaperesistance",
+            "sociallubricant"
         ],
         "armorrating": -1
     },
-    "viper_queen": {
+    "viperqueen": {
         "name": "Viper Queen",
         "description": "Viper Queen, the sovereign of slither, whose mere presence commands respect, fear, and a healthy distance. This class embraces the venomous, the cunning, and the cold-blooded (literally). With an affinity for all things serpentine, they can control, command, or become vipers, proving that sometimes, the most dangerous thing in the room isn't the sword but the snake hiding in the shadows.",
         "archetype": "Necromancer",
@@ -1677,12 +1677,12 @@
             "nature": 2
         },
         "abilities": [
-            "Venom Strike",
-            "Serpent Form"
+            "venomstrike",
+            "serpentform"
         ],
         "traits": [
-            "Cold Blood",
-            "Hypnotic Gaze"
+            "coldblood",
+            "hypnoticgaze"
         ],
         "armorrating": 1
     },
@@ -1706,16 +1706,16 @@
             "intimidation": 2
         },
         "abilities": [
-            "Eldritch Blast",
-            "Pact Magic"
+            "eldritchblast",
+            "pactmagic"
         ],
         "traits": [
-            "Dark One's Blessing",
-            "Otherworldly Patron"
+            "darkone'sblessing",
+            "otherworldlypatron"
         ],
         "armorrating": 0
     },
-    "weather_engineer": {
+    "weatherengineer": {
         "name": "Weather Engineer",
         "description": "Weather Engineer, the meteorologist with a god complex. Why predict the weather when you can create it? These elemental manipulators ensure that it's always raining on their enemies' parade\u2014literally. With a flick of their wrist, they can turn a sunny day into a tempest, proving that sometimes, the best strategy is just changing the climate.",
         "archetype": "Wizard",
@@ -1735,16 +1735,16 @@
             "survival": 2
         },
         "abilities": [
-            "Storm Summoner",
-            "Climate Control"
+            "stormsummoner",
+            "climatecontrol"
         ],
         "traits": [
-            "Weather Sense",
-            "Elemental Affinity"
+            "weathersense",
+            "elementalaffinity"
         ],
         "armorrating": -1
     },
-    "wind_mage": {
+    "windmage": {
         "name": "Wind Mage",
         "description": "Wind Mage, the master of breezes, gusts, and the occasional hurricane. These elementalists command the air with a flick of their wrist, proving that an ill wind blows no good\u2014especially if you're on the wrong side of the battle. They're a breath of fresh air in a stalemate, turning the tide with the power of the skies.",
         "archetype": "Wizard",
@@ -1764,16 +1764,16 @@
             "nature": 2
         },
         "abilities": [
-            "Gale Force",
-            "Zephyr Step"
+            "galeforce",
+            "zephyrstep"
         ],
         "traits": [
-            "Air Cushion",
-            "Wind Whisper"
+            "aircushion",
+            "windwhisper"
         ],
         "armorrating": -1
     },
-    "zulu_warrior": {
+    "zuluwarrior": {
         "name": "Zulu Warrior",
         "description": "Zulu Warrior, the embodiment of \"speak softly and carry a big stick\"\u2014except their version of \"softly\" is a battle cry that chills the very soul. These masters of strategy and close combat don't just fight; they turn war into performance art. Their prowess on the battlefield is matched only by their dignity off it, proving that true warriors carry their strength not just in their arms but in their hearts.",
         "archetype": "Fighter",
@@ -1793,12 +1793,12 @@
             "athletics": 2
         },
         "abilities": [
-            "War Cry",
-            "Shield Wall"
+            "warcry",
+            "shieldwall"
         ],
         "traits": [
-            "Warrior's Pride",
-            "Battle Dancer"
+            "warrior'spride",
+            "battledancer"
         ],
         "armorrating": 2
     }

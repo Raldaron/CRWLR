@@ -6,8 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useCharacter } from '@/context/CharacterContext';
 import { Heart, Brain, Zap } from 'lucide-react';
 import RaceSelectionModals from './RaceSelectionModals';
+import ClassSelectionModals from './ClassSelectionModals';
 
-// StatCard interface
 interface StatCardProps {
   label: string;
   current: number;
@@ -18,7 +18,6 @@ interface StatCardProps {
   breakdown: string;
 }
 
-// StatCard component
 const StatCard: React.FC<StatCardProps> = ({ 
   label, 
   current, 
@@ -52,14 +51,12 @@ const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-// Main Character component
 const Character: React.FC = () => {
-  const { stats } = useCharacter();
+  const { currentStats } = useCharacter();
   const characterLevel = 1;
   
-  // Calculate stats
-  const maxHp = 8 * stats.constitution + characterLevel;
-  const maxMp = 5 * stats.intelligence + characterLevel;
+  const maxHp = 8 * currentStats.stamina + characterLevel;
+  const maxMp = 5 * currentStats.intelligence + characterLevel;
   const maxAp = characterLevel * 2;
 
   return (
@@ -75,40 +72,9 @@ const Character: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <Text className="text-lg font-semibold mb-4">Class</Text>
-            {/* Class selection will be implemented similarly */}
+            <ClassSelectionModals />
           </CardContent>
         </Card>
-      </SimpleGrid>
-
-      {/* Resource Cards */}
-      <SimpleGrid columns={3} spacing={6}>
-        <StatCard 
-          label="HP" 
-          current={maxHp} 
-          max={maxHp}
-          icon={Heart}
-          color="#E53E3E"
-          formula="8 × Constitution + Level"
-          breakdown={`8 × ${stats.constitution} + ${characterLevel} = ${maxHp}`}
-        />
-        <StatCard 
-          label="MP" 
-          current={maxMp} 
-          max={maxMp}
-          icon={Brain}
-          color="#3182CE"
-          formula="5 × Intelligence + Level"
-          breakdown={`5 × ${stats.intelligence} + ${characterLevel} = ${maxMp}`}
-        />
-        <StatCard 
-          label="AP" 
-          current={maxAp} 
-          max={maxAp}
-          icon={Zap}
-          color="#D69E2E"
-          formula="2 × Level"
-          breakdown={`2 × ${characterLevel} = ${maxAp}`}
-        />
       </SimpleGrid>
     </Box>
   );
