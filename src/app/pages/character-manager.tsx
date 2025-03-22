@@ -1,5 +1,5 @@
-// Updated character-manager.tsx
-// This fixes the character listing and management
+// Updated character-manager.tsx 
+// This file handles character listing and management with dark theme styling
 
 'use client';
 
@@ -10,10 +10,7 @@ import {
   Text, 
   Button, 
   Heading, 
-  SimpleGrid, 
-  Card, 
-  CardBody, 
-  useToast,
+  SimpleGrid,
   Spinner,
   AlertDialog,
   AlertDialogBody,
@@ -23,12 +20,16 @@ import {
   AlertDialogOverlay,
   Flex,
   Center,
+  Badge,
+  HStack,
+  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { collection, query, where, doc, getDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
-import { PlusCircle, LogOut } from 'lucide-react';
+import { PlusCircle, LogOut, Calendar, Star } from 'lucide-react';
+import DarkThemedCard from '@/components/ui/DarkThemedCard';
 
 // Simple character interface
 interface Character {
@@ -183,19 +184,29 @@ export default function CharacterManager() {
     }
   };
 
+  // Function to format date
+  const formatDate = (timestamp?: number) => {
+    if (!timestamp) return 'Unknown';
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   // If user is not logged in, redirect to login
   if (!currentUser) {
     return null;
   }
 
   return (
-    <Box p={8} maxW="container.xl" mx="auto">
+    <Box p={8} maxW="container.xl" mx="auto" bg="gray.900" minH="100vh">
       <VStack spacing={8} align="stretch">
         <Flex justifyContent="space-between" alignItems="center">
-          <Heading>Character Manager</Heading>
+          <Heading color="brand.300">Character Manager</Heading>
           <Flex gap={4}>
             <Button 
-              colorScheme="green" 
+              colorScheme="brand" 
               size="lg" 
               onClick={handleCreateNewCharacter}
               leftIcon={<PlusCircle size={20} />}
@@ -215,14 +226,14 @@ export default function CharacterManager() {
         
         {isLoading ? (
           <Center py={10}>
-            <Spinner size="xl" />
+            <Spinner size="xl" color="brand.400" />
           </Center>
         ) : characters.length === 0 ? (
-          <Card variant="outline" p={6} textAlign="center">
+          <DarkThemedCard borderColor="brand.700" p={6} textAlign="center">
             <VStack spacing={6}>
-              <Text fontSize="lg">You don't have any characters yet.</Text>
+              <Text fontSize="lg" color="gray.300">You don't have any characters yet.</Text>
               <Button 
-                colorScheme="green" 
+                colorScheme="brand" 
                 size="lg" 
                 onClick={handleCreateNewCharacter}
                 leftIcon={<PlusCircle size={20} />}
@@ -231,53 +242,74 @@ export default function CharacterManager() {
                 Create Your First Character
               </Button>
             </VStack>
-          </Card>
+          </DarkThemedCard>
         ) : (
           <SimpleGrid columns={[1, 2, 3]} spacing={6}>
             {characters.map((character) => (
-              <Card 
-                key={character.id} 
-                variant="elevated" 
-                bg="white" 
-                boxShadow="md"
-                borderRadius="lg"
+              <DarkThemedCard
+                key={character.id}
+                isSelected={false}
+                borderColor="gray.700"
                 transition="transform 0.2s, box-shadow 0.2s"
                 _hover={{ 
                   transform: "translateY(-4px)", 
                   boxShadow: "lg"
                 }}
               >
-                <CardBody>
-                  <VStack spacing={4} align="stretch">
-                    <Text fontWeight="bold" fontSize="xl">
-                      {character.characterName || 'Unnamed Character'}
-                    </Text>
-                    <Text>
-                      Level {character.characterLevel} 
-                      {character.selectedRace ? ` ${character.selectedRace.name}` : ''}
-                      {character.selectedClass ? ` ${character.selectedClass.name}` : ''}
-                    </Text>
-                    <Text fontSize="xs" color="gray.500">
-                      Last Updated: {character.lastUpdated ? new Date(character.lastUpdated).toLocaleString() : 'Unknown'}
-                    </Text>
-                    <SimpleGrid columns={2} spacing={2}>
-                      <Button 
-                        colorScheme="blue" 
-                        onClick={() => handleCharacterSelect(character)}
-                      >
-                        Select
-                      </Button>
-                      <Button 
-                        colorScheme="red" 
-                        variant="outline"
-                        onClick={() => setCharacterToDelete(character)}
-                      >
-                        Delete
-                      </Button>
-                    </SimpleGrid>
-                  </VStack>
-                </CardBody>
-              </Card>
+                <VStack spacing={4} align="stretch">
+                  <Text fontWeight="bold" fontSize="xl" color="gray.200">
+                    {character.characterName || 'Unnamed Character'}
+                  </Text>
+                  
+                  <HStack spacing={2}>
+                    <Badge colorScheme="brand" px={2} py={1}>
+                      Level {character.characterLevel}
+                    </Badge>
+                    
+                    {character.selectedRace && (
+                      <Badge colorScheme="teal" px={2} py={1}>
+                        {character.selectedRace.name}
+                      </Badge>
+                    )}
+                    
+                    {character.selectedClass && (
+                      <Badge colorScheme="purple" px={2} py={1}>
+                        {character.selectedClass.name}
+                      </Badge>
+                    )}
+                  </HStack>
+                  
+                  <HStack spacing={4} color="gray.400" fontSize="xs">
+                    <Flex align="center" gap={1}>
+                      <Calendar size={12} />
+                      <Text>Updated: {formatDate(character.lastUpdated)}</Text>
+                    </Flex>
+                    
+                    {character.selectedClass && (
+                      <Flex align="center" gap={1}>
+                        <Star size={12} />
+                        <Text>{character.selectedClass.name}</Text>
+                      </Flex>
+                    )}
+                  </HStack>
+                  
+                  <SimpleGrid columns={2} spacing={2}>
+                    <Button 
+                      colorScheme="brand" 
+                      onClick={() => handleCharacterSelect(character)}
+                    >
+                      Select
+                    </Button>
+                    <Button 
+                      colorScheme="accent" 
+                      variant="outline"
+                      onClick={() => setCharacterToDelete(character)}
+                    >
+                      Delete
+                    </Button>
+                  </SimpleGrid>
+                </VStack>
+              </DarkThemedCard>
             ))}
           </SimpleGrid>
         )}
@@ -289,21 +321,21 @@ export default function CharacterManager() {
           onClose={() => setCharacterToDelete(null)}
         >
           <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            <AlertDialogContent bg="gray.800" borderColor="gray.700">
+              <AlertDialogHeader fontSize="lg" fontWeight="bold" color="gray.200">
                 Delete Character
               </AlertDialogHeader>
 
-              <AlertDialogBody>
+              <AlertDialogBody color="gray.300">
                 Are you sure you want to delete "{characterToDelete?.characterName}"? 
                 This action cannot be undone.
               </AlertDialogBody>
 
               <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={() => setCharacterToDelete(null)}>
+                <Button ref={cancelRef} onClick={() => setCharacterToDelete(null)} variant="ghost" color="gray.300">
                   Cancel
                 </Button>
-                <Button colorScheme="red" onClick={handleDeleteCharacter} ml={3}>
+                <Button colorScheme="accent" onClick={handleDeleteCharacter} ml={3}>
                   Delete
                 </Button>
               </AlertDialogFooter>

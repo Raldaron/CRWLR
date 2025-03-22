@@ -1,14 +1,13 @@
 // components/ui/dark-themed-card.tsx
 import React, { ReactNode } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, HTMLChakraProps } from '@chakra-ui/react';
 
-interface DarkThemedCardProps {
+interface DarkThemedCardProps extends HTMLChakraProps<'div'> {
   children: ReactNode;
-  onClick?: () => void;
   isHoverable?: boolean;
   isSelected?: boolean;
   borderColor?: string;
-  height?: string | number;
+  _hover?: HTMLChakraProps<'div'>['_hover'];
 }
 
 const DarkThemedCard: React.FC<DarkThemedCardProps> = ({ 
