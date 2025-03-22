@@ -1,0 +1,165 @@
+{
+    "ammunition": {
+        "impactdetonatedhoblobber": {
+            "name": "Impact Detonated Hob-Lobber",
+            "description": "The Impact Detonated Hob-Lobber is for when you absolutely, positively need something to go boom the moment it hits. Engineered with the precision of a catapult and the subtlety of a sledgehammer, this bad boy explodes on contact, turning enemies into a fine mist of regret and shrapnel.",
+            "itemType": "Ammunition",
+            "rarity": "Uncommon",
+            "effect": "Explodes on impact, dealing explosive damage to all in a 10-foot radius.",
+            "additionaleffects": [
+                {
+                    "name": "Explosive Impact",
+                    "description": "Deals an additional 2d6 fire damage if the target is wearing metal armor."
+                },
+                {
+                    "name": "Shrapnel Spread",
+                    "description": "Anyone within the blast radius must make a Dexterity save (DC 15) or take 4d6 piercing damage."
+                }
+            ],
+            "range": 60,
+            "damageAmount": "5d6",
+            "damageType": "Fire",
+            "radius": 10,
+            "triggerMechanism": "Impact Detonation",
+            "statBonus": {},
+            "skillBonus": {},
+            "abilities": [],
+            "id": "9ca74c83-2f8e-4cc8-a897-05f020bb033d"
+        },
+        "timedfusehoblobber": {
+            "name": "Timed Fuse Hob-Lobber",
+            "description": "The Timed Fuse Hob-Lobber is perfect for the patient bomber who enjoys watching their enemies' brief moment of realization before everything goes up in flames. Set the timer, lob it, and enjoy the fireworks from a safe distance.",
+            "itemType": "Ammunition",
+            "rarity": "Rare",
+            "effect": "Explodes after a set duration, dealing explosive damage in a 20-foot radius.",
+            "additionaleffects": [
+                {
+                    "name": "Delayed Blast",
+                    "description": "Can be set to explode up to 30 seconds after being thrown."
+                },
+                {
+                    "name": "Smoke Screen",
+                    "description": "Creates a 10-foot radius smoke screen that provides partial cover (+2 AC) for 1d4 rounds."
+                },
+                {
+                    "name": "Shrapnel Spread",
+                    "description": "Anyone within the blast radius must make a Dexterity save (DC 15) or take 4d6 piercing damage."
+                }
+            ],
+            "range": 60,
+            "damageAmount": "10d6",
+            "damageType": "Fire",
+            "radius": 20,
+            "triggerMechanism": "Timed Fuse (5 seconds by default, adjustable up to 30 seconds)",
+            "statBonus": {},
+            "skillBonus": {},
+            "abilities": [],
+            "id": "b2a5db31-6067-48f1-a1ed-64d7c85056e3"
+        },
+        "solidstandardhoblobber": {
+            "name": "Solid Standard Hob-Lobber",
+            "description": "For the traditionalist who believes that sometimes, simple is best. The Solid Standard Hob-Lobber delivers a powerful hit without the frills and explosions, making it ideal for those who prefer their projectiles solid and deadly.",
+            "itemType": "Ammunition",
+            "rarity": "Ordinary",
+            "effect": "Delivers a solid impact capable of knocking back targets.",
+            "additionaleffects": [
+                {
+                    "name": "Knockback",
+                    "description": "Targets hit by this ammunition must make a Strength save (DC 14) or be knocked back 10 feet."
+                },
+                {
+                    "name": "Armor Piercing",
+                    "description": "Ignores 2 points of target's armor rating."
+                }
+            ],
+            "range": 60,
+            "damageAmount": "2d10",
+            "damageType": "Bludgeoning",
+            "statBonus": {},
+            "skillBonus": {},
+            "abilities": [],
+            "id": "d58904f9-37da-4aa3-b7f4-01690624203a"
+        },
+        "stickyhoblobber": {
+            "name": "Sticky Hob-Lobber",
+            "description": "The Sticky Hob-Lobber is for the sneaky demolitions expert who enjoys watching their enemies struggle in vain before meeting a fiery end. This adhesive grenade clings to any surface, including unfortunate enemies, and ensures they can't shake off their imminent doom. Perfect for those 'sticky' situations where a little extra explosive persuasion is needed.",
+            "itemType": "Ammunition",
+            "rarity": "Rare",
+            "effect": "Adheres to any surface or creature, detonating after a short delay or upon remote detonation.",
+            "additionaleffects": [
+                {
+                    "name": "Cling-On",
+                    "description": "The Sticky Hob-Lobber adheres to any surface or creature it hits. Targets stuck with this explosive must make a Strength save (DC 16) to remove it before detonation."
+                },
+                {
+                    "name": "Remote Detonation",
+                    "description": "The user can choose to detonate the Sticky Hob-Lobber remotely within 60 feet."
+                },
+                {
+                    "name": "Silent Timer",
+                    "description": "Emits no sound during its delay period, giving enemies no hint of the impending explosion."
+                },
+                {
+                    "name": "Shrapnel Spread",
+                    "description": "Anyone within the blast radius must make a Dexterity save (DC 15) or take 4d6 piercing damage."
+                }
+            ],
+            "range": 60,
+            "damageAmount": "5d6",
+            "damageType": "Fire",
+            "radius": 15,
+            "triggerMechanism": "Adhesive (sticks on impact) with a 3-second delay or remote detonation",
+            "statBonus": {},
+            "skillBonus": {},
+            "abilities": [],
+            "id": "ffe484f7-4fa6-4d08-8576-31e0794a7dc7"
+        },
+    "arrowofenthusiasticdoublegonorrhea": {
+        "name": "Arrow of Enthusiastic Double Gonorrhea",
+        "description": "This is a regular arrow, but the tip is dipped in a poison that will inflict you with Enthusiastic Double Gonorrhea. \n Trust me on this. You don't want Enthusiastic Double Gonorrhea. \n It doesn't kill you, but you'll want it to. It sets your genitals aflame. Literally. And then it heals that area of your body over and over. The only way to remove the disease is to, uh, geld yourself. Or pass it on to someone else.",
+        "itemType": "Ammunition",
+        "damageType": "Piercing",
+        "effect": "Inflicts Enthusiastic Double Gonorrhea on the target.",
+        "duration": "Until cured",
+        "damageAmount": "20d6 + Poison Effect",
+        "range": "N/A (depends on the bow)",
+        "rarity": "Rare",
+        "statBonus": {},
+        "skillBonus": {},
+        "abilities": [],
+        "id": "ffe484f7-4fa6-4d08-8576-31e0794a7dt3"
+    },
+    "boltofphiotaurus": {
+        "name": "Bolt of Ophiotaurus",
+        "description": "This is 1 of 100. \n This item acts as a regular crossbow bolt unless it is shot directly into the eye of a deity. \n Upon a successful strike to the gods eye, the deitys invulnerability pauses for fifteen seconds.",
+        "itemType": "Ammunition",
+        "damageType": "Piercing",
+        "effect": "Strips a deity of invulnerability for fifteen seconds when shot into their eye.",
+        "duration": "15 seconds",
+        "damageAmount": "1d8",
+        "range": "N/A (depends on the crossbow)",
+        "rarity": "Legendary",
+        "statBonus": {},
+        "skillBonus": {},
+        "abilities": [
+                "Divine Strike"
+        ],
+        "id": "ffe484f7-4fa6-4d08-8576-31e0794dda9"
+    },
+    "boltofpetrifyrockclass": {
+        "name": "Bolt of Petrify Rock Class",
+        "description": "a crossbow bolt that imbues a rock-class target with the \"Petrified\" status condition. The bolt vanishes in a puff of smoke after impact. This type of bolt is more expensive than bolts designed to injure rock-class creatures",
+        "itemType": "Ammunition",
+        "damageType": "Piercing",
+        "effect": "Imbues a rock-class target with the \"Petrified\" status condition.",
+        "duration": "Permanent until cured",
+        "damageAmount": "1d8",
+        "range": "N/A (depends on the crossbow)",
+        "rarity": "Epic",
+        "statBonus": {},
+        "skillBonus": {},
+        "abilities": [],
+        "id": "ffe484f7-4fa6-4d08-8576-24w347f8cx3"
+    }
+}
+}

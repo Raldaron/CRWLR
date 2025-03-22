@@ -1,1005 +1,1265 @@
 {
-    "traits": {
-        "acidresistance": {
-            "name": "Acid Resistance",
-            "description": "Takes half damage from acid-based attacks.",
-            "effect": ""
-        },
-        "actually": {
-            "name": "Actually...",
-            "description": "You have advantage on Intelligence checks to recall obscure information.",
-            "effect": ""
-        },
-        "adaptivephysiology": {
-            "name": "Adaptive Physiology",
-            "description": "Advantage on checks to resist physical alterations.",
-            "effect": ""
-        },
-        "aircushion": {
-            "name": "Air Cushion",
-            "description": "You can use your reaction to reduce falling damage to 0.",
-            "effect": ""
-        },
-        "alwaysprepared": {
-            "name": "Always Prepared",
-            "description": "You can take the Hide action as a bonus action on each of your turns.",
-            "effect": ""
-        },
-        "ambidextrous": {
-            "name": "Ambidextrous",
-            "description": "No penalties for using either hand.",
-            "effect": ""
-        },
-        "amphibious": {
-            "name": "Amphibious",
-            "description": "Can breathe both air and water.",
-            "effect": ""
-        },
-        "anatomicalexpertise": {
-            "name": "Anatomical Expertise",
-            "description": "You have advantage on attacks targeting specific body parts.",
-            "effect": ""
-        },
-        "ancientknowledge": {
-            "name": "Ancient Knowledge",
-            "description": "All higher-tier skills are unlocked and can be trained to level 20.",
-            "effect": ""
-        },
-        "arcaneinsight": {
-            "name": "Arcane Insight",
-            "description": "You have advantage on Intelligence (Arcana) checks related to understanding magical effects or items.",
-            "effect": ""
-        },
-        "arenaveteran": {
-            "name": "Arena Veteran",
-            "description": "You have advantage on saving throws against being frightened or charmed in combat situations.",
-            "effect": ""
-        },
-        "aurareading": {
-            "name": "Aura Reading",
-            "description": "You can detect diseases and emotional disturbances in creatures within 30 feet.",
-            "effect": ""
-        },
-        "auraofgloom": {
-            "name": "Aura of Gloom",
-            "description": "Enemies within 10 feet of you have disadvantage on Charisma (Persuasion) checks."
-        },
-        "auraofprotection": {
-            "name": "Aura of Protection",
-            "description": "Allies within 10 feet of you gain a +1 bonus to all saving throws.",
-            "effect": ""
-        },
-        "autobuckleractivation": {
-            "name": "AutoBucklerActivation",
-            "description": "Forms a metallic buckler on command or by shaking your wrist."
-        },
-        "backpatchbonus": {
-            "name": "Back Patch Bonus",
-            "description": "If an eligible Back Patch is added, this benefit is doubled."
-        },
-        "battledancer": {
-            "name": "Battle Dancer",
-            "description": "Your AC increases by 2 when you're not wearing armor.",
-            "effect": ""
-        },
-        "beastwhisperer": {
-            "name": "Beast Whisperer",
-            "description": "You can communicate simple ideas with animals.",
-            "effect": ""
-        },
-        "blastresistant": {
-            "name": "Blast Resistant",
-            "description": "You have resistance to fire damage and thunder damage.",
-            "effect": ""
-        },
-        "bloodsense": {
-            "name": "Bloodsense",
-            "description": "You can detect living creatures within 30 feet by sensing their blood.",
-            "effect": ""
-        },
-        "bonked": {
-            "name": "Bonked",
-            "description": "Has a 5% chance to inflict Bonked on any mob struck with this weapon.",
-            "effect": "Inflicts Bonked status."
-        },
-        "buffetenchantment": {
-            "name": "Buffet Enchantment",
-            "description": "The crossbow will not run out of basic ammunition.",
-            "effect": "Additional ammunition types can be loaded and fired, though special bonuses apply only to the stock ammunition."
-        },
-        "calmingpresence": {
-            "name": "Calming Presence",
-            "description": "You can use your action to end the frightened condition on an ally within 30 feet.",
-            "effect": ""
-        },
-        "camouflageexpert": {
-            "name": "Camouflage Expert",
-            "description": "You have advantage on Stealth checks in natural environments.",
-            "effect": ""
-        },
-        "cat-likereflexes": {
-            "name": "Cat-like Reflexes",
-            "description": "You have advantage on Dexterity saving throws.",
-            "effect": ""
-        },
-        "centerstage": {
-            "name": "Center Stage",
-            "description": "When you're the target of an attack, you can use your reaction to impose disadvantage on the attack roll.",
-            "effect": ""
-        },
-        "charmresistance": {
-            "name": "Charm Resistance",
-            "description": "Advantage on saving throws against being charmed.",
-            "effect": ""
-        },
-        "coinburst": {
-            "name": "Coin Burst",
-            "description": "All mobs killed with this weapon have a 20% chance to burst into a pile of gold coins upon death.",
-            "effect": "The number of coins is equal to the (value of the items in their inventory) + (level x 10)."
-        },
-        "coldblood": {
-            "name": "Cold Blood",
-            "description": "You have advantage on saving throws against poison and disease.",
-            "effect": ""
-        },
-        "coldimmunity": {
-            "name": "Cold Immunity",
-            "description": "You are immune to cold damage and environmental effects of extreme cold.",
-            "effect": ""
-        },
-        "coldresistance": {
-            "name": "Cold Resistance",
-            "description": "Takes half damage from cold-based attacks.",
-            "effect": ""
-        },
-        "criticalgamble": {
-            "name": "Critical Gamble",
-            "description": "Every shot has a 50% chance to be a critical hit, dealing double damage.",
-            "effect": "50% chance to deal double damage."
-        },
-        "crowddispersal": {
-            "name": "Crowd Dispersal",
-            "description": "You have advantage on Strength checks to push, shove, or knock prone multiple targets at once.",
-            "effect": ""
-        },
-        "crowdfavorite": {
-            "name": "Crowd Favorite",
-            "description": "You have advantage on Charisma checks to influence crowds or gather information in urban settings.",
-            "effect": ""
-        },
-        "damageresistance": {
-            "name": "Damage Resistance",
-            "description": "Resistant to physical attacks.",
-            "effect": ""
-        },
-        "damageboost": {
-            "name": "DamageBoost",
-            "description": "+25% damage against all clerics."
-        },
-        "damagereflect": {
-            "name": "DamageReflect",
-            "description": "Adds 10% Damage Reflect to all equipped armor."
-        },
-        "dangersense": {
-            "name": "Danger Sense",
-            "description": "You can take the Search action as a bonus action on your turn.",
-            "effect": ""
-        },
-        "darkone'sblessing": {
-            "name": "Dark One's Blessing",
-            "description": "When you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your Warlock level.",
-            "effect": ""
-        },
-        "darkvision": {
-            "name": "Darkvision",
-            "description": "Can see in the dark up to 60 feet.",
-            "effect": ""
-        },
-        "demolitionsexpert": {
-            "name": "Demolitions Expert",
-            "description": "You have advantage on checks to disarm traps and on saving throws against explosive devices.",
-            "effect": ""
-        },
-        "demonworshipperdetection": {
-            "name": "DemonWorshipperDetection",
-            "description": "All demon worshippers are visible and marked on your map."
-        },
-        "dimensionalawareness": {
-            "name": "Dimensional Awareness",
-            "description": "Your body can adapt to a wide range of environments and situations. +1 in one skill of your choice at the start of each floor.",
-            "effect": ""
-        },
-        "diseaseresistance": {
-            "name": "Disease Resistance",
-            "description": "Immune to common diseases and ailments.",
-            "effect": ""
-        },
-        "divinehealth": {
-            "name": "Divine Health",
-            "description": "You are immune to disease.",
-            "effect": ""
-        },
-        "divineprotection": {
-            "name": "Divine Protection",
-            "description": "You have advantage on saving throws against spells and other magical effects.",
-            "effect": ""
-        },
-        "eagleeye": {
-            "name": "Eagle Eye",
-            "description": "You can accurately hit targets at twice the normal range.",
-            "effect": ""
-        },
-        "earthsense": {
-            "name": "Earth Sense",
-            "description": "Can detect vibrations in the ground up to 60 feet.",
-            "effect": ""
-        },
-        "elementalaffinity": {
-            "name": "Elemental Affinity",
-            "description": "You have resistance to lightning and cold damage.",
-            "effect": ""
-        },
-        "embarrassingstrikes": {
-            "name": "Embarrassing Strikes",
-            "description": "When you land a critical hit, the target has disadvantage on their next action due to shame.",
-            "effect": ""
-        },
-        "enhancedmobdetection": {
-            "name": "Enhanced Mob Detection",
-            "description": "Increased ability to detect mobs on the map."
-        },
-        "enhancedvision": {
-            "name": "Enhanced Vision",
-            "description": "Enhances all dark vision effects. Allows for heat vision and other visible-light viewing options."
-        },
-        "environmentalprotection": {
-            "name": "Environmental Protection",
-            "description": "Protects the eyes from a variety of environmental hazards, including magic-based attacks that render the user blind."
-        },
-        "experimentalresistance": {
-            "name": "Experimental Resistance",
-            "description": "You have advantage on saving throws against poisons and magical effects.",
-            "effect": ""
-        },
-        "explosiveexpertise": {
-            "name": "Explosive Expertise",
-            "description": "+50% range and accuracy for all thrown explosives."
-        },
-        "faefury": {
-            "name": "Fae Fury",
-            "description": "For every female in your party, up to thirty, this items damage and firing speed is increased.",
-            "effect": "Add an extra attack per round per female member of the party. Add 1d12 per female member of the party."
-        },
-        "fearsomepresence": {
-            "name": "Fearsome Presence",
-            "description": "Creatures that fail a Wit save against your abilities are frightened of you for 1 minute.",
-            "effect": ""
-        },
-        "feyancestry": {
-            "name": "Fey Ancestry",
-            "description": "Advantage on saving throws against being charmed and magic can't put you to sleep.",
-            "effect": ""
-        },
-        "fireaffinity": {
-            "name": "Fire Affinity",
-            "description": "You have resistance to fire damage and can speak to fire elementals.",
-            "effect": ""
-        },
-        "fireresistance": {
-            "name": "FireResistance",
-            "description": "User is resistant to fire-based spells."
-        },
-        "fireimmunity": {
-            "name": "FireImmunity",
-            "description": "User is impervious to natural fire."
-        },
-        "firespellboost": {
-            "name": "FireSpellBoost",
-            "description": "All spells with a fire attack now deal (Intelligence)% more damage."
-        },
-        "firststrike": {
-            "name": "First Strike",
-            "description": "You have advantage on initiative rolls.",
-            "effect": ""
-        },
-        "flexibleform": {
-            "name": "Flexible Form",
-            "description": "Can squeeze through spaces as narrow as 1 inch without squeezing.",
-            "effect": ""
-        },
-        "flight": {
-            "name": "Flight",
-            "description": "Can fly at a speed of 30 feet.",
-            "effect": ""
-        },
-        "fragilepower": {
-            "name": "Fragile Power",
-            "description": "Your damage spells deal an extra die of damage, but you have -2 to your AC.",
-            "effect": ""
-        },
-        "freeballing": {
-            "name": "Freeballing",
-            "description": "And I\u2019m freeeeee! Freeee Ballling! Usually reserved for monk classes and those too soused to reliably dress themselves, recipients of this benefit receive an additional 100% damage bonus to all attacks that originate below the waist. In addition, all skills that originate from below the waist train 20% faster. But as the name implies, this benefit allows only a single layer of armor or clothing to cover your crotch area. And since you\u2019re already wearing these, it looks like you won\u2019t be getting trousers anytime soon.",
-            "effect": "100% additional bonus damage and 20% additional experience for all attacks that originate below the waist"
-        },
-        "frozenaura": {
-            "name": "Frozen Aura",
-            "description": "The air around you is perpetually chilled. You have advantage on Stealth checks in snowy environments, and your melee attacks deal an additional 1d4 cold damage.",
-            "effect": ""
-        },
-        "gravitydefiance": {
-            "name": "Gravity Defiance",
-            "description": "You can slow your fall rate and take no damage from falls of 60 feet or less."
-        },
-        "gruesomedisplay": {
-            "name": "Gruesome Display",
-            "description": "After killing an enemy, nearby foes must make a Wit save or be frightened for 1 round.",
-            "effect": ""
-        },
-        "guardian'spresence": {
-            "name": "Guardian's Presence",
-            "description": "Allies within 5 feet of you gain +2 to their AC."
-        },
-        "gutinstinct": {
-            "name": "Gut Instinct",
-            "description": "You have advantage on Medicine checks related to internal injuries.",
-            "effect": ""
-        },
-        "heataura": {
-            "name": "Heat Aura",
-            "description": "Creatures within 5 feet take 1d4 fire damage at the start of their turn.",
-            "effect": ""
-        },
-        "heatresistance": {
-            "name": "Heat Resistance",
-            "description": "You have resistance to fire damage.",
-            "effect": ""
-        },
-        "heatresistant": {
-            "name": "Heat Resistant",
-            "description": "You have resistance to fire damage and advantage on saving throws against heat-based effects.",
-            "effect": ""
-        },
-        "heavenlyconnections": {
-            "name": "Heavenly Connections",
-            "description": "Once per day, you can attempt to contact your demigod employer for advice or assistance.",
-            "effect": ""
-        },
-        "heavyarmor": {
-            "name": "Heavy Armor",
-            "description": "Natural armor grants +2 bonus to AC.",
-            "effect": ""
-        },
-        "honorbound": {
-            "name": "Honor Bound",
-            "description": "You have advantage on Charisma checks when dealing with nobility or in formal settings.",
-            "effect": ""
-        },
-        "hostdependency": {
-            "name": "Host Dependency",
-            "description": "Must inhabit a host to survive.",
-            "effect": ""
-        },
-        "hypnoticgaze": {
-            "name": "Hypnotic Gaze",
-            "description": "You can use your action to attempt to charm a creature within 30 feet, forcing a Wit saving throw.",
-            "effect": ""
-        },
-        "iceresistance": {
-            "name": "Ice Resistance",
-            "description": "99% ice resistance"
-        },
-        "illusoryescape": {
-            "name": "Illusory Escape",
-            "description": "Once per short rest, when you would take damage, you can use your reaction to create an illusion of yourself and teleport up to 30 feet away.",
-            "effect": ""
-        },
-        "immovable": {
-            "name": "Immovable",
-            "description": "You have advantage on ability checks and saving throws against effects that would move you against your will.",
-            "effect": ""
-        },
-        "incrementaldamage": {
-            "name": "Incremental Damage",
-            "description": "This weapon's damage increases by 1.5% for every mob it kills that is no more than 10 levels below the current wielder's level.",
-            "effect": "Current upgrade: 238% damage increase."
-        },
-        "infection": {
-            "name": "Infection",
-            "description": "Successful hits have a 10% chance to inflict Tetanus, dealing 1d4 damage per round for 3 rounds.",
-            "effect": "10% chance to deal 1d4 damage per round for 3 rounds."
-        },
-        "infernalheritage": {
-            "name": "Infernal Heritage",
-            "description": "Resistance to fire damage.",
-            "effect": ""
-        },
-        "infiltrator": {
-            "name": "Infiltrator",
-            "description": "You can blend into a crowd, gaining advantage on Stealth checks in populated areas.",
-            "effect": ""
-        },
-        "infraredvision": {
-            "name": "Infrared Vision",
-            "description": "Can detect heat signatures up to 30 feet.",
-            "effect": ""
-        },
-        "insightful": {
-            "name": "Insightful",
-            "description": "You have advantage on Perception checks to determine a creature's emotional state.",
-            "effect": ""
-        },
-        "inspiringpresence": {
-            "name": "Inspiring Presence",
-            "description": "Allies within 30 feet of you gain a +1 bonus to saving throws.",
-            "effect": ""
-        },
-        "ironstomach": {
-            "name": "Iron Stomach",
-            "description": "You're immune to poison and have advantage on Constitution saving throws against ingested substances.",
-            "effect": ""
-        },
-        "ironwill": {
-            "name": "Iron Will",
-            "description": "You have advantage on saving throws against being charmed or frightened.",
-            "effect": ""
-        },
-        "keenedge": {
-            "name": "Keen Edge",
-            "description": "Your bladed weapons deal an additional 1d4 damage.",
-            "effect": ""
-        },
-        "keensenses": {
-            "name": "Keen Senses",
-            "description": "Advantage on Perception checks involving smell.",
-            "effect": ""
-        },
-        "lavaimmunity": {
-            "name": "LavaImmunity",
-            "description": "User is impervious to lava attacks."
-        },
-        "legendarystrength": {
-            "name": "Legendary Strength",
-            "description": "You can carry, push, drag, or lift twice as much as normal.",
-            "effect": ""
-        },
-        "light-footed": {
-            "name": "Light-footed",
-            "description": "You can move through difficult terrain without penalty.",
-            "effect": ""
-        },
-        "livingshield": {
-            "name": "Living Shield",
-            "description": "You can use your reaction to impose disadvantage on an attack roll against an ally within 5 feet of you.",
-            "effect": ""
-        },
-        "loaded": {
-            "name": "Loaded",
-            "description": "All non-hidden creatures wearing magical gear are indicated on your map. Particularly useful when you only want to hang out with the real fashionistas and not just the posers wearing fake shit. Also good if you want to sneak up behind someone, bonk them on their head, and steal all their stuff."
-        },
-        "long-rangeexpert": {
-            "name": "Long-Range Expert",
-            "description": "You have advantage on attack rolls against targets more than 100 feet away.",
-            "effect": ""
-        },
-        "luckybreak": {
-            "name": "Lucky Break",
-            "description": "Once per short rest, you can reroll a failed ability check, attack roll, or saving throw.",
-            "effect": ""
-        },
-        "lycanthropyprotection": {
-            "name": "Lycanthropy Protection",
-            "description": "Protection against Lycanthropy."
-        },
-        "lyricalmemory": {
-            "name": "Lyrical Memory",
-            "description": "You can perfectly recall any poem or song you've heard at least once.",
-            "effect": ""
-        },
-        "magicresistance": {
-            "name": "Magic Resistance",
-            "description": "Advantage on saves against magical effects.",
-            "effect": ""
-        },
-        "managenita'sfavor": {
-            "name": "ManaGenita's Favor",
-            "description": "Removes automatic hostility by worshippers of Mana Genita."
-        },
-        "mastercraftsman": {
-            "name": "Master Craftsman",
-            "description": "You can identify the properties of any metal item by examining it for 1 minute.",
-            "effect": ""
-        },
-        "masterofdisguise": {
-            "name": "Master of Disguise",
-            "description": "You have advantage on Deception checks when trying to pass yourself off as someone else.",
-            "effect": ""
-        },
-        "meleeimmunity": {
-            "name": "Melee Immunity",
-            "description": "All melee-based damage debuffs such as Stun, Knockback, Disarm, and Out-of-Breath are negated."
-        },
-        "mentalfortitude": {
-            "name": "Mental Fortitude",
-            "description": "Advantage on saves against mind control.",
-            "effect": ""
-        },
-        "mimicry": {
-            "name": "Mimicry",
-            "description": "Can imitate sounds they have heard.",
-            "effect": ""
-        },
-        "mindshield": {
-            "name": "Mind Shield",
-            "description": "Advantage on saves against mental attacks.",
-            "effect": ""
-        },
-        "minorfireresistance": {
-            "name": "Minor Fire Resistance",
-            "description": "+15% Fire Resistance"
-        },
-        "mobmentality": {
-            "name": "Mob Mentality",
-            "description": "You have advantage on attack rolls when within 5 feet of an ally.",
-            "effect": ""
-        },
-        "momentumcancel": {
-            "name": "MomentumCancel",
-            "description": "Cancels all Momentum-based attacks."
-        },
-        "naturalarmor": {
-            "name": "Natural Armor",
-            "description": "Gain a +2 bonus to AC.",
-            "effect": ""
-        },
-        "naturalcamouflage": {
-            "name": "Natural Camouflage",
-            "description": "Advantage on Stealth checks in forested areas.",
-            "effect": ""
-        },
-        "naturalcharmer": {
-            "name": "Natural Charmer",
-            "description": "You have advantage on Persuasion checks when interacting with non-hostile NPCs.",
-            "effect": ""
-        },
-        "neithersnownorrain": {
-            "name": "Neither Snow Nor Rain",
-            "description": "You gain advantage on saving throws against environmental hazards while on a delivery.",
-            "effect": ""
-        },
-        "nightvision": {
-            "name": "Night Vision",
-            "description": "Can see in the dark up to 60 feet.",
-            "effect": ""
-        },
-        "nimbledefense": {
-            "name": "Nimble Defense",
-            "description": "While wearing light or no armor, your AC increases by 1 for every point of Dexterity bonus (maximum +3).",
-            "effect": ""
-        },
-        "nimbleescape": {
-            "name": "Nimble Escape",
-            "description": "You can use the Disengage or Hide action as a bonus action on each of your turns.",
-            "effect": ""
-        },
-        "onewithearth": {
-            "name": "One with Earth",
-            "description": "While touching the ground, you can sense vibrations within a 60-foot radius.",
-            "effect": ""
-        },
-        "onewithnature": {
-            "name": "One with Nature",
-            "description": "You can communicate simple ideas with animals and have advantage on Animal Handling checks.",
-            "effect": ""
-        },
-        "otherworldlypatron": {
-            "name": "Otherworldly Patron",
-            "description": "You have a powerful entity as your patron, granting you unique abilities based on their nature.",
-            "effect": ""
-        },
-        "paintolerance": {
-            "name": "Pain Tolerance",
-            "description": "You have advantage on saving throws against pain-inducing effects.",
-            "effect": ""
-        },
-        "paranoia": {
-            "name": "Paranoia",
-            "description": "You have advantage on Perception checks to spot hidden threats.",
-            "effect": ""
-        },
-        "passionateaura": {
-            "name": "Passionate Aura",
-            "description": "Allies within 10 feet of you gain +1 to attack rolls and saving throws against fear effects.",
-            "effect": ""
-        },
-        "perfectpitch": {
-            "name": "Perfect Pitch",
-            "description": "You have advantage on saving throws against sound-based effects and can perfectly mimic any sound you've heard.",
-            "effect": ""
-        },
-        "persistentirritant": {
-            "name": "Persistent Irritant",
-            "description": "Enemies within 5 feet of you have disadvantage on concentration checks.",
-            "effect": ""
-        },
-        "pestsense": {
-            "name": "Pest Sense",
-            "description": "You can detect the presence of vermin within 60 feet of you.",
-            "effect": ""
-        },
-        "piercingresistance": {
-            "name": "Piercing Resistance",
-            "description": "50% piercing resistance"
-        },
-        "plaguedoctor": {
-            "name": "Plague Doctor",
-            "description": "You have resistance to disease and can identify ailments with a successful Intelligence check.",
-            "effect": ""
-        },
-        "poisonresistance": {
-            "name": "Poison Resistance",
-            "description": "Takes half damage from poison-based attacks.",
-            "effect": ""
-        },
-        "poisonimmunity": {
-            "name": "PoisonImmunity",
-            "description": "Protection from poison"
-        },
-        "potionmaster": {
-            "name": "PotionMaster",
-            "description": "50% reduction to potion cooldown"
-        },
-        "powerofbelief": {
-            "name": "Power of Belief",
-            "description": "Once per day, you can reroll a failed healing ability and take the higher result.",
-            "effect": ""
-        },
-        "predator'sinstinct": {
-            "name": "Predator's Instinct",
-            "description": "You have advantage on Perception checks that rely on hearing or smell.",
-            "effect": ""
-        },
-        "protectiveinstinct": {
-            "name": "Protective Instinct",
-            "description": "When an ally within 30 feet is attacked, you can use your reaction to impose disadvantage on the attack roll.",
-            "effect": ""
-        },
-        "psychichotline": {
-            "name": "Psychic Hotline",
-            "description": "You can use your action to gain advantage on your next Charisma check.",
-            "effect": ""
-        },
-        "psychicresistance": {
-            "name": "Psychic Resistance",
-            "description": "Takes half damage from psychic attacks.",
-            "effect": ""
-        },
-        "psychicshield": {
-            "name": "Psychic Shield",
-            "description": "Advantage on saves against psychic damage.",
-            "effect": ""
-        },
-        "quickreflexes": {
-            "name": "QuickReflexes",
-            "description": "Increases the user\u2019s reaction time, giving a +1 bonus to dodge checks."
-        },
-        "quickstudy": {
-            "name": "Quick Study",
-            "description": "Can learn and replicate simple actions after observing them once.",
-            "effect": ""
-        },
-        "quickdraw": {
-            "name": "Quickdraw",
-            "description": "You have advantage on initiative rolls when using a ranged weapon.",
-            "effect": ""
-        },
-        "regeneration": {
-            "name": "Regeneration",
-            "description": "Regains 1d6 HP at the start of their turn if they have drunk blood in the last 24 hours.",
-            "effect": ""
-        },
-        "regimentedtraining": {
-            "name": "Regimented Training",
-            "description": "You can don or doff armor in half the usual time.",
-            "effect": ""
-        },
-        "relentlessendurance": {
-            "name": "Relentless Endurance",
-            "description": "Once per day when reduced to 0 HP can drop to 1 HP instead.",
-            "effect": ""
-        },
-        "religiousaffiliationdetection": {
-            "name": "ReligiousAffiliationDetection",
-            "description": "Instantly know the religious affiliation of all nearby mobs and crawlers."
-        },
-        "remotedetonator": {
-            "name": "Remote Detonator",
-            "description": "If you\u2019re one of those explodey guys, I bet you use a lot of Hobgoblin Pus or Troll Boom-Boom Paste to make your bombs pop. Those days are now over. This benefit allows you to magically remote-detonate any explosive that has been designated by you. This benefit offers multiple physical and interface-based triggering options when combined with a Sapper\u2019s table.",
-            "effect": "When using a Sapper\u2019s Table, you gain access to the following physical and interface-based triggering options for any explosive you have designated: \n \n <b>Physical Triggering Options:</b> \n \n <b>Timed Detonation:</b> Set a timer on the explosive to detonate after a specified duration. \n \n <b>Pressure Plate:</b> Detonate the explosive when a certain amount of weight or pressure is applied. \n \n <b>Tripwire:</b> Rig a tripwire to detonate the explosive when disturbed. \n \n <b>Proximity Sensor:</b> Set the explosive to detonate when a creature or object enters a specified radius. \n \n <b>Interface-Based Triggering Options:</b> \n \n <b>Magical Remote Control:</b> Use a magical remote control to trigger the explosive from a distance. \n \n <b>Telepathic Link:</b> Establish a telepathic link to trigger the explosive mentally. \n \n <b>Arcane Signal:</b> Activate the explosive using a specific magical gesture or incantation. \n \n <b>Rune Activation:</b> Use a magical interface to activate a special rune on the explosive. \n \n <b>Special Note:</b> The range for remote triggering options is up to 120 feet, unless otherwise specified by the DM."
-        },
-        "removecurseditems": {
-            "name": "RemoveCursedItems",
-            "description": "Allows the removal of cursed items."
-        },
-        "removedebuffs": {
-            "name": "RemoveDebuffs",
-            "description": "Removes most health-seeping and disease-based debuff effects. Variable numbing effect on various other debuff types."
-        },
-        "resilient": {
-            "name": "Resilient",
-            "description": "Advantage on saving throws against exhaustion or stamina-based debuffs.",
-            "effect": ""
-        },
-        "resistancetofire": {
-            "name": "Resistance to Fire",
-            "description": "Takes half damage from fire-based attacks.",
-            "effect": ""
-        },
-        "returntosender": {
-            "name": "Return to Sender",
-            "description": "Once per day, you can redirect a ranged attack that misses you back at the attacker.",
-            "effect": ""
-        },
-        "ripe": {
-            "name": "Ripe",
-            "description": "All creatures with less than 50% health are indicated on your map. This does not increase your map\u2019s view, but used in conjunction with other skills such as Pathfinder, it makes being a glory-stealing asshole really easy"
-        },
-        "ritualmaster": {
-            "name": "Ritual Master",
-            "description": "You have advantage on skill checks related to performing religious or spiritual rituals.",
-            "effect": ""
-        },
-        "rockyhide": {
-            "name": "Rocky Hide",
-            "description": "Your skin toughens, granting you a +1 bonus to your natural Armor Class.",
-            "effect": ""
-        },
-        "saddlesure": {
-            "name": "Saddle Sure",
-            "description": "You have advantage on saves to avoid falling off your mount.",
-            "effect": ""
-        },
-        "sepsisdebuff": {
-            "name": "Sepsis Debuff",
-            "description": "All attacks, including magical attacks, now have a 15% chance to inflict the Sepsis debuff."
-        },
-        "shadowmeld": {
-            "name": "Shadow Meld",
-            "description": "Advantage on Stealth checks in dim light or darkness.",
-            "effect": ""
-        },
-        "shatterenchantment": {
-            "name": "ShatterEnchantment",
-            "description": "Any attack that lands upon the buckler has a 1.5% chance to disarm the opponent. If the opponent is disarmed, there is a 90% chance the weapon will drop to the ground, a 5% chance the weapon will break, and a 5% chance the weapon will be immediately transferred to your inventory."
-        },
-        "sheolhealth": {
-            "name": "SheolHealth",
-            "description": "User will not lose health while inside Sheol."
-        },
-        "shortfuse": {
-            "name": "Short Fuse",
-            "description": "You have advantage on initiative rolls.",
-            "effect": ""
-        },
-        "showmanship": {
-            "name": "Showmanship",
-            "description": "Your critical hits inspire allies within 30 feet, granting them advantage on their next attack roll.",
-            "effect": ""
-        },
-        "shrinedestruction": {
-            "name": "ShrineDestruction",
-            "description": "Allows the destruction of church shrines without further ill effects from deities."
-        },
-        "silvertongue": {
-            "name": "Silver Tongue",
-            "description": "You have advantage on Charisma checks involving poetry or wordplay.",
-            "effect": ""
-        },
-        "skateordie": {
-            "name": "Skate or Die",
-            "description": "Your speed increases by 10 feet, and you ignore difficult terrain while moving.",
-            "effect": ""
-        },
-        "sociallubricant": {
-            "name": "Social Lubricant",
-            "description": "Your vape creations grant you advantage on Charisma checks in social situations.",
-            "effect": ""
-        },
-        "socialmediasavvy": {
-            "name": "Social Media Savvy",
-            "description": "You can use your action to gain advantage on your next Charisma check by leveraging your online presence.",
-            "effect": ""
-        },
-        "spellfocus": {
-            "name": "Spell Focus",
-            "description": "Any energy-based spell that originates from the ocular region is caught and focused by these goggles, which allows for multiple combat and targeting options."
-        },
-        "spellsculptor": {
-            "name": "Spell Sculptor",
-            "description": "Once per short rest, you can change the elemental damage type of one of your spells as you cast it.",
-            "effect": ""
-        },
-        "spiritualconduit": {
-            "name": "Spiritual Conduit",
-            "description": "You can sense the presence of spirits within 60 feet and communicate with them.",
-            "effect": ""
-        },
-        "steadydrinker": {
-            "name": "Steady Drinker",
-            "description": "Negates the dexterity debuff when inebriated"
-        },
-        "stonecunning": {
-            "name": "Stonecunning",
-            "description": "Advantage on checks related to stonework.",
-            "effect": ""
-        },
-        "streetsmarts": {
-            "name": "Street Smarts",
-            "description": "You have advantage on Perception (Survival) checks in urban environments.",
-            "effect": ""
-        },
-        "structuralweakness": {
-            "name": "Structural Weakness",
-            "description": "You can use an action to analyze a structure and identify its weak points, granting advantage on attacks against it.",
-            "effect": ""
-        },
-        "sure-footed": {
-            "name": "Sure-Footed",
-            "description": "Advantage on checks and saves against being knocked prone.",
-            "effect": ""
-        },
-        "surgicalstrikes": {
-            "name": "Surgical Strikes",
-            "description": "Your critical hits deal an extra die of damage.",
-            "effect": ""
-        },
-        "suspiciousmind": {
-            "name": "Suspicious Mind",
-            "description": "You have advantage on saving throws against being charmed or frightened.",
-            "effect": ""
-        },
-        "taskmaster": {
-            "name": "Taskmaster",
-            "description": "Allies within earshot of your commands gain a +2 bonus to Strength checks.",
-            "effect": ""
-        },
-        "taxstipend": {
-            "name": "TaxStipend",
-            "description": "Taxes received: 432 Gold every 10 days from Medium Skyfowl Settlement."
-        },
-        "terrainmastery": {
-            "name": "Terrain Mastery",
-            "description": "You can move through difficult terrain without penalty.",
-            "effect": ""
-        },
-        "toxinresistance": {
-            "name": "Toxin Resistance",
-            "description": "You have advantage on saving throws against poison and disease.",
-            "effect": ""
-        },
-        "truthseeker": {
-            "name": "Truth Seeker",
-            "description": "You have advantage on Perception (Insight) checks to determine if someone is lying.",
-            "effect": ""
-        },
-        "unbreakable": {
-            "name": "Unbreakable",
-            "description": "You have advantage on stamina saving throws to maintain concentration on spells or abilities."
-        },
-        "unbreakableformation": {
-            "name": "Unbreakable Formation",
-            "description": "Allies within 10 feet of you gain a +1 bonus to AC.",
-            "effect": ""
-        },
-        "unbreakableline": {
-            "name": "Unbreakable Line",
-            "description": "While wielding a shield, allies adjacent to you gain +2 to their AC.",
-            "effect": ""
-        },
-        "unbreakablespirit": {
-            "name": "Unbreakable Spirit",
-            "description": "Once per long rest, when you drop to 0 hit points, you can choose to drop to 1 hit point instead.",
-            "effect": ""
-        },
-        "unbreakablestance": {
-            "name": "Unbreakable Stance",
-            "description": "You have advantage on saving throws against effects that would knock you prone or move you against your will."
-        },
-        "uncannyintuition": {
-            "name": "Uncanny Intuition",
-            "description": "Once per day, you can reroll a failed Perception check.",
-            "effect": ""
-        },
-        "undeadslayer": {
-            "name": "Undead Slayer",
-            "description": "+25% Magical damage against all sapient undead."
-        },
-        "unpredictablebiology": {
-            "name": "Unpredictable Biology",
-            "description": "At the start of each day, roll a d20 to gain a random beneficial mutation for 24 hours.",
-            "effect": ""
-        },
-        "unyieldingloyalty": {
-            "name": "Unyielding Loyalty",
-            "description": "You have advantage on saving throws against being charmed or frightened.",
-            "effect": ""
-        },
-        "upgradeable": {
-            "name": "Upgradeable",
-            "description": "This base stat upgrade increases by +1 for every compatible patch that is added to this jacket."
-        },
-        "vampirismprotection": {
-            "name": "Vampirism Protection",
-            "description": "Protection against Vampirism."
-        },
-        "vaperesistance": {
-            "name": "Vape Resistance",
-            "description": "You have advantage on saving throws against inhaled poisons and gases.",
-            "effect": ""
-        },
-        "versatile": {
-            "name": "Versatile",
-            "description": "Can choose an additional +2 in any skill.",
-            "effect": ""
-        },
-        "voiceofauthority": {
-            "name": "Voice of Authority",
-            "description": "Your commands can be clearly heard by allies within 60 feet, even in the chaos of battle.",
-            "effect": ""
-        },
-        "vulpinecharm": {
-            "name": "Vulpine Charm",
-            "description": "You have advantage on Charisma checks against creatures that are not hostile toward you.",
-            "effect": ""
-        },
-        "wallclimbing": {
-            "name": "Wall Climbing",
-            "description": "Can climb difficult surfaces including upside down on ceilings without needing to make an ability check.",
-            "effect": ""
-        },
-        "warrior'spride": {
-            "name": "Warrior's Pride",
-            "description": "You have advantage on saving throws against being frightened.",
-            "effect": ""
-        },
-        "waterbreathing": {
-            "name": "Water Breathing",
-            "description": "Can breathe underwater.",
-            "effect": ""
-        },
-        "watercamouflage": {
-            "name": "Water Camouflage",
-            "description": "Advantage on Stealth checks in aquatic environments.",
-            "effect": ""
-        },
-        "waterretention": {
-            "name": "Water Retention",
-            "description": "Requires less water than other races to survive.",
-            "effect": ""
-        },
-        "weaponmastery": {
-            "name": "Weapon Mastery",
-            "description": "You can use your Strength modifier instead of Dexterity for attack and damage rolls with finesse weapons."
-        },
-        "weaponwhisperer": {
-            "name": "Weapon Whisperer",
-            "description": "You can identify the magical properties of any bladed weapon by examining it for 1 minute.",
-            "effect": ""
-        },
-        "weathersense": {
-            "name": "Weather Sense",
-            "description": "You can accurately predict the weather for the next 24 hours.",
-            "effect": ""
-        },
-        "windwhisper": {
-            "name": "Wind Whisper",
-            "description": "You can cast Message at will, without expending a spell slot.",
-            "effect": ""
-        },
-        "wingsoffreedom": {
-            "name": "Wings of Freedom",
-            "description": "You have a flying speed equal to your walking speed.",
-            "effect": ""
-        }
+  "traits": {
+    "acidresistance": {
+      "name": "Acid Resistance",
+      "description": "Takes half damage from acid-based attacks.",
+      "effect": ""
+    },
+    "actually": {
+      "name": "Actually...",
+      "description": "You have advantage on Intelligence checks to recall obscure information.",
+      "effect": ""
+    },
+    "adaptivephysiology": {
+      "name": "Adaptive Physiology",
+      "description": "Advantage on checks to resist physical alterations.",
+      "effect": ""
+    },
+    "aircushion": {
+      "name": "Air Cushion",
+      "description": "You can use your reaction to reduce falling damage to 0.",
+      "effect": ""
+    },
+    "alwaysprepared": {
+      "name": "Always Prepared",
+      "description": "You can take the Hide action as a bonus action on each of your turns.",
+      "effect": ""
+    },
+    "ambidextrous": {
+      "name": "Ambidextrous",
+      "description": "No penalties for using either hand.",
+      "effect": ""
+    },
+    "amphibious": {
+      "name": "Amphibious",
+      "description": "Can breathe both air and water.",
+      "effect": ""
+    },
+    "anatomicalexpertise": {
+      "name": "Anatomical Expertise",
+      "description": "You have advantage on attacks targeting specific body parts.",
+      "effect": ""
+    },
+    "ancientknowledge": {
+      "name": "Ancient Knowledge",
+      "description": "All higher-tier skills are unlocked and can be trained to level 20.",
+      "effect": ""
+    },
+    "arcaneinsight": {
+      "name": "Arcane Insight",
+      "description": "You have advantage on Intelligence (Arcana) checks related to understanding magical effects or items.",
+      "effect": ""
+    },
+    "arenaveteran": {
+      "name": "Arena Veteran",
+      "description": "You have advantage on saving throws against being frightened or charmed in combat situations.",
+      "effect": ""
+    },
+    "aurareading": {
+      "name": "Aura Reading",
+      "description": "You can detect diseases and emotional disturbances in creatures within 30 feet.",
+      "effect": ""
+    },
+    "auraofgloom": {
+      "name": "Aura of Gloom",
+      "description": "Enemies within 10 feet of you have disadvantage on Charisma (Persuasion) checks."
+    },
+    "auraofprotection": {
+      "name": "Aura of Protection",
+      "description": "Allies within 10 feet of you gain a +1 bonus to all saving throws.",
+      "effect": ""
+    },
+    "autobuckleractivation": {
+      "name": "AutoBucklerActivation",
+      "description": "Forms a metallic buckler on command or by shaking your wrist."
+    },
+    "backpatchbonus": {
+      "name": "Back Patch Bonus",
+      "description": "If an eligible Back Patch is added, this benefit is doubled."
+    },
+    "battledancer": {
+      "name": "Battle Dancer",
+      "description": "Your AC increases by 2 when you're not wearing armor.",
+      "effect": ""
+    },
+    "beastwhisperer": {
+      "name": "Beast Whisperer",
+      "description": "You can communicate simple ideas with animals.",
+      "effect": ""
+    },
+    "blastresistant": {
+      "name": "Blast Resistant",
+      "description": "You have resistance to fire damage and thunder damage.",
+      "effect": ""
+    },
+    "bloodsense": {
+      "name": "Bloodsense",
+      "description": "You can detect living creatures within 30 feet by sensing their blood.",
+      "effect": ""
+    },
+    "bonked": {
+      "name": "Bonked",
+      "description": "Has a 5% chance to inflict Bonked on any mob struck with this weapon.",
+      "effect": "Inflicts Bonked status."
+    },
+    "buffetenchantment": {
+      "name": "Buffet Enchantment",
+      "description": "The crossbow will not run out of basic ammunition.",
+      "effect": "Additional ammunition types can be loaded and fired, though special bonuses apply only to the stock ammunition."
+    },
+    "calmingpresence": {
+      "name": "Calming Presence",
+      "description": "You can use your action to end the frightened condition on an ally within 30 feet.",
+      "effect": ""
+    },
+    "camouflageexpert": {
+      "name": "Camouflage Expert",
+      "description": "You have advantage on Stealth checks in natural environments.",
+      "effect": ""
+    },
+    "cat-likereflexes": {
+      "name": "Cat-like Reflexes",
+      "description": "You have advantage on Dexterity saving throws.",
+      "effect": ""
+    },
+    "centerstage": {
+      "name": "Center Stage",
+      "description": "When you're the target of an attack, you can use your reaction to impose disadvantage on the attack roll.",
+      "effect": ""
+    },
+    "charmresistance": {
+      "name": "Charm Resistance",
+      "description": "Advantage on saving throws against being charmed.",
+      "effect": ""
+    },
+    "coinburst": {
+      "name": "Coin Burst",
+      "description": "All mobs killed with this weapon have a 20% chance to burst into a pile of gold coins upon death.",
+      "effect": "The number of coins is equal to the (value of the items in their inventory) + (level x 10)."
+    },
+    "coldblood": {
+      "name": "Cold Blood",
+      "description": "You have advantage on saving throws against poison and disease.",
+      "effect": ""
+    },
+    "coldimmunity": {
+      "name": "Cold Immunity",
+      "description": "You are immune to cold damage and environmental effects of extreme cold.",
+      "effect": ""
+    },
+    "coldresistance": {
+      "name": "Cold Resistance",
+      "description": "Takes half damage from cold-based attacks.",
+      "effect": ""
+    },
+    "criticalgamble": {
+      "name": "Critical Gamble",
+      "description": "Every shot has a 50% chance to be a critical hit, dealing double damage.",
+      "effect": "50% chance to deal double damage."
+    },
+    "crowddispersal": {
+      "name": "Crowd Dispersal",
+      "description": "You have advantage on Strength checks to push, shove, or knock prone multiple targets at once.",
+      "effect": ""
+    },
+    "crowdfavorite": {
+      "name": "Crowd Favorite",
+      "description": "You have advantage on Charisma checks to influence crowds or gather information in urban settings.",
+      "effect": ""
+    },
+    "damageresistance": {
+      "name": "Damage Resistance",
+      "description": "Resistant to physical attacks.",
+      "effect": ""
+    },
+    "damageboost": {
+      "name": "DamageBoost",
+      "description": "+25% damage against all clerics."
+    },
+    "damagereflect": {
+      "name": "DamageReflect",
+      "description": "Adds 10% Damage Reflect to all equipped armor."
+    },
+    "dangersense": {
+      "name": "Danger Sense",
+      "description": "You can take the Search action as a bonus action on your turn.",
+      "effect": ""
+    },
+    "darkone'sblessing": {
+      "name": "Dark One's Blessing",
+      "description": "When you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your Warlock level.",
+      "effect": ""
+    },
+    "darkvision": {
+      "name": "Darkvision",
+      "description": "Can see in the dark up to 60 feet.",
+      "effect": ""
+    },
+    "demolitionsexpert": {
+      "name": "Demolitions Expert",
+      "description": "You have advantage on checks to disarm traps and on saving throws against explosive devices.",
+      "effect": ""
+    },
+    "demonworshipperdetection": {
+      "name": "DemonWorshipperDetection",
+      "description": "All demon worshippers are visible and marked on your map."
+    },
+    "dimensionalawareness": {
+      "name": "Dimensional Awareness",
+      "description": "Your body can adapt to a wide range of environments and situations. +1 in one skill of your choice at the start of each floor.",
+      "effect": ""
+    },
+    "diseaseresistance": {
+      "name": "Disease Resistance",
+      "description": "Immune to common diseases and ailments.",
+      "effect": ""
+    },
+    "divinehealth": {
+      "name": "Divine Health",
+      "description": "You are immune to disease.",
+      "effect": ""
+    },
+    "divineprotection": {
+      "name": "Divine Protection",
+      "description": "You have advantage on saving throws against spells and other magical effects.",
+      "effect": ""
+    },
+    "eagleeye": {
+      "name": "Eagle Eye",
+      "description": "You can accurately hit targets at twice the normal range.",
+      "effect": ""
+    },
+    "earthsense": {
+      "name": "Earth Sense",
+      "description": "Can detect vibrations in the ground up to 60 feet.",
+      "effect": ""
+    },
+    "elementalaffinity": {
+      "name": "Elemental Affinity",
+      "description": "You have resistance to lightning and cold damage.",
+      "effect": ""
+    },
+    "embarrassingstrikes": {
+      "name": "Embarrassing Strikes",
+      "description": "When you land a critical hit, the target has disadvantage on their next action due to shame.",
+      "effect": ""
+    },
+    "enhancedmobdetection": {
+      "name": "Enhanced Mob Detection",
+      "description": "Increased ability to detect mobs on the map."
+    },
+    "enhancedvision": {
+      "name": "Enhanced Vision",
+      "description": "Enhances all dark vision effects. Allows for heat vision and other visible-light viewing options."
+    },
+    "environmentalprotection": {
+      "name": "Environmental Protection",
+      "description": "Protects the eyes from a variety of environmental hazards, including magic-based attacks that render the user blind."
+    },
+    "experimentalresistance": {
+      "name": "Experimental Resistance",
+      "description": "You have advantage on saving throws against poisons and magical effects.",
+      "effect": ""
+    },
+    "explosiveexpertise": {
+      "name": "Explosive Expertise",
+      "description": "+50% range and accuracy for all thrown explosives."
+    },
+    "faefury": {
+      "name": "Fae Fury",
+      "description": "For every female in your party, up to thirty, this items damage and firing speed is increased.",
+      "effect": "Add an extra attack per round per female member of the party. Add 1d12 per female member of the party."
+    },
+    "fearsomepresence": {
+      "name": "Fearsome Presence",
+      "description": "Creatures that fail a Wit save against your abilities are frightened of you for 1 minute.",
+      "effect": ""
+    },
+    "feyancestry": {
+      "name": "Fey Ancestry",
+      "description": "Advantage on saving throws against being charmed and magic can't put you to sleep.",
+      "effect": ""
+    },
+    "fireaffinity": {
+      "name": "Fire Affinity",
+      "description": "You have resistance to fire damage and can speak to fire elementals.",
+      "effect": ""
+    },
+    "fireresistance": {
+      "name": "FireResistance",
+      "description": "User is resistant to fire-based spells."
+    },
+    "fireimmunity": {
+      "name": "FireImmunity",
+      "description": "User is impervious to natural fire."
+    },
+    "firespellboost": {
+      "name": "FireSpellBoost",
+      "description": "All spells with a fire attack now deal (Intelligence)% more damage."
+    },
+    "firststrike": {
+      "name": "First Strike",
+      "description": "You have advantage on initiative rolls.",
+      "effect": ""
+    },
+    "flexibleform": {
+      "name": "Flexible Form",
+      "description": "Can squeeze through spaces as narrow as 1 inch without squeezing.",
+      "effect": ""
+    },
+    "flight": {
+      "name": "Flight",
+      "description": "Can fly at a speed of 30 feet.",
+      "effect": ""
+    },
+    "fragilepower": {
+      "name": "Fragile Power",
+      "description": "Your damage spells deal an extra die of damage, but you have -2 to your AC.",
+      "effect": ""
+    },
+    "freeballing": {
+      "name": "Freeballing",
+      "description": "And I\u2019m freeeeee! Freeee Ballling! Usually reserved for monk classes and those too soused to reliably dress themselves, recipients of this benefit receive an additional 100% damage bonus to all attacks that originate below the waist. In addition, all skills that originate from below the waist train 20% faster. But as the name implies, this benefit allows only a single layer of armor or clothing to cover your crotch area. And since you\u2019re already wearing these, it looks like you won\u2019t be getting trousers anytime soon.",
+      "effect": "100% additional bonus damage and 20% additional experience for all attacks that originate below the waist"
+    },
+    "frozenaura": {
+      "name": "Frozen Aura",
+      "description": "The air around you is perpetually chilled. You have advantage on Stealth checks in snowy environments, and your melee attacks deal an additional 1d4 cold damage.",
+      "effect": ""
+    },
+    "gravitydefiance": {
+      "name": "Gravity Defiance",
+      "description": "You can slow your fall rate and take no damage from falls of 60 feet or less."
+    },
+    "gruesomedisplay": {
+      "name": "Gruesome Display",
+      "description": "After killing an enemy, nearby foes must make a Wit save or be frightened for 1 round.",
+      "effect": ""
+    },
+    "guardian'spresence": {
+      "name": "Guardian's Presence",
+      "description": "Allies within 5 feet of you gain +2 to their AC."
+    },
+    "gutinstinct": {
+      "name": "Gut Instinct",
+      "description": "You have advantage on Medicine checks related to internal injuries.",
+      "effect": ""
+    },
+    "heataura": {
+      "name": "Heat Aura",
+      "description": "Creatures within 5 feet take 1d4 fire damage at the start of their turn.",
+      "effect": ""
+    },
+    "heatresistance": {
+      "name": "Heat Resistance",
+      "description": "You have resistance to fire damage.",
+      "effect": ""
+    },
+    "heatresistant": {
+      "name": "Heat Resistant",
+      "description": "You have resistance to fire damage and advantage on saving throws against heat-based effects.",
+      "effect": ""
+    },
+    "heavenlyconnections": {
+      "name": "Heavenly Connections",
+      "description": "Once per day, you can attempt to contact your demigod employer for advice or assistance.",
+      "effect": ""
+    },
+    "heavyarmor": {
+      "name": "Heavy Armor",
+      "description": "Natural armor grants +2 bonus to AC.",
+      "effect": ""
+    },
+    "honorbound": {
+      "name": "Honor Bound",
+      "description": "You have advantage on Charisma checks when dealing with nobility or in formal settings.",
+      "effect": ""
+    },
+    "hostdependency": {
+      "name": "Host Dependency",
+      "description": "Must inhabit a host to survive.",
+      "effect": ""
+    },
+    "hypnoticgaze": {
+      "name": "Hypnotic Gaze",
+      "description": "You can use your action to attempt to charm a creature within 30 feet, forcing a Wit saving throw.",
+      "effect": ""
+    },
+    "iceresistance": {
+      "name": "Ice Resistance",
+      "description": "99% ice resistance"
+    },
+    "illusoryescape": {
+      "name": "Illusory Escape",
+      "description": "Once per short rest, when you would take damage, you can use your reaction to create an illusion of yourself and teleport up to 30 feet away.",
+      "effect": ""
+    },
+    "immovable": {
+      "name": "Immovable",
+      "description": "You have advantage on ability checks and saving throws against effects that would move you against your will.",
+      "effect": ""
+    },
+    "incrementaldamage": {
+      "name": "Incremental Damage",
+      "description": "This weapon's damage increases by 1.5% for every mob it kills that is no more than 10 levels below the current wielder's level.",
+      "effect": "Current upgrade: 238% damage increase."
+    },
+    "infection": {
+      "name": "Infection",
+      "description": "Successful hits have a 10% chance to inflict Tetanus, dealing 1d4 damage per round for 3 rounds.",
+      "effect": "10% chance to deal 1d4 damage per round for 3 rounds."
+    },
+    "infernalheritage": {
+      "name": "Infernal Heritage",
+      "description": "Resistance to fire damage.",
+      "effect": ""
+    },
+    "infiltrator": {
+      "name": "Infiltrator",
+      "description": "You can blend into a crowd, gaining advantage on Stealth checks in populated areas.",
+      "effect": ""
+    },
+    "infraredvision": {
+      "name": "Infrared Vision",
+      "description": "Can detect heat signatures up to 30 feet.",
+      "effect": ""
+    },
+    "insightful": {
+      "name": "Insightful",
+      "description": "You have advantage on Perception checks to determine a creature's emotional state.",
+      "effect": ""
+    },
+    "inspiringpresence": {
+      "name": "Inspiring Presence",
+      "description": "Allies within 30 feet of you gain a +1 bonus to saving throws.",
+      "effect": ""
+    },
+    "ironstomach": {
+      "name": "Iron Stomach",
+      "description": "You're immune to poison and have advantage on Constitution saving throws against ingested substances.",
+      "effect": ""
+    },
+    "ironwill": {
+      "name": "Iron Will",
+      "description": "You have advantage on saving throws against being charmed or frightened.",
+      "effect": ""
+    },
+    "keenedge": {
+      "name": "Keen Edge",
+      "description": "Your bladed weapons deal an additional 1d4 damage.",
+      "effect": ""
+    },
+    "keensenses": {
+      "name": "Keen Senses",
+      "description": "Advantage on Perception checks involving smell.",
+      "effect": ""
+    },
+    "lavaimmunity": {
+      "name": "LavaImmunity",
+      "description": "User is impervious to lava attacks."
+    },
+    "legendarystrength": {
+      "name": "Legendary Strength",
+      "description": "You can carry, push, drag, or lift twice as much as normal.",
+      "effect": ""
+    },
+    "light-footed": {
+      "name": "Light-footed",
+      "description": "You can move through difficult terrain without penalty.",
+      "effect": ""
+    },
+    "livingshield": {
+      "name": "Living Shield",
+      "description": "You can use your reaction to impose disadvantage on an attack roll against an ally within 5 feet of you.",
+      "effect": ""
+    },
+    "loaded": {
+      "name": "Loaded",
+      "description": "All non-hidden creatures wearing magical gear are indicated on your map. Particularly useful when you only want to hang out with the real fashionistas and not just the posers wearing fake shit. Also good if you want to sneak up behind someone, bonk them on their head, and steal all their stuff."
+    },
+    "long-rangeexpert": {
+      "name": "Long-Range Expert",
+      "description": "You have advantage on attack rolls against targets more than 100 feet away.",
+      "effect": ""
+    },
+    "luckybreak": {
+      "name": "Lucky Break",
+      "description": "Once per short rest, you can reroll a failed ability check, attack roll, or saving throw.",
+      "effect": ""
+    },
+    "lycanthropyprotection": {
+      "name": "Lycanthropy Protection",
+      "description": "Protection against Lycanthropy."
+    },
+    "lyricalmemory": {
+      "name": "Lyrical Memory",
+      "description": "You can perfectly recall any poem or song you've heard at least once.",
+      "effect": ""
+    },
+    "magicresistance": {
+      "name": "Magic Resistance",
+      "description": "Advantage on saves against magical effects.",
+      "effect": ""
+    },
+    "managenita'sfavor": {
+      "name": "ManaGenita's Favor",
+      "description": "Removes automatic hostility by worshippers of Mana Genita."
+    },
+    "mastercraftsman": {
+      "name": "Master Craftsman",
+      "description": "You can identify the properties of any metal item by examining it for 1 minute.",
+      "effect": ""
+    },
+    "masterofdisguise": {
+      "name": "Master of Disguise",
+      "description": "You have advantage on Deception checks when trying to pass yourself off as someone else.",
+      "effect": ""
+    },
+    "meleeimmunity": {
+      "name": "Melee Immunity",
+      "description": "All melee-based damage debuffs such as Stun, Knockback, Disarm, and Out-of-Breath are negated."
+    },
+    "mentalfortitude": {
+      "name": "Mental Fortitude",
+      "description": "Advantage on saves against mind control.",
+      "effect": ""
+    },
+    "mimicry": {
+      "name": "Mimicry",
+      "description": "Can imitate sounds they have heard.",
+      "effect": ""
+    },
+    "mindshield": {
+      "name": "Mind Shield",
+      "description": "Advantage on saves against mental attacks.",
+      "effect": ""
+    },
+    "minorfireresistance": {
+      "name": "Minor Fire Resistance",
+      "description": "+15% Fire Resistance"
+    },
+    "mobmentality": {
+      "name": "Mob Mentality",
+      "description": "You have advantage on attack rolls when within 5 feet of an ally.",
+      "effect": ""
+    },
+    "momentumcancel": {
+      "name": "MomentumCancel",
+      "description": "Cancels all Momentum-based attacks."
+    },
+    "naturalarmor": {
+      "name": "Natural Armor",
+      "description": "Gain a +2 bonus to AC.",
+      "effect": ""
+    },
+    "naturalcamouflage": {
+      "name": "Natural Camouflage",
+      "description": "Advantage on Stealth checks in forested areas.",
+      "effect": ""
+    },
+    "naturalcharmer": {
+      "name": "Natural Charmer",
+      "description": "You have advantage on Persuasion checks when interacting with non-hostile NPCs.",
+      "effect": ""
+    },
+    "neithersnownorrain": {
+      "name": "Neither Snow Nor Rain",
+      "description": "You gain advantage on saving throws against environmental hazards while on a delivery.",
+      "effect": ""
+    },
+    "nightvision": {
+      "name": "Night Vision",
+      "description": "Can see in the dark up to 60 feet.",
+      "effect": ""
+    },
+    "nimbledefense": {
+      "name": "Nimble Defense",
+      "description": "While wearing light or no armor, your AC increases by 1 for every point of Dexterity bonus (maximum +3).",
+      "effect": ""
+    },
+    "nimbleescape": {
+      "name": "Nimble Escape",
+      "description": "You can use the Disengage or Hide action as a bonus action on each of your turns.",
+      "effect": ""
+    },
+    "onewithearth": {
+      "name": "One with Earth",
+      "description": "While touching the ground, you can sense vibrations within a 60-foot radius.",
+      "effect": ""
+    },
+    "onewithnature": {
+      "name": "One with Nature",
+      "description": "You can communicate simple ideas with animals and have advantage on Animal Handling checks.",
+      "effect": ""
+    },
+    "otherworldlypatron": {
+      "name": "Otherworldly Patron",
+      "description": "You have a powerful entity as your patron, granting you unique abilities based on their nature.",
+      "effect": ""
+    },
+    "paintolerance": {
+      "name": "Pain Tolerance",
+      "description": "You have advantage on saving throws against pain-inducing effects.",
+      "effect": ""
+    },
+    "paranoia": {
+      "name": "Paranoia",
+      "description": "You have advantage on Perception checks to spot hidden threats.",
+      "effect": ""
+    },
+    "passionateaura": {
+      "name": "Passionate Aura",
+      "description": "Allies within 10 feet of you gain +1 to attack rolls and saving throws against fear effects.",
+      "effect": ""
+    },
+    "perfectpitch": {
+      "name": "Perfect Pitch",
+      "description": "You have advantage on saving throws against sound-based effects and can perfectly mimic any sound you've heard.",
+      "effect": ""
+    },
+    "persistentirritant": {
+      "name": "Persistent Irritant",
+      "description": "Enemies within 5 feet of you have disadvantage on concentration checks.",
+      "effect": ""
+    },
+    "pestsense": {
+      "name": "Pest Sense",
+      "description": "You can detect the presence of vermin within 60 feet of you.",
+      "effect": ""
+    },
+    "piercingresistance": {
+      "name": "Piercing Resistance",
+      "description": "50% piercing resistance"
+    },
+    "plaguedoctor": {
+      "name": "Plague Doctor",
+      "description": "You have resistance to disease and can identify ailments with a successful Intelligence check.",
+      "effect": ""
+    },
+    "poisonresistance": {
+      "name": "Poison Resistance",
+      "description": "Takes half damage from poison-based attacks.",
+      "effect": ""
+    },
+    "poisonimmunity": {
+      "name": "PoisonImmunity",
+      "description": "Protection from poison"
+    },
+    "potionmaster": {
+      "name": "PotionMaster",
+      "description": "50% reduction to potion cooldown"
+    },
+    "powerofbelief": {
+      "name": "Power of Belief",
+      "description": "Once per day, you can reroll a failed healing ability and take the higher result.",
+      "effect": ""
+    },
+    "predator'sinstinct": {
+      "name": "Predator's Instinct",
+      "description": "You have advantage on Perception checks that rely on hearing or smell.",
+      "effect": ""
+    },
+    "protectiveinstinct": {
+      "name": "Protective Instinct",
+      "description": "When an ally within 30 feet is attacked, you can use your reaction to impose disadvantage on the attack roll.",
+      "effect": ""
+    },
+    "psychichotline": {
+      "name": "Psychic Hotline",
+      "description": "You can use your action to gain advantage on your next Charisma check.",
+      "effect": ""
+    },
+    "psychicresistance": {
+      "name": "Psychic Resistance",
+      "description": "Takes half damage from psychic attacks.",
+      "effect": ""
+    },
+    "psychicshield": {
+      "name": "Psychic Shield",
+      "description": "Advantage on saves against psychic damage.",
+      "effect": ""
+    },
+    "quickreflexes": {
+      "name": "QuickReflexes",
+      "description": "Increases the user\u2019s reaction time, giving a +1 bonus to dodge checks."
+    },
+    "quickstudy": {
+      "name": "Quick Study",
+      "description": "Can learn and replicate simple actions after observing them once.",
+      "effect": ""
+    },
+    "quickdraw": {
+      "name": "Quickdraw",
+      "description": "You have advantage on initiative rolls when using a ranged weapon.",
+      "effect": ""
+    },
+    "regeneration": {
+      "name": "Regeneration",
+      "description": "Regains 1d6 HP at the start of their turn if they have drunk blood in the last 24 hours.",
+      "effect": ""
+    },
+    "regimentedtraining": {
+      "name": "Regimented Training",
+      "description": "You can don or doff armor in half the usual time.",
+      "effect": ""
+    },
+    "relentlessendurance": {
+      "name": "Relentless Endurance",
+      "description": "Once per day when reduced to 0 HP can drop to 1 HP instead.",
+      "effect": ""
+    },
+    "religiousaffiliationdetection": {
+      "name": "ReligiousAffiliationDetection",
+      "description": "Instantly know the religious affiliation of all nearby mobs and crawlers."
+    },
+    "remotedetonator": {
+      "name": "Remote Detonator",
+      "description": "If you\u2019re one of those explodey guys, I bet you use a lot of Hobgoblin Pus or Troll Boom-Boom Paste to make your bombs pop. Those days are now over. This benefit allows you to magically remote-detonate any explosive that has been designated by you. This benefit offers multiple physical and interface-based triggering options when combined with a Sapper\u2019s table.",
+      "effect": "When using a Sapper\u2019s Table, you gain access to the following physical and interface-based triggering options for any explosive you have designated: \n \n <b>Physical Triggering Options:</b> \n \n <b>Timed Detonation:</b> Set a timer on the explosive to detonate after a specified duration. \n \n <b>Pressure Plate:</b> Detonate the explosive when a certain amount of weight or pressure is applied. \n \n <b>Tripwire:</b> Rig a tripwire to detonate the explosive when disturbed. \n \n <b>Proximity Sensor:</b> Set the explosive to detonate when a creature or object enters a specified radius. \n \n <b>Interface-Based Triggering Options:</b> \n \n <b>Magical Remote Control:</b> Use a magical remote control to trigger the explosive from a distance. \n \n <b>Telepathic Link:</b> Establish a telepathic link to trigger the explosive mentally. \n \n <b>Arcane Signal:</b> Activate the explosive using a specific magical gesture or incantation. \n \n <b>Rune Activation:</b> Use a magical interface to activate a special rune on the explosive. \n \n <b>Special Note:</b> The range for remote triggering options is up to 120 feet, unless otherwise specified by the DM."
+    },
+    "removecurseditems": {
+      "name": "RemoveCursedItems",
+      "description": "Allows the removal of cursed items."
+    },
+    "removedebuffs": {
+      "name": "RemoveDebuffs",
+      "description": "Removes most health-seeping and disease-based debuff effects. Variable numbing effect on various other debuff types."
+    },
+    "resilient": {
+      "name": "Resilient",
+      "description": "Advantage on saving throws against exhaustion or stamina-based debuffs.",
+      "effect": ""
+    },
+    "resistancetofire": {
+      "name": "Resistance to Fire",
+      "description": "Takes half damage from fire-based attacks.",
+      "effect": ""
+    },
+    "returntosender": {
+      "name": "Return to Sender",
+      "description": "Once per day, you can redirect a ranged attack that misses you back at the attacker.",
+      "effect": ""
+    },
+    "ripe": {
+      "name": "Ripe",
+      "description": "All creatures with less than 50% health are indicated on your map. This does not increase your map\u2019s view, but used in conjunction with other skills such as Pathfinder, it makes being a glory-stealing asshole really easy"
+    },
+    "ritualmaster": {
+      "name": "Ritual Master",
+      "description": "You have advantage on skill checks related to performing religious or spiritual rituals.",
+      "effect": ""
+    },
+    "rockyhide": {
+      "name": "Rocky Hide",
+      "description": "Your skin toughens, granting you a +1 bonus to your natural Armor Class.",
+      "effect": ""
+    },
+    "saddlesure": {
+      "name": "Saddle Sure",
+      "description": "You have advantage on saves to avoid falling off your mount.",
+      "effect": ""
+    },
+    "sepsisdebuff": {
+      "name": "Sepsis Debuff",
+      "description": "All attacks, including magical attacks, now have a 15% chance to inflict the Sepsis debuff."
+    },
+    "shadowmeld": {
+      "name": "Shadow Meld",
+      "description": "Advantage on Stealth checks in dim light or darkness.",
+      "effect": ""
+    },
+    "shatterenchantment": {
+      "name": "ShatterEnchantment",
+      "description": "Any attack that lands upon the buckler has a 1.5% chance to disarm the opponent. If the opponent is disarmed, there is a 90% chance the weapon will drop to the ground, a 5% chance the weapon will break, and a 5% chance the weapon will be immediately transferred to your inventory."
+    },
+    "sheolhealth": {
+      "name": "SheolHealth",
+      "description": "User will not lose health while inside Sheol."
+    },
+    "shortfuse": {
+      "name": "Short Fuse",
+      "description": "You have advantage on initiative rolls.",
+      "effect": ""
+    },
+    "showmanship": {
+      "name": "Showmanship",
+      "description": "Your critical hits inspire allies within 30 feet, granting them advantage on their next attack roll.",
+      "effect": ""
+    },
+    "shrinedestruction": {
+      "name": "ShrineDestruction",
+      "description": "Allows the destruction of church shrines without further ill effects from deities."
+    },
+    "silvertongue": {
+      "name": "Silver Tongue",
+      "description": "You have advantage on Charisma checks involving poetry or wordplay.",
+      "effect": ""
+    },
+    "skateordie": {
+      "name": "Skate or Die",
+      "description": "Your speed increases by 10 feet, and you ignore difficult terrain while moving.",
+      "effect": ""
+    },
+    "sociallubricant": {
+      "name": "Social Lubricant",
+      "description": "Your vape creations grant you advantage on Charisma checks in social situations.",
+      "effect": ""
+    },
+    "socialmediasavvy": {
+      "name": "Social Media Savvy",
+      "description": "You can use your action to gain advantage on your next Charisma check by leveraging your online presence.",
+      "effect": ""
+    },
+    "spellfocus": {
+      "name": "Spell Focus",
+      "description": "Any energy-based spell that originates from the ocular region is caught and focused by these goggles, which allows for multiple combat and targeting options."
+    },
+    "spellsculptor": {
+      "name": "Spell Sculptor",
+      "description": "Once per short rest, you can change the elemental damage type of one of your spells as you cast it.",
+      "effect": ""
+    },
+    "spiritualconduit": {
+      "name": "Spiritual Conduit",
+      "description": "You can sense the presence of spirits within 60 feet and communicate with them.",
+      "effect": ""
+    },
+    "steadydrinker": {
+      "name": "Steady Drinker",
+      "description": "Negates the dexterity debuff when inebriated"
+    },
+    "stonecunning": {
+      "name": "Stonecunning",
+      "description": "Advantage on checks related to stonework.",
+      "effect": ""
+    },
+    "streetsmarts": {
+      "name": "Street Smarts",
+      "description": "You have advantage on Perception (Survival) checks in urban environments.",
+      "effect": ""
+    },
+    "structuralweakness": {
+      "name": "Structural Weakness",
+      "description": "You can use an action to analyze a structure and identify its weak points, granting advantage on attacks against it.",
+      "effect": ""
+    },
+    "sure-footed": {
+      "name": "Sure-Footed",
+      "description": "Advantage on checks and saves against being knocked prone.",
+      "effect": ""
+    },
+    "surgicalstrikes": {
+      "name": "Surgical Strikes",
+      "description": "Your critical hits deal an extra die of damage.",
+      "effect": ""
+    },
+    "suspiciousmind": {
+      "name": "Suspicious Mind",
+      "description": "You have advantage on saving throws against being charmed or frightened.",
+      "effect": ""
+    },
+    "taskmaster": {
+      "name": "Taskmaster",
+      "description": "Allies within earshot of your commands gain a +2 bonus to Strength checks.",
+      "effect": ""
+    },
+    "taxstipend": {
+      "name": "TaxStipend",
+      "description": "Taxes received: 432 Gold every 10 days from Medium Skyfowl Settlement."
+    },
+    "terrainmastery": {
+      "name": "Terrain Mastery",
+      "description": "You can move through difficult terrain without penalty.",
+      "effect": ""
+    },
+    "toxinresistance": {
+      "name": "Toxin Resistance",
+      "description": "You have advantage on saving throws against poison and disease.",
+      "effect": ""
+    },
+    "truthseeker": {
+      "name": "Truth Seeker",
+      "description": "You have advantage on Perception (Insight) checks to determine if someone is lying.",
+      "effect": ""
+    },
+    "unbreakable": {
+      "name": "Unbreakable",
+      "description": "You have advantage on stamina saving throws to maintain concentration on spells or abilities."
+    },
+    "unbreakableformation": {
+      "name": "Unbreakable Formation",
+      "description": "Allies within 10 feet of you gain a +1 bonus to AC.",
+      "effect": ""
+    },
+    "unbreakableline": {
+      "name": "Unbreakable Line",
+      "description": "While wielding a shield, allies adjacent to you gain +2 to their AC.",
+      "effect": ""
+    },
+    "unbreakablespirit": {
+      "name": "Unbreakable Spirit",
+      "description": "Once per long rest, when you drop to 0 hit points, you can choose to drop to 1 hit point instead.",
+      "effect": ""
+    },
+    "unbreakablestance": {
+      "name": "Unbreakable Stance",
+      "description": "You have advantage on saving throws against effects that would knock you prone or move you against your will."
+    },
+    "uncannyintuition": {
+      "name": "Uncanny Intuition",
+      "description": "Once per day, you can reroll a failed Perception check.",
+      "effect": ""
+    },
+    "undeadslayer": {
+      "name": "Undead Slayer",
+      "description": "+25% Magical damage against all sapient undead."
+    },
+    "unpredictablebiology": {
+      "name": "Unpredictable Biology",
+      "description": "At the start of each day, roll a d20 to gain a random beneficial mutation for 24 hours.",
+      "effect": ""
+    },
+    "unyieldingloyalty": {
+      "name": "Unyielding Loyalty",
+      "description": "You have advantage on saving throws against being charmed or frightened.",
+      "effect": ""
+    },
+    "upgradeable": {
+      "name": "Upgradeable",
+      "description": "This base stat upgrade increases by +1 for every compatible patch that is added to this jacket."
+    },
+    "vampirismprotection": {
+      "name": "Vampirism Protection",
+      "description": "Protection against Vampirism."
+    },
+    "vaperesistance": {
+      "name": "Vape Resistance",
+      "description": "You have advantage on saving throws against inhaled poisons and gases.",
+      "effect": ""
+    },
+    "versatile": {
+      "name": "Versatile",
+      "description": "Can choose an additional +2 in any skill.",
+      "effect": ""
+    },
+    "voiceofauthority": {
+      "name": "Voice of Authority",
+      "description": "Your commands can be clearly heard by allies within 60 feet, even in the chaos of battle.",
+      "effect": ""
+    },
+    "vulpinecharm": {
+      "name": "Vulpine Charm",
+      "description": "You have advantage on Charisma checks against creatures that are not hostile toward you.",
+      "effect": ""
+    },
+    "wallclimbing": {
+      "name": "Wall Climbing",
+      "description": "Can climb difficult surfaces including upside down on ceilings without needing to make an ability check.",
+      "effect": ""
+    },
+    "warrior'spride": {
+      "name": "Warrior's Pride",
+      "description": "You have advantage on saving throws against being frightened.",
+      "effect": ""
+    },
+    "waterbreathing": {
+      "name": "Water Breathing",
+      "description": "Can breathe underwater.",
+      "effect": ""
+    },
+    "watercamouflage": {
+      "name": "Water Camouflage",
+      "description": "Advantage on Stealth checks in aquatic environments.",
+      "effect": ""
+    },
+    "waterretention": {
+      "name": "Water Retention",
+      "description": "Requires less water than other races to survive.",
+      "effect": ""
+    },
+    "weaponmastery": {
+      "name": "Weapon Mastery",
+      "description": "You can use your Strength modifier instead of Dexterity for attack and damage rolls with finesse weapons."
+    },
+    "weaponwhisperer": {
+      "name": "Weapon Whisperer",
+      "description": "You can identify the magical properties of any bladed weapon by examining it for 1 minute.",
+      "effect": ""
+    },
+    "weathersense": {
+      "name": "Weather Sense",
+      "description": "You can accurately predict the weather for the next 24 hours.",
+      "effect": ""
+    },
+    "windwhisper": {
+      "name": "Wind Whisper",
+      "description": "You can cast Message at will, without expending a spell slot.",
+      "effect": ""
+    },
+    "wingsoffreedom": {
+      "name": "Wings of Freedom",
+      "description": "You have a flying speed equal to your walking speed.",
+      "effect": ""
+    },
+    "AbyssWhisper": {
+      "name": "Abyss Whisper",
+      "description": "The item murmurs in a language of ancient darkness, unsettling the brave and keeping insomnia companies in business.",
+      "effect": "While worn, you gain advantage on Stealth checks in dim or no light. However, you occasionally whisper back in Abyssal during your sleep."
+    },
+    "AerialDominion": {
+      "name": "Aerial Dominion",
+      "description": "You command the skies like a hawk on too much caffeine, bounding across rooftops and leaping off cliffs without a second thought.",
+      "effect": "Grants improved jumping and gliding capabilities. Gain advantage on Athletics checks performed mid-air."
+    },
+    "AmphibianAffinity": {
+      "name": "Amphibian Affinity",
+      "description": "Your taste in pets might raise eyebrows, but frogs and newts think you’re simply enchanting.",
+      "effect": "Can communicate basic emotions and intentions to amphibians. Amphibious creatures are neutral or friendlier to you unless otherwise provoked."
+    },
+    "BoneShield": {
+      "name": "Bone Shield",
+      "description": "Ghostly bones swirl around you like a bony mosh pit, blocking strikes and creeping out everyone else.",
+      "effect": "Once per short rest, reduce incoming physical damage by 50% for one attack. Also adds a bony knock to your footsteps."
+    },
+    "ChainlinkFate": {
+      "name": "Chainlink Fate",
+      "description": "Your destiny is tethered to the unfortunate (or fortunate) soul at the other end of these shackles.",
+      "effect": "If you or your bound target takes damage, the other feels a fraction of the pain (transfer 25% of damage)."
+    },
+    "CinderRegrowth": {
+      "name": "Cinder Regrowth",
+      "description": "From ash to smoldering ash? It’s the Phoenix version of a spa day. Ember-scented.",
+      "effect": "Regenerate a small amount of HP each round while in combat (1 HP/round). Fire damage against you heals for half instead of harming, once per short rest."
+    },
+    "ColdBlooded": {
+      "name": "Cold-Blooded",
+      "description": "Reptilian vibes all around. You hiss more than usual, and your body runs on suspicion and sunbathing.",
+      "effect": "Gain resistance to temperature-based environmental hazards. However, take a slight penalty (–2) to initiative rolls in frigid environments unless warmed."
+    },
+    "CosmicNarration": {
+      "name": "Cosmic Narration",
+      "description": "A cosmic scribe recites your every dramatic entrance, ensuring the universe always knows you’re the main character.",
+      "effect": "Enemies have disadvantage on their first attack roll against you each encounter. Allies nearby feel oddly compelled to cheer you on."
+    },
+    "CozyVibes": {
+      "name": "Cozy Vibes",
+      "description": "Radiate that snug, warm feeling of a blanket fort on a cold night—good luck keeping people from wanting to snuggle up.",
+      "effect": "Allies within 5 feet regain an extra 1 HP whenever they receive healing. Enemies must make a Wit save or hesitate to attack you (–1 penalty on first attack)."
+    },
+    "CrunchyGuard": {
+      "name": "Crunchy Guard",
+      "description": "Your knees are adorned with something suspiciously crunchy, but it sure looks intimidating.",
+      "effect": "Grants +1 AR against attacks targeting your lower body. If an enemy critically fails a melee attack, they take 1d4 piercing damage from the spikes."
+    },
+    "DarkAegis": {
+      "name": "Dark Aegis",
+      "description": "Shielded by the gloom of an edgelord’s teenage poetry phase. Expect suspicious eyeliner to appear unannounced.",
+      "effect": "Grants +2 AR in dim light or darkness. Under direct sunlight, you lose this bonus but look pretty grim doing it."
+    },
+    "DominionCouncil": {
+      "name": "Dominion Council",
+      "description": "It’s like having nine bickering monarchs whispering instructions in your ear. Sometimes helpful, sometimes not.",
+      "effect": "Before rolling an attack or check, you may call upon the council for advice. Gain +2 to the roll, but risk incurring a –1 penalty on your next action due to 'royal disagreements.'"
+    },
+    "DraconicPresence": {
+      "name": "Draconic Presence",
+      "description": "Carrying yourself like a rampaging dragon, you intimidate lesser beings who prefer not to be eaten.",
+      "effect": "Enemies within 10 feet take a –2 penalty on Morale checks. Once per encounter, roar to force a Wit save or cause nearby foes to cower for 1 round."
+    },
+    "EternalProtector": {
+      "name": "Eternal Protector",
+      "description": "Your vow to guard the vulnerable echoes through time and dimensions, never truly ending.",
+      "effect": "Allies within 15 feet can use you as cover, turning half the damage they would take into your damage. You take only half of that half, once per turn."
+    },
+    "FearAura": {
+      "name": "Fear Aura",
+      "description": "Standing near you is like listening to a haunted house soundtrack on repeat—unsettling for everyone involved.",
+      "effect": "Enemies within 5 feet must succeed on a Wit save or have disadvantage on their first attack each round. Allies are unaffected, aside from mild discomfort."
+    },
+    "FeatheredAegis": {
+      "name": "Feathered Aegis",
+      "description": "Glimmering plumes create a barrier of plucked glory. Softer than it looks, but no less protective.",
+      "effect": "Once per short rest, reduce one instance of incoming damage by 10. Visually, it’s like a pillow fight shield—only deadlier."
+    },
+    "FenricksWit": {
+      "name": "Fenrick’s Wit",
+      "description": "A portion of that scrawny genius’s cunning flows through you, especially when there’s trouble (or tea).",
+      "effect": "Once per short rest, gain +2 on any Wit-based roll or saving throw as you conjure up a demon-foiling scheme in the nick of time."
+    },
+    "FireImmunity": {
+      "name": "Fire Immunity",
+      "description": "Flames simply can’t be bothered to crisp you. You’re basically a walking firewall with questionable life choices.",
+      "effect": "You take no damage from non-magical fire sources. Against magical fire, you have resistance and take half damage."
+    },
+    "FracturedDefense": {
+      "name": "Fractured Defense",
+      "description": "Cracks in the crystalline surface channel incoming blows into carefully orchestrated shatters. Painful, but fancy.",
+      "effect": "Add +1 AR, and on a critical hit against you, crystal shards explode outward, dealing 1d6 damage to adjacent foes."
+    },
+    "GorillaGrip": {
+      "name": "Gorilla Grip",
+      "description": "Your handshake might pulverize bones. Try not to greet your allies too vigorously.",
+      "effect": "+2 to Grapple checks and the ability to climb rope or vines one-handed with no penalty."
+    },
+    "HauntedHeritage": {
+      "name": "Haunted Heritage",
+      "description": "You carry the woes and ambitions of a fallen prince, complete with occasional ghostly scoldings.",
+      "effect": "Once per short rest, call upon an ancestral echo to grant advantage on Persuasion or Intimidation. Also, random whispers in the night are free of charge."
+    },
+    "HeatResistance": {
+      "name": "Heat Resistance",
+      "description": "You handle scorching environments like a lizard sunbathing on a rock. Admittedly, you might smell like burnt hair if it gets too hot.",
+      "effect": "Ignore extreme heat penalties and take half damage from non-magical fire."
+    },
+    "HeavenlyAuthority": {
+      "name": "Heavenly Authority",
+      "description": "Your mere presence resonates with a thunderous command akin to divine thunder. People either kneel or flee.",
+      "effect": "Gain advantage on Leadership checks. Once per day, speak with ‘the voice of the sky’ to impose disadvantage on a foe’s saving throw."
+    },
+    "HistoryEcho": {
+      "name": "History Echo",
+      "description": "Fragments of past tragedies and triumphs reverberate through you, ensuring you never repeat historical mistakes—unless you want to.",
+      "effect": "Gain +2 to Lore checks and can sense if a location harbors significant historical events (DM’s discretion)."
+    },
+    "HorseSense": {
+      "name": "Horse Sense",
+      "description": "You share in the unsung wisdom of a centaur stable. It’s not just about galloping—it’s also about strategic poop placement.",
+      "effect": "Gain +2 on Survival checks and the uncanny ability to detect fresh water sources within 1 mile."
+    },
+    "KnotMastery": {
+      "name": "Knot Mastery",
+      "description": "Tying or untying knots is child’s play—probably from the spirit of a giant centipede’s infinite segments messing with your motor skills.",
+      "effect": "Instantly tie or untie complex knots, granting advantage on checks related to ropes, restraints, or tangling foes."
+    },
+    "LightAsAir": {
+      "name": "Light As Air",
+      "description": "Moving gracefully like you’re made of helium, though you still can’t pronounce 'balloon' in a high-pitched voice. A missed opportunity.",
+      "effect": "Reduce fall damage by half and gain advantage on checks or saves against being knocked prone."
+    },
+    "LongLegs": {
+      "name": "Long Legs",
+      "description": "Strut like a runway model and tower over your short-legged companions. Stairs? Pfft. Merely suggestions.",
+      "effect": "Increases your base movement speed by 5 feet and grants advantage on checks to jump or climb smaller obstacles."
+    },
+    "MoodKiller": {
+      "name": "Mood Killer",
+      "description": "Wherever you go, the party vibe plummets. Jokes? Dead on arrival. Don’t expect birthday invites.",
+      "effect": "Enemies within 10 feet suffer a –1 penalty on their next attack roll if they recently cheered or felt joy. Allies might quietly resent you."
+    },
+    "MoonlitSparkle": {
+      "name": "Moonlit Sparkle",
+      "description": "Under the silvery glow of the moon, you shimmer like a disco ball performing interpretive dance.",
+      "effect": "In moonlight, gain +2 to all Dexterity-based checks. However, you glow faintly, making Stealth trickier (–2 to Stealth in bright moonlight)."
+    },
+    "MustyScent": {
+      "name": "Musty Scent",
+      "description": "That earthy aroma that says, 'I haven’t showered in a while, but nature is my cologne.'",
+      "effect": "Animals (and some monsters) have a neutral or mildly friendly reaction to you, while refined folk find you off-putting (–1 Charisma in high-society settings)."
+    },
+    "NarrativeDominion": {
+      "name": "Narrative Dominion",
+      "description": "You keep hijacking the story, ensuring scenes spin in your favor, like an author rewriting the plot on the fly.",
+      "effect": "Once per session, declare a minor narrative twist in your favor (DM’s discretion). Enemies find themselves living in your story."
+    },
+    "NineLives": {
+      "name": "Nine Lives",
+      "description": "A faint supernatural luck that might just save you from lethal hazards—eight times, anyway.",
+      "effect": "Once per session, negate a fatal blow, leaving you at 1 HP. Each time this triggers, the trait’s number of uses decreases by one until you’re out of 'lives.'"
+    },
+    "NobleSuffering": {
+      "name": "Noble Suffering",
+      "description": "Bear a regal burden of tragic dignity, like a noble in a scandalous romance novel that never ends well.",
+      "effect": "You can choose to transfer 5 damage from an adjacent ally to yourself once per round. Allies within sight gain +1 Morale knowing you share their pain."
+    },
+    "OdorousWarning": {
+      "name": "Odorous Warning",
+      "description": "You reek of something indescribable, giving allies a chance to plug their noses—and giving enemies second thoughts.",
+      "effect": "Enemies must make a Wit save before ambushing you. On a fail, they hesitate, granting you a surprise reaction. Allies within 5 feet also catch a whiff."
+    },
+    "PhaseBeyondVision": {
+      "name": "Phase Beyond Vision",
+      "description": "Partially existing outside normal sight lines, you flicker in and out like a half-baked fever dream.",
+      "effect": "Enemies have disadvantage on Perception checks to spot you if you haven’t moved more than 5 feet this round."
+    },
+    "PoisonResidual": {
+      "name": "Poison Residual",
+      "description": "Faint traces of venom linger, possibly from a monstrous arthropod. They’d kill you if they could—but you’re too stubborn.",
+      "effect": "Gain advantage on saves against poison and a mild toxin aura that imposes a –1 penalty on adjacent foes’ Stamina checks."
+    },
+    "PoisonThread": {
+      "name": "Poison Thread",
+      "description": "Threads laced with spider venom that make hugging you a surprisingly lethal act. Use responsibly.",
+      "effect": "Once per combat, if a foe grapples you, they take 1d6 poison damage. Gain +2 to resisting grapples due to your prickly existence."
+    },
+    "PranksterAura": {
+      "name": "Prankster Aura",
+      "description": "Mischief clings to you like static, causing harmless illusions and comedic timing to flourish around you.",
+      "effect": "Enemies have a slight chance (10%) each round to slip, fumble, or otherwise embarrass themselves when engaged with you."
+    },
+    "ReflectiveSurface": {
+      "name": "Reflective Surface",
+      "description": "Mirrors bounce off your armor, dazzling onlookers and forcing you to check for spinach in your teeth. Constantly.",
+      "effect": "Once per short rest, reflect a targeted spell of level 1–2 back at its caster on a successful Wit contest."
+    },
+    "RodentCunning": {
+      "name": "Rodent Cunning",
+      "description": "Channel the wily survival instincts of that one heroic mouse from the tales—cute, but deadly to unprepared felines.",
+      "effect": "Gain advantage on checks to hide or escape grapples. If cornered, you can nibble your way out of ropes at double speed."
+    },
+    "RumSoaked": {
+      "name": "Rum Soaked",
+      "description": "You and your gear permanently smell of cheap rum. This may inspire karaoke or lead to tactical regrets.",
+      "effect": "Gain a +1 bonus to morale-based checks (Intimidation, Persuasion among rowdy pirates), but sober nobles or law enforcers react at –2 Charisma."
+    },
+    "ShatterStrike": {
+      "name": "Shatter Strike",
+      "description": "You strike like a jagged glass wrecking ball, daring objects (and skulls) to remain intact.",
+      "effect": "Once per short rest, deal double damage against inorganic materials (stone, crystal, metal). Against living creatures, critical hits might cause bleeding (GM’s choice)."
+    },
+    "SoulHarvest": {
+      "name": "Soul Harvest",
+      "description": "A faint connection to the realm of death ensures that each felled foe slightly empowers you—spooky but effective.",
+      "effect": "Whenever you reduce a hostile creature to 0 HP, regain 1d6 HP once per short rest. They won’t be needing that soul juice anyway."
+    },
+    "StickyGrip": {
+      "name": "Sticky Grip",
+      "description": "Your toes or fingers cling like tar-covered suction cups. Washing your hands may never feel the same.",
+      "effect": "Advantage on climbing checks. You also can’t be easily disarmed of handheld items, as they stick to your palm unless you let go."
+    },
+    "StingOfTheEternals": {
+      "name": "Sting of the Eternals",
+      "description": "A perpetual venom courses through you, reminiscent of an eternal arthropod’s final strike.",
+      "effect": "Your first successful melee hit each combat deals an additional 1d6 poison damage. If the foe is already poisoned, add 1d6 more."
+    },
+    "StormAegis": {
+      "name": "Storm Aegis",
+      "description": "Flickers of lightning crackle around you, politely reminding everyone you’re wearing the meteorological equivalent of a mood ring set to “Angry.”",
+      "effect": "Once per short rest, reduce electric/lightning damage by half. Melee attackers who hit you take 1d4 lightning damage in retaliation."
+    },
+    "TimelessGrace": {
+      "name": "Timeless Grace",
+      "description": "Glimmers of eternal youth and fae elegance keep your movements fluid—and your sense of arrogance shining.",
+      "effect": "Once per encounter, ignore difficult terrain for a round. Allies see you glow with annoying perfection."
+    },
+    "UmbralLink": {
+      "name": "Umbral Link",
+      "description": "A shadowy tether to darker planes has latched onto you, letting you slip through gloom more easily.",
+      "effect": "Gain advantage on Stealth checks in darkness. If you vanish into a shadow, you can teleport up to 10 feet within connected shadows once per short rest."
+    },
+    "UnrelentingHunt": {
+      "name": "Unrelenting Hunt",
+      "description": "When you catch a scent, you stalk your prey like a werewolf on espresso—there’s no escape.",
+      "effect": "Deal +1d6 bonus damage to any target you’ve successfully tracked in the last hour. Foe must pass a Wit save to hide from you again."
+    },
+    "UrbanWalk": {
+      "name": "Urban Walk",
+      "description": "Navigating crowded streets, back alleys, or random parades is a breeze—just watch out for horse poop.",
+      "effect": "Ignore difficult terrain in urban environments. Gain +2 to Streetwise or local knowledge checks."
+    },
+    "WingedJuggernaut": {
+      "name": "Winged Juggernaut",
+      "description": "Expand colossal wings that don’t just lift you—they flatten anyone foolish enough to stand in your flight path.",
+      "effect": "When you take flight, create a 10-foot gust of wind that forces enemies to make a Strength save or be knocked prone."
     }
+  }
 }

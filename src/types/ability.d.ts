@@ -10,6 +10,7 @@ export interface Ability {
     };
     abilitypointcost: number;
     cooldown: string;
+    specialrules?: Record<string, string>;
   }
   
   export interface AbilitiesData {

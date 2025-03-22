@@ -1,6 +1,13 @@
 import React from 'react';
-import { Box, SimpleGrid, Text, VStack } from '@chakra-ui/react';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+  Box,
+  SimpleGrid,
+  Text,
+  VStack,
+  HStack,
+  Badge,
+} from '@chakra-ui/react';
+import { Card } from '@/components/ui/card';
 import { useCharacter } from '@/context/CharacterContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -17,7 +24,12 @@ interface TraitsData {
 }
 
 const Traits = () => {
-  const { selectedRace, selectedClass } = useCharacter();
+  const { 
+    selectedRace, 
+    selectedClass, 
+    getEquipmentTraits 
+  } = useCharacter();
+  
   const [traitsData, setTraitsData] = React.useState<TraitsData | null>(null);
 
   React.useEffect(() => {
@@ -34,36 +46,54 @@ const Traits = () => {
     loadTraitsData();
   }, []);
 
-  if (!selectedRace && !selectedClass) {
-    return (
-      <Box p={4} textAlign="center">
-        <Text color="gray.500">Select a race and class to view traits</Text>
-      </Box>
-    );
-  }
-
   if (!traitsData) {
     return (
       <Box p={4} textAlign="center">
-        <Text color="gray.500">Loading traits...</Text>
+        <Text color="gray.400">Loading traits...</Text>
       </Box>
     );
   }
 
-  // Combine traits from both race and class using Array.from
+  // Get all traits from different sources
   const racialTraits = selectedRace?.traits || [];
   const classTraits = selectedClass?.traits || [];
-  const allTraits = Array.from(new Set([...racialTraits, ...classTraits]));
+  const equipmentTraits = getEquipmentTraits();
 
+  // No traits message if no sources are selected
+  if (!selectedRace && !selectedClass && equipmentTraits.length === 0) {
+    return (
+      <Box p={4} textAlign="center">
+        <Text color="gray.400">Select a race, class, or equip items to view traits</Text>
+      </Box>
+    );
+  }
+
+  // Combine all traits and remove duplicates
+  const allTraits = Array.from(new Set([
+    ...racialTraits,
+    ...classTraits,
+    ...equipmentTraits
+  ]));
+
+  // Get trait details and track sources
   const traitDetails = allTraits.map(traitName => {
     const trait = Object.values(traitsData.traits).find(
       t => t.name.toLowerCase() === traitName.toLowerCase()
     );
     
-    return trait || { 
-      name: traitName, 
-      description: "Trait details not found",
-      effect: ""
+    // Track where this trait comes from
+    const sources = [];
+    if (racialTraits.includes(traitName)) sources.push('Race');
+    if (classTraits.includes(traitName)) sources.push('Class');
+    if (equipmentTraits.includes(traitName)) sources.push('Equipment');
+    
+    return {
+      ...trait || { 
+        name: traitName, 
+        description: "Trait details not found",
+        effect: ""
+      },
+      sources
     };
   });
 
@@ -71,31 +101,58 @@ const Traits = () => {
     <ScrollArea className="h-[600px] pr-4">
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} p={4}>
         {traitDetails.map((trait, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow">
-            <CardContent>
-              <VStack align="start" spacing={2} p={4}>
+          <Box
+            key={index}
+            bg="gray.800"
+            borderRadius="lg"
+            boxShadow="sm"
+            p={4}
+            transition="all 0.2s"
+            _hover={{ boxShadow: "md", borderColor: "orange.700" }}
+            borderWidth="1px"
+            borderColor="gray.700"
+          >
+            <VStack align="start" spacing={2}>
+              <Box w="full">
                 <Text 
                   fontSize="lg" 
                   fontWeight="bold" 
-                  color="blue.600"
+                  color="orange.400"
+                  mb={2}
                 >
                   {trait.name}
                 </Text>
-                <Text color="gray.700">
-                  {trait.description}
+                {/* Source badges */}
+                <HStack spacing={2} mb={2}>
+                  {trait.sources.map((source, idx) => (
+                    <Badge 
+                      key={idx}
+                      colorScheme={
+                        source === 'Race' ? 'green' :
+                        source === 'Class' ? 'purple' :
+                        'blue'
+                      }
+                      fontSize="xs"
+                    >
+                      {source}
+                    </Badge>
+                  ))}
+                </HStack>
+              </Box>
+              <Text color="gray.300">
+                {trait.description}
+              </Text>
+              {trait.effect && (
+                <Text 
+                  color="gray.400" 
+                  fontSize="sm" 
+                  fontStyle="italic"
+                >
+                  Effect: {trait.effect}
                 </Text>
-                {trait.effect && (
-                  <Text 
-                    color="gray.600" 
-                    fontSize="sm" 
-                    fontStyle="italic"
-                  >
-                    Effect: {trait.effect}
-                  </Text>
-                )}
-              </VStack>
-            </CardContent>
-          </Card>
+              )}
+            </VStack>
+          </Box>
         ))}
       </SimpleGrid>
     </ScrollArea>

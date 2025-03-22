@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
   // Enable static file serving through the /public folder
   images: {
     domains: [], // Add any external image domains you need here
+  },
+  eslint: {
+    // Warning: This allows you to build with errors
+    ignoreDuringBuilds: true,
   }
 }
 

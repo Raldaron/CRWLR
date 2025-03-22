@@ -1,11 +1,11 @@
-'use client';
 import React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import WeaponsEquipment from './WeaponsEquipment';
 
 const Weapons: React.FC = () => {
   return (
     <Box p={4}>
-      <Text>Weapons Component</Text>
+      <WeaponsEquipment />
     </Box>
   );
 };

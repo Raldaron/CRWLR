@@ -6,12 +6,10 @@
         "strength": 1,
         "dexterity": 1,
         "intelligence": 1,
-        "appearance": 1,
         "charisma": 1,
         "stamina": 1,
         "perception": 1,
-        "wit": 1,
-        "manipulation": 1
+        "wit": 1
       },
       "skillbonus": {
         "survival": 2,
@@ -41,8 +39,7 @@
         "melee": 3,
         "athletics": 3,
         "survival": 2,
-        "intimidation": 3,
-        "leadership": 2
+        "intimidation": 3
       },
       "abilities": [
         "battlecry",
@@ -88,7 +85,7 @@
         "dexterity": 1
       },
       "skillbonus": {
-        "close combat": 3,
+        "melee": 3,
         "intimidation": 2,
         "stealth": 1
       },
@@ -161,7 +158,7 @@
       "skillbonus": {
         "deception": 3,
         "disguise": 2,
-        "perception": 1
+        "stealth": 1
       },
       "abilities": [
         "shapechange",
@@ -207,7 +204,7 @@
         "dexterity": 1
       },
       "skillbonus": {
-        "close combat": 3,
+        "melee": 3,
         "intimidation": 2,
         "athletics": 1
       },
@@ -232,7 +229,7 @@
       },
       "skillbonus": {
         "stealth": 3,
-        "close combat": 2,
+        "melee": 2,
         "survival": 1
       },
       "abilities": [
@@ -257,7 +254,7 @@
       "skillbonus": {
         "disguise": 3,
         "deception": 2,
-        "perception": 1
+        "sense deception": 1
       },
       "abilities": [
         "perfectimitation",
@@ -279,7 +276,7 @@
         "charisma": 1
       },
       "skillbonus": {
-        "ranged combat": 3,
+        "archery": 3,
         "stealth": 2,
         "arcana": 1
       },
@@ -375,7 +372,7 @@
         "dexterity": 1
       },
       "skillbonus": {
-        "close combat": 3,
+        "melee": 3,
         "intimidation": 2,
         "survival": 1
       },
@@ -396,7 +393,7 @@
       "statbonus": {
         "charisma": 3,
         "dexterity": 2,
-        "appearance": 5
+        "wit": 5
       },
       "skillbonus": {
         "persuasion": 3,
@@ -518,7 +515,7 @@
         "dexterity": 1
       },
       "skillbonus": {
-        "close combat": 3,
+        "melee": 3,
         "intimidation": 2,
         "athletics": 1
       },
@@ -543,7 +540,7 @@
       },
       "skillbonus": {
         "survival": 3,
-        "close combat": 1
+        "melee": 1
       },
       "abilities": [
         "burrowblitz",
@@ -635,16 +632,14 @@
         "stamina": 3,
         "dexterity": 2,
         "intelligence": 4,
-        "manipulation": 3,
         "charisma": 3,
-        "appearance": 5
+        "wit": 5
       },
       "skillbonus": {
-        "explosives-handling": 3,
+        "explosives handling": 3,
         "seduction": 4,
         "persuasion": 3,
         "performance": 3,
-        "empathy": 4,
         "awareness": 3,
         "tracking": 3,
         "perception": 3,
@@ -696,7 +691,7 @@
         "stamina": 1
       },
       "skillbonus": {
-        "close combat": 3,
+        "melee": 3,
         "intimidation": 2,
         "stealth": 1
       },
@@ -720,7 +715,6 @@
         "stamina": 2
       },
       "skillbonus": {
-        "close-combat": 2,
         "melee": 2,
         "stealth": 3,
         "athletics": 2,

@@ -1,81 +1,55 @@
-'use client';
-
 import React from 'react';
-import { Box, SimpleGrid, Text, VStack } from '@chakra-ui/react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Box, VStack, Text, Badge, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react';
 import { useCharacter } from '@/context/CharacterContext';
-import { Heart, Brain, Zap } from 'lucide-react';
+import CharacterLevel from './CharacterLevel';
 import RaceSelectionModals from './RaceSelectionModals';
 import ClassSelectionModals from './ClassSelectionModals';
-
-interface StatCardProps {
-  label: string;
-  current: number;
-  max: number;
-  icon: React.ElementType;
-  color: string;
-  formula: string;
-  breakdown: string;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ 
-  label, 
-  current, 
-  max, 
-  icon: Icon,
-  color,
-  formula,
-  breakdown
-}) => {
-  return (
-    <Card
-      className="transition-all duration-200 hover:shadow-lg"
-      style={{ borderTop: `4px solid ${color}` }}
-    >
-      <CardContent>
-        <VStack p={4} spacing={3} alignItems="center" minH="150px" justifyContent="center">
-          <Icon size={24} color={color} />
-          <Text fontSize="xl" fontWeight="bold" color="gray.600">
-            {label}
-          </Text>
-          <Text fontSize="3xl" fontWeight="bold">
-            <span style={{ color }}>{current}</span>
-            <span className="text-gray-400">/{max}</span>
-          </Text>
-          <Text fontSize="xs" color="gray.500">
-            {breakdown}
-          </Text>
-        </VStack>
-      </CardContent>
-    </Card>
-  );
-};
+import CharacterBackground from './CharacterBackground';
 
 const Character: React.FC = () => {
-  const { currentStats } = useCharacter();
-  const characterLevel = 1;
-  
-  const maxHp = 8 * currentStats.stamina + characterLevel;
-  const maxMp = 5 * currentStats.intelligence + characterLevel;
-  const maxAp = characterLevel * 2;
+  const { selectedRace, selectedClass } = useCharacter();
+
+  // Check if either race or class is selected
+  const hasSelection = selectedRace || selectedClass;
 
   return (
-    <Box p={6}>
-      {/* Character Creation Section */}
-      <SimpleGrid columns={2} spacing={6} className="mb-8">
-        <Card>
-          <CardContent className="p-4">
-            <Text className="text-lg font-semibold mb-4">Race</Text>
-            <RaceSelectionModals />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <Text className="text-lg font-semibold mb-4">Class</Text>
-            <ClassSelectionModals />
-          </CardContent>
-        </Card>
-      </SimpleGrid>
+    <Box p={3}>
+      {/* Character Level Section */}
+      <CharacterLevel />
+      
+      {/* Character Selection Section */}
+      <Box 
+        bg="gray.800" 
+        borderRadius="lg" 
+        boxShadow="sm"
+        overflow="hidden"
+        mb={4}
+        borderWidth="1px"
+        borderColor="gray.700"
+      >
+        <Box p={4}>
+          <VStack spacing={4} align="stretch">
+            {/* Race and Class Selection with uniform-sized buttons */}
+            <Box display="flex" flexDirection={{ base: "column", md: "row" }} gap={4}>
+              <Box flex={1}>
+                <Text fontWeight="semibold" fontSize="sm" mb={2} color="gray.300">Race</Text>
+                <Box height="40px">
+                  <RaceSelectionModals />
+                </Box>
+              </Box>
+              <Box flex={1}>
+                <Text fontWeight="semibold" fontSize="sm" mb={2} color="gray.300">Class</Text>
+                <Box height="40px">
+                  <ClassSelectionModals />
+                </Box>
+              </Box>
+            </Box>
+          </VStack>
+        </Box>
+      </Box>
+
+      {/* Character Background - only displayed if race or class is selected */}
+      {hasSelection && <CharacterBackground />}
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -13,44 +13,67 @@ import {
   Text,
   Flex,
   Icon,
+  Spinner,
+  VStack,
+  HStack,
+  Badge,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Sword, Star } from 'lucide-react';
-import classesData from '@/data/classes.json';
 import { useCharacter } from '@/context/CharacterContext';
+import type { Class } from '@/types/class';
 
-// Define what a class looks like
-interface Class {
-  name: string;
-  description: string;
-  archetype: string;
-  primarystats: string[];
-  statbonus: {
-    [key: string]: number;
-  };
-  skillbonus: {
-    [key: string]: number;
-  };
-  abilities: string[];
-  traits: string[];
-  armorrating: number;
-}
+// Helper function to standardize skill names
+const standardizeSkillName = (skillName: string): string => {
+  return skillName
+    .toLowerCase()
+    .replace(/[-_]/g, ' ')
+    .trim();
+};
+
+// Helper function to capitalize first letter of each word
+const capitalizeWords = (str: string): string => {
+  return str.split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 const ClassSelectionModals = () => {
-  // Track selected class and modal states
   const { selectedClass, setSelectedClass } = useCharacter();
   const [isMainOpen, setIsMainOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedClassDetails, setSelectedClassDetails] = useState<Class | null>(null);
+  const [classesData, setClassesData] = useState<{[key: string]: Class}>({});
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Handle clicking a class in the list
+  // Responsive layout
+  const gridColumns = useBreakpointValue({ base: 1, sm: 2, md: 3 }) || 1;
+  const modalSize = useBreakpointValue({ base: "full", md: "2xl", lg: "4xl" }) || "full";
+
+  // Load classes data from JSON file
+  useEffect(() => {
+    const loadClassesData = async () => {
+      try {
+        const response = await fetch('/data/classes.json');
+        const data = await response.json();
+        setClassesData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading classes data:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadClassesData();
+  }, []);
+
   const handleClassClick = (classData: Class) => {
     setSelectedClassDetails(classData);
     setIsMainOpen(false);
     setIsDetailsOpen(true);
   };
 
-  // Handle confirming class selection
   const handleConfirmSelection = () => {
     if (selectedClassDetails) {
       setSelectedClass(selectedClassDetails);
@@ -60,178 +83,202 @@ const ClassSelectionModals = () => {
 
   return (
     <>
-      {/* Select Class Button */}
       <Button
         onClick={() => setIsMainOpen(true)}
         variant="outline"
-        width="full"
+        colorScheme="purple"
+        width="100%"
+        height="100%"
+        bg="gray.800"
+        borderColor="gray.600"
+        _hover={{ bg: "gray.700", borderColor: "purple.400" }}
       >
         {selectedClass ? selectedClass.name : "Select Class"}
       </Button>
 
-      {/* Class List Modal */}
-      <Modal isOpen={isMainOpen} onClose={() => setIsMainOpen(false)} size="4xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Choose Your Class</ModalHeader>
-          <ModalCloseButton />
+      {/* Main Class Selection Modal */}
+      <Modal isOpen={isMainOpen} onClose={() => setIsMainOpen(false)} size={modalSize}>
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+        <ModalContent bg="gray.800" borderColor="gray.700">
+          <ModalHeader color="gray.100">Choose Your Class</ModalHeader>
+          <ModalCloseButton color="gray.400" />
           <ModalBody>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} pb={4}>
-              {Object.entries(classesData).map(([key, classData]) => (
-                <Card 
-                  key={key}
-                  className="cursor-pointer hover:bg-gray-100 transition-colors"
-                  onClick={() => handleClassClick(classData as Class)}
-                >
-                  <CardContent className="p-4">
-                    <Text fontSize="lg" fontWeight="bold" mb={2}>{classData.name}</Text>
-                    <Text fontSize="sm" color="gray.600" noOfLines={2}>
+            {isLoading ? (
+              <Flex justify="center" align="center" h="200px">
+                <Spinner color="purple.400" />
+              </Flex>
+            ) : (
+              <SimpleGrid columns={gridColumns} spacing={3} pb={4}>
+                {Object.entries(classesData).map(([key, classData]) => (
+                  <Box 
+                    key={key}
+                    borderWidth="1px"
+                    borderRadius="md"
+                    p={3}
+                    cursor="pointer"
+                    bg="gray.750"
+                    onClick={() => handleClassClick(classData as Class)}
+                    _hover={{ bg: "gray.700", borderColor: "purple.400" }}
+                    transition="all 0.2s"
+                    borderColor="gray.600"
+                  >
+                    <Text fontWeight="bold" mb={1} color="gray.100">{classData.name}</Text>
+                    <Badge colorScheme="purple" size="sm" mb={1}>
+                      {classData.archetype}
+                    </Badge>
+                    <Text fontSize="xs" color="gray.400" noOfLines={2}>
                       {classData.description}
                     </Text>
-                  </CardContent>
-                </Card>
-              ))}
-            </SimpleGrid>
+                  </Box>
+                ))}
+              </SimpleGrid>
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
 
       {/* Class Details Modal */}
-      <Modal isOpen={isDetailsOpen} onClose={() => setIsDetailsOpen(false)} size="4xl">
-        <ModalOverlay />
-        <ModalContent maxH="85vh" overflowY="auto">
-          <ModalHeader>{selectedClassDetails?.name}</ModalHeader>
-          <ModalCloseButton />
+      <Modal isOpen={isDetailsOpen} onClose={() => setIsDetailsOpen(false)} size={modalSize}>
+        <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(10px)" />
+        <ModalContent maxH="85vh" overflowY="auto" bg="gray.800" borderColor="gray.700">
+          <ModalHeader>
+            <Text color="gray.100">{selectedClassDetails?.name}</Text>
+            <Badge colorScheme="purple" mt={1}>
+              {selectedClassDetails?.archetype}
+            </Badge>
+          </ModalHeader>
+          <ModalCloseButton color="gray.400" />
           <ModalBody>
             {selectedClassDetails && (
-              <Box className="space-y-6">
+              <VStack spacing={4} align="stretch">
                 {/* Description */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Description</Text>
-                  <Text color="gray.700">{selectedClassDetails.description}</Text>
-                </Box>
-
-                {/* Archetype */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Archetype</Text>
-                  <Text color="gray.700">{selectedClassDetails.archetype}</Text>
-                </Box>
+                <Text color="gray.300">{selectedClassDetails.description}</Text>
 
                 {/* Primary Stats */}
                 <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Primary Stats</Text>
-                  <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4}>
+                  <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Primary Stats</Text>
+                  <SimpleGrid columns={{ base: 2, md: 3 }} spacing={2}>
                     {selectedClassDetails.primarystats.map((stat) => (
                       <Flex 
                         key={stat}
                         align="center" 
-                        bg="purple.50" 
+                        bg="teal.900" 
                         p={2} 
                         borderRadius="md"
                       >
-                        <Icon as={Star} color="purple.500" mr={2} />
-                        <Text>{stat}</Text>
+                        <Icon as={Star} color="teal.400" boxSize={3} mr={1} />
+                        <Text fontSize="sm" color="gray.200">{capitalizeWords(stat)}</Text>
                       </Flex>
                     ))}
                   </SimpleGrid>
                 </Box>
 
                 {/* Stat Bonuses */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Stat Bonuses</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-                    {Object.entries(selectedClassDetails.statbonus).map(([stat, bonus]) => (
-                      <Flex 
-                        key={stat} 
-                        align="center" 
-                        bg="blue.50" 
-                        p={2} 
-                        borderRadius="md"
-                      >
-                        <Icon as={Star} color="blue.500" mr={2} />
-                        <Text>
-                          +{bonus} {stat.charAt(0).toUpperCase() + stat.slice(1)}
-                        </Text>
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
-                </Box>
+                {Object.keys(selectedClassDetails.statbonus).length > 0 && (
+                  <Box>
+                    <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Stat Bonuses</Text>
+                    <SimpleGrid columns={{ base: 2, md: 3 }} spacing={2}>
+                      {Object.entries(selectedClassDetails.statbonus).map(([stat, bonus]) => (
+                        <Flex 
+                          key={stat} 
+                          align="center" 
+                          bg="blue.900" 
+                          p={2} 
+                          borderRadius="md"
+                        >
+                          <Icon as={Star} color="blue.400" boxSize={3} mr={1} />
+                          <Text fontSize="sm" color="gray.200">
+                            +{bonus} {capitalizeWords(stat)}
+                          </Text>
+                        </Flex>
+                      ))}
+                    </SimpleGrid>
+                  </Box>
+                )}
 
                 {/* Skill Bonuses */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Skill Bonuses</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-                    {Object.entries(selectedClassDetails.skillbonus).map(([skill, bonus]) => (
-                      <Flex 
-                        key={skill} 
-                        align="center" 
-                        bg="green.50" 
-                        p={2} 
-                        borderRadius="md"
-                      >
-                        <Icon as={Sword} color="green.500" mr={2} />
-                        <Text>
-                          +{bonus} {skill.charAt(0).toUpperCase() + skill.slice(1)}
-                        </Text>
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
-                </Box>
+                {Object.keys(selectedClassDetails.skillbonus).length > 0 && (
+                  <Box>
+                    <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Skill Bonuses</Text>
+                    <SimpleGrid columns={{ base: 2, md: 3 }} spacing={2}>
+                      {Object.entries(selectedClassDetails.skillbonus).map(([skill, bonus]) => {
+                        const standardizedSkillName = standardizeSkillName(skill);
+                        return (
+                          <Flex 
+                            key={skill} 
+                            align="center" 
+                            bg="green.900" 
+                            p={2} 
+                            borderRadius="md"
+                          >
+                            <Icon as={Sword} color="green.400" boxSize={3} mr={1} />
+                            <Text fontSize="sm" color="gray.200">
+                              +{bonus} {capitalizeWords(standardizedSkillName)}
+                            </Text>
+                          </Flex>
+                        );
+                      })}
+                    </SimpleGrid>
+                  </Box>
+                )}
 
                 {/* Abilities */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Abilities</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                    {selectedClassDetails.abilities.map((ability) => (
-                      <Flex 
-                        key={ability}
-                        align="center" 
-                        bg="yellow.50" 
-                        p={2} 
-                        borderRadius="md"
-                      >
-                        <Icon as={Star} color="yellow.500" mr={2} />
-                        <Text>{ability}</Text>
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
-                </Box>
+                {selectedClassDetails.abilities.length > 0 && (
+                  <Box>
+                    <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Abilities</Text>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
+                      {selectedClassDetails.abilities.map((ability) => (
+                        <Flex 
+                          key={ability}
+                          align="center" 
+                          bg="purple.900" 
+                          p={2} 
+                          borderRadius="md"
+                        >
+                          <Icon as={Star} color="purple.400" boxSize={3} mr={1} />
+                          <Text fontSize="sm" color="gray.200">{ability}</Text>
+                        </Flex>
+                      ))}
+                    </SimpleGrid>
+                  </Box>
+                )}
 
                 {/* Traits */}
-                <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Traits</Text>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                    {selectedClassDetails.traits.map((trait) => (
-                      <Flex 
-                        key={trait}
-                        align="center" 
-                        bg="orange.50" 
-                        p={2} 
-                        borderRadius="md"
-                      >
-                        <Icon as={Shield} color="orange.500" mr={2} />
-                        <Text>{trait}</Text>
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
-                </Box>
+                {selectedClassDetails.traits.length > 0 && (
+                  <Box>
+                    <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Traits</Text>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
+                      {selectedClassDetails.traits.map((trait) => (
+                        <Flex 
+                          key={trait}
+                          align="center" 
+                          bg="orange.900" 
+                          p={2} 
+                          borderRadius="md"
+                        >
+                          <Icon as={Shield} color="orange.400" boxSize={3} mr={1} />
+                          <Text fontSize="sm" color="gray.200">{trait}</Text>
+                        </Flex>
+                      ))}
+                    </SimpleGrid>
+                  </Box>
+                )}
 
                 {/* Base Armor Rating */}
                 <Box>
-                  <Text fontSize="lg" fontWeight="semibold" mb={2}>Base Armor Rating</Text>
-                  <Flex align="center" bg="gray.50" p={2} borderRadius="md" width="fit-content">
-                    <Icon as={Shield} color="gray.500" mr={2} />
-                    <Text>{selectedClassDetails.armorrating}</Text>
-                  </Flex>
+                  <Text fontSize="md" fontWeight="semibold" mb={2} color="gray.200">Base Armor Rating</Text>
+                  <Badge colorScheme="blue" fontSize="md">
+                    AR: {selectedClassDetails.armorrating}
+                  </Badge>
                 </Box>
-              </Box>
+              </VStack>
             )}
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={() => setIsDetailsOpen(false)}>
+            <Button variant="ghost" mr={3} onClick={() => setIsDetailsOpen(false)} color="gray.300">
               Cancel
             </Button>
-            <Button colorScheme="blue" onClick={handleConfirmSelection}>
+            <Button colorScheme="purple" onClick={handleConfirmSelection}>
               Select {selectedClassDetails?.name}
             </Button>
           </ModalFooter>
