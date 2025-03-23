@@ -615,8 +615,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     characterLevel: 1,
     baseSkills: {},
     utilitySlots: defaultUtilitySlots,
-    availableStatPoints: 1,
-    availableSkillPoints: 10,
+    availableStatPoints: 7,
+    availableSkillPoints: 16,
     lastUpdated: Date.now(),
     notes: defaultNotes,
   });
@@ -1250,8 +1250,8 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
       characterLevel: 1,
       baseSkills: {},
       utilitySlots: defaultUtilitySlots,
-      availableStatPoints: 1,
-      availableSkillPoints: 10,
+      availableStatPoints: 7,
+      availableSkillPoints: 16,
     });
     featureManager.reset();
     equipmentBonuses.reset();
