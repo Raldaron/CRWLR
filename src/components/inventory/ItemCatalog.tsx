@@ -38,7 +38,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card, CardContent } from '@/components/ui/card';
+import DarkThemedCard from '@/components/ui/DarkThemedCard';
 import { useCharacter } from '@/context/CharacterContext';
 import type { InventoryItem } from '@/types/inventory';
 
@@ -62,6 +62,71 @@ interface CatalogItem {
   rarity: string;
   [key: string]: any;  // Allow for any additional properties
 }
+
+// Item card component
+const ItemCard = ({ item, onViewDetails, onAddToInventory }: { 
+  item: CatalogItem;
+  onViewDetails: () => void;
+  onAddToInventory: () => void;
+}) => {
+  // Get rarity color for badges
+  const getRarityColor = (rarity: string = 'common') => {
+    switch(rarity.toLowerCase()) {
+      case 'common': return 'gray';
+      case 'uncommon': return 'green';
+      case 'rare': return 'blue';
+      case 'epic': return 'purple';
+      case 'legendary': return 'orange';
+      case 'unique': return 'yellow';
+      case 'exceedingly rare': return 'pink';
+      case 'very rare': return 'red';
+      default: return 'gray';
+    }
+  };
+
+  return (
+    <DarkThemedCard>
+      <VStack spacing={2} align="stretch" h="full">
+        <Text fontWeight="bold" fontSize="md" noOfLines={1} color="gray.200">{item.name}</Text>
+        
+        <HStack>
+          <Badge colorScheme={getRarityColor(item.rarity)} variant="solid">
+            {item.rarity}
+          </Badge>
+          <Badge variant="outline" color="gray.300">{item.itemType}</Badge>
+        </HStack>
+        
+        <Text fontSize="sm" color="gray.400" noOfLines={2} flexGrow={1}>
+          {item.description}
+        </Text>
+        
+        <HStack spacing={2} justify="space-between" mt="auto">
+          <IconButton
+            aria-label="View details"
+            icon={<Eye size={18} />}
+            size="sm"
+            variant="ghost"
+            colorScheme="brand"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails();
+            }}
+          />
+          <IconButton
+            aria-label="Add to inventory"
+            icon={<Plus size={18} />}
+            size="sm"
+            colorScheme="brand"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToInventory();
+            }}
+          />
+        </HStack>
+      </VStack>
+    </DarkThemedCard>
+  );
+};
 
 // The main ItemCatalog component
 const ItemCatalog: React.FC = () => {
@@ -307,21 +372,6 @@ const ItemCatalog: React.FC = () => {
     loadCatalogData();
   }, []);
 
-  // Get rarity color for badges
-  const getRarityColor = (rarity: string = 'common') => {
-    switch(rarity.toLowerCase()) {
-      case 'common': return 'gray';
-      case 'uncommon': return 'green';
-      case 'rare': return 'blue';
-      case 'epic': return 'purple';
-      case 'legendary': return 'orange';
-      case 'unique': return 'yellow';
-      case 'exceedingly rare': return 'pink';
-      case 'very rare': return 'red';
-      default: return 'gray';
-    }
-  };
-
   // Get filtered items based on selected category and search term
   const getFilteredItems = () => {
     let items: CatalogItem[] = [];
@@ -352,61 +402,13 @@ const ItemCatalog: React.FC = () => {
     return items;
   };
 
-  // Item card component
-  const ItemCard = ({ item }: { item: CatalogItem }) => (
-    <Card className="h-full transition-all hover:shadow-md">
-      <CardContent className="p-0">
-        <Box p={3} h="full">
-          <VStack spacing={2} align="stretch" h="full">
-            <Text fontWeight="bold" fontSize="md" noOfLines={1}>{item.name}</Text>
-            
-            <HStack>
-              <Badge colorScheme={getRarityColor(item.rarity)}>
-                {item.rarity}
-              </Badge>
-              <Badge variant="outline">{item.itemType}</Badge>
-            </HStack>
-            
-            <Text fontSize="sm" color="gray.600" noOfLines={2} flexGrow={1}>
-              {item.description}
-            </Text>
-            
-            <HStack spacing={2} justify="space-between" mt="auto">
-              <IconButton
-                aria-label="View details"
-                icon={<Eye size={18} />}
-                size="sm"
-                variant="ghost"
-                colorScheme="blue"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleViewDetails(item);
-                }}
-              />
-              <IconButton
-                aria-label="Add to inventory"
-                icon={<Plus size={18} />}
-                size="sm"
-                colorScheme="green"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenQuantitySelector(item);
-                }}
-              />
-            </HStack>
-          </VStack>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-
   // If loading, show spinner
   if (isLoading) {
     return (
       <Center h="400px">
         <VStack spacing={4}>
-          <Spinner size="xl" color="blue.500" />
-          <Text>Loading item catalog...</Text>
+          <Spinner size="xl" color="brand.500" />
+          <Text color="gray.300">Loading item catalog...</Text>
         </VStack>
       </Center>
     );
@@ -416,7 +418,7 @@ const ItemCatalog: React.FC = () => {
   if (error) {
     return (
       <Center h="300px">
-        <Text color="red.500">{error}</Text>
+        <Text color="accent.400">{error}</Text>
       </Center>
     );
   }
@@ -428,18 +430,23 @@ const ItemCatalog: React.FC = () => {
     <Box p={4}>
       <VStack spacing={4} align="stretch">
         {/* Search and Filter UI */}
-        <Box borderRadius="md" bg="white" p={4} shadow="sm">
+        <Box borderRadius="md" bg="gray.800" p={4} shadow="sm" borderWidth="1px" borderColor="gray.700">
           <VStack spacing={3}>
             {/* Search Input */}
             <InputGroup>
               <InputLeftElement pointerEvents="none">
-                <Search size={18} color="gray.300" />
+                <Search size={18} className="text-gray-400" />
               </InputLeftElement>
               <Input 
                 placeholder="Search items..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 borderRadius="md"
+                bg="gray.750"
+                borderColor="gray.600"
+                _hover={{ borderColor: "brand.600" }}
+                _focus={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}
+                color="gray.200"
               />
             </InputGroup>
             
@@ -451,7 +458,7 @@ const ItemCatalog: React.FC = () => {
               width="full"
               justifyContent="space-between"
               fontWeight="normal"
-              color="gray.600"
+              color="gray.300"
             >
               {showFilters ? "Hide Filters" : "Show Filters"}
             </Button>
@@ -464,7 +471,7 @@ const ItemCatalog: React.FC = () => {
                     key={category.id}
                     size="sm"
                     variant={activeFilter === category.id ? "solid" : "outline"}
-                    colorScheme={activeFilter === category.id ? "blue" : "gray"}
+                    colorScheme={activeFilter === category.id ? "brand" : "gray"}
                     leftIcon={<category.icon size={14} />}
                     onClick={() => setActiveFilter(category.id)}
                     width="full"
@@ -479,17 +486,17 @@ const ItemCatalog: React.FC = () => {
         
         {/* Results Count */}
         <HStack justify="space-between">
-          <Text fontSize="sm" color="gray.600">
+          <Text fontSize="sm" color="gray.400">
             {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'} found
           </Text>
-          <Badge colorScheme="blue">{activeFilter === 'All' ? 'All Items' : activeFilter}</Badge>
+          <Badge colorScheme="brand">{activeFilter === 'All' ? 'All Items' : activeFilter}</Badge>
         </HStack>
         
         {/* Items Grid */}
         {filteredItems.length === 0 ? (
-          <Center h="200px" bg="white" borderRadius="md" p={4}>
+          <Center h="200px" bg="gray.800" borderRadius="md" p={4} borderWidth="1px" borderColor="gray.700">
             <VStack spacing={2}>
-              <Text>No items found</Text>
+              <Text color="gray.300">No items found</Text>
               <Text fontSize="sm" color="gray.500">Try adjusting your search or filters</Text>
             </VStack>
           </Center>
@@ -497,7 +504,12 @@ const ItemCatalog: React.FC = () => {
           <ScrollArea className="h-[450px] pr-2">
             <SimpleGrid columns={columns} spacing={4}>
               {filteredItems.map(item => (
-                <ItemCard key={item.id} item={item} />
+                <ItemCard 
+                  key={item.id} 
+                  item={item} 
+                  onViewDetails={() => handleViewDetails(item)} 
+                  onAddToInventory={() => handleOpenQuantitySelector(item)} 
+                />
               ))}
             </SimpleGrid>
           </ScrollArea>
