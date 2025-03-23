@@ -1,4 +1,4 @@
-// Update the Stats component in Stats.tsx
+// Updated Stats.tsx with fixed decrement functionality
 import React from 'react';
 import { 
   Box, 
@@ -53,7 +53,7 @@ const StatCard: React.FC<StatCardProps> = ({
             colorScheme="accent"
             aria-label="Decrease stat"
             onClick={() => decrementStat(statKey)}
-            isDisabled={baseValue === currentValue}
+            isDisabled={baseValue <= 0} // Only disable if base value is 0 or less
           />
           
           <Text fontSize="2xl" fontWeight="bold" color="gray.200">
