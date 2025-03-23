@@ -267,6 +267,25 @@ const ArmorEquipment: React.FC = () => {
     item.item.itemType === 'Armor'
   );
 
+  // Helper function to convert slot name to property key
+  const getSlotKey = (slotName: string, index: number): keyof typeof equippedItems => {
+    // Special handling for toe slots and other indexed slots
+    if (slotName === 'toes') {
+      return `toes${index}` as keyof typeof equippedItems;
+    } else if (slotName === 'face') {
+      return `face${index}` as keyof typeof equippedItems;
+    } else if (slotName === 'wrist') {
+      return `wrist${index}` as keyof typeof equippedItems;
+    } else if (slotName === 'finger') {
+      return `finger${index}` as keyof typeof equippedItems;
+    } else if (slotName === 'ankle') {
+      return `ankle${index}` as keyof typeof equippedItems;
+    } else {
+      // For slots with only one item
+      return slotName as keyof typeof equippedItems;
+    }
+  };
+
   // Calculate equipped count for a slot
   const countEquippedInSlot = (slotKey: string): number => {
     const slot = ARMOR_SLOTS[slotKey];
@@ -274,7 +293,7 @@ const ArmorEquipment: React.FC = () => {
     
     let equipped = 0;
     for (let i = 0; i < slot.count; i++) {
-      const slotName = `${slotKey}${i || ''}` as keyof typeof equippedItems;
+      const slotName = getSlotKey(slotKey, i);
       if (equippedItems[slotName]) equipped++;
     }
     return equipped;
@@ -340,16 +359,16 @@ const ArmorEquipment: React.FC = () => {
   // Handle equipping an armor piece
   const handleArmorSelect = (armor: ArmorItem) => {
     if (selectedSlot) {
-      const slotKey = `${selectedSlot}${selectedIndex || ''}` as keyof typeof equippedItems;
-      equipItem(slotKey, armor);
+      const slotName = getSlotKey(selectedSlot, selectedIndex);
+      equipItem(slotName, armor);
       closeArmorSelectModal();
     }
   };
 
   // Handle unequipping an armor piece
   const handleUnequip = (slot: string, index: number = 0) => {
-    const slotKey = `${slot}${index || ''}` as keyof typeof equippedItems;
-    equipItem(slotKey, null);
+    const slotName = getSlotKey(slot, index);
+    equipItem(slotName, null);
   };
 
   return (
@@ -408,7 +427,7 @@ const ArmorEquipment: React.FC = () => {
             <SimpleGrid columns={[2, 3, 4]} spacing={3}>
               {activeSubCategoryKey &&
                 [...Array(ARMOR_SLOTS[activeSubCategoryKey].count)].map((_, i) => {
-                  const slotName = `${activeSubCategoryKey}${i || ''}` as keyof typeof equippedItems;
+                  const slotName = getSlotKey(activeSubCategoryKey, i);
                   
                   return (
                     <Box key={`${activeSubCategoryKey}-${i}`} position="relative">
