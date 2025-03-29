@@ -22,11 +22,11 @@ import {
   Td,
 } from '@chakra-ui/react';
 import { Gift, Package, Check, ShoppingBag, Award } from 'lucide-react';
-import { 
-  collection, 
-  query, 
-  where, 
-  getDocs, 
+import {
+  collection,
+  query,
+  where,
+  getDocs,
   Timestamp,
   doc,
   updateDoc,
@@ -103,7 +103,7 @@ const PlayerLoot: React.FC = () => {
   const { currentUser } = useAuth();
   const { addToInventory } = useCharacter();
   const toast = useToast();
-  
+
   // State Management
   const [lootHistory, setLootHistory] = useState<LootDistribution[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -113,13 +113,13 @@ const PlayerLoot: React.FC = () => {
   const [viewMode, setViewMode] = useState<'active' | 'history'>('active');
 
   // Memoized Calculations
-  const unacknowledgedLoot = useMemo(() => 
-    lootHistory.filter(loot => !loot.acknowledged), 
+  const unacknowledgedLoot = useMemo(() =>
+    lootHistory.filter(loot => !loot.acknowledged),
     [lootHistory]
   );
 
-  const acknowledgedLoot = useMemo(() => 
-    lootHistory.filter(loot => loot.acknowledged), 
+  const acknowledgedLoot = useMemo(() =>
+    lootHistory.filter(loot => loot.acknowledged),
     [lootHistory]
   );
 
@@ -127,7 +127,7 @@ const PlayerLoot: React.FC = () => {
   useEffect(() => {
     const fetchLootHistory = async () => {
       if (!currentUser) return;
-      
+
       setIsLoading(true);
       setError(null);
 
@@ -136,24 +136,24 @@ const PlayerLoot: React.FC = () => {
           collection(db, 'lootDistributions'),
           where('recipientId', '==', currentUser.uid)
         );
-        
+
         const lootSnapshot = await getDocs(lootQuery);
-        
+
         const history: LootDistribution[] = await Promise.all(
           lootSnapshot.docs.map(async (doc) => {
             const data = doc.data();
-            
+
             // Fetch DM name
             let dmName = 'System AI';
             if (data.distributedBy) {
               try {
                 const dmDocs = await getDocs(
                   query(
-                    collection(db, 'users'), 
+                    collection(db, 'users'),
                     where('userId', '==', data.distributedBy)
                   )
                 );
-                
+
                 if (!dmDocs.empty) {
                   const dmData = dmDocs.docs[0].data();
                   dmName = dmData.displayName || dmData.email || 'System AI';
@@ -162,19 +162,19 @@ const PlayerLoot: React.FC = () => {
                 console.error('Error fetching DM name:', dmError);
               }
             }
-            
+
             // Sort the distribution items by name to maintain consistency
-            const sortedItems = (data.items || []).sort((a: LootItem, b: LootItem) => 
+            const sortedItems = (data.items || []).sort((a: LootItem, b: LootItem) =>
               a.name.localeCompare(b.name)
             );
-            
+
             return {
               id: doc.id,
               packageName: data.packageName || 'Mystery Loot Box',
               packageId: data.packageId || '',
               distributedBy: data.distributedBy,
-              distributedAt: data.distributedAt instanceof Timestamp 
-                ? data.distributedAt.toMillis() 
+              distributedAt: data.distributedAt instanceof Timestamp
+                ? data.distributedAt.toMillis()
                 : data.distributedAt,
               dmName,
               items: sortedItems,
@@ -183,10 +183,10 @@ const PlayerLoot: React.FC = () => {
             };
           })
         );
-        
+
         // Sort history by distribution date (most recent first)
         const sortedHistory = history.sort((a, b) => b.distributedAt - a.distributedAt);
-        
+
         setLootHistory(sortedHistory);
       } catch (fetchError) {
         console.error('Error loading loot history:', fetchError);
@@ -207,52 +207,74 @@ const PlayerLoot: React.FC = () => {
   }, [currentUser, toast]);
 
   // Acknowledge Loot Handler
-  const handleAcknowledgeLoot = async (lootId: string) => {
-    if (!currentUser) return;
+  // Updated handleAcknowledgeLoot function for PlayerLoot.tsx
+  // Updated handleAcknowledgeLoot function for PlayerLoot.tsx
+const handleAcknowledgeLoot = async (lootId: string) => {
+  if (!currentUser) return;
+  
+  setIsAcknowledging(true);
+  
+  try {
+    // Find the specific loot package
+    const lootBox = lootHistory.find(loot => loot.id === lootId);
     
-    setIsAcknowledging(true);
-    
-    try {
-      // Find the specific loot package
-      const lootBox = lootHistory.find(loot => loot.id === lootId);
+    if (lootBox) {
+      // First check if it's already acknowledged in the database
+      const lootRef = doc(db, 'lootDistributions', lootId);
+      const lootDoc = await getDoc(lootRef);
       
-      if (lootBox) {
-        // First check if it's already acknowledged in the database
-        const lootRef = doc(db, 'lootDistributions', lootId);
-        const lootDoc = await getDoc(lootRef);
-        
-        if (lootDoc.exists() && lootDoc.data().acknowledged) {
-          toast({
-            title: 'Already Acknowledged',
-            description: `This loot box has already been added to your inventory`,
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-          });
-          
-          // Update local state to match database
-          setLootHistory(prevHistory => 
-            prevHistory.map(loot => 
-              loot.id === lootId ? { ...loot, acknowledged: true } : loot
-            )
-          );
-          
-          setIsAcknowledging(false);
-          return;
-        }
-        
-        // Properly add ALL quantities of EACH item to inventory
-        lootBox.items.forEach(item => {
-          // Add the FULL quantity of the item to inventory
-          for (let i = 0; i < (item.quantity || 1); i++) {
-            addToInventory({
-              ...item,
-              description: item.description || ''
-            });
-          }
+      if (lootDoc.exists() && lootDoc.data().acknowledged) {
+        toast({
+          title: 'Already Acknowledged',
+          description: `This loot box has already been added to your inventory`,
+          status: 'warning',
+          duration: 3000,
+          isClosable: true,
         });
         
-        // Update the database to mark as acknowledged
+        // Update local state to match database
+        setLootHistory(prevHistory => 
+          prevHistory.map(loot => 
+            loot.id === lootId ? { ...loot, acknowledged: true } : loot
+          )
+        );
+        
+        setIsAcknowledging(false);
+        return;
+      }
+      
+      // ---- FIXED SECTION STARTS HERE ----
+      
+      // Create a copy of all the items to add to inventory
+      const itemsToAdd: LootItem[] = [];
+      
+      // Prepare all items with their full quantities
+      lootBox.items.forEach(item => {
+        // For each item, add it to our array the number of times specified by quantity
+        const quantity = item.quantity || 1;
+        for (let i = 0; i < quantity; i++) {
+          // Create a new object with all properties from item
+          // Ensure description is never undefined by providing a fallback empty string
+          itemsToAdd.push({
+            ...item,
+            description: item.description || '' // Convert undefined to empty string
+          });
+        }
+      });
+      
+      // Now add all items one by one, but handle them as a batch
+      try {
+        // Add each item to inventory
+        for (const item of itemsToAdd) {
+          // Explicitly ensure the item meets the InventoryItem type requirements
+          const inventoryItem = {
+            ...item,
+            description: item.description || '' // Guarantee description is a string
+          };
+          addToInventory(inventoryItem);
+        }
+        
+        // After successfully adding all items, update the database
         await updateDoc(lootRef, {
           acknowledged: true,
           acknowledgedAt: Date.now()
@@ -267,25 +289,31 @@ const PlayerLoot: React.FC = () => {
         
         toast({
           title: 'Loot Box Opened!',
-          description: `Items from ${lootBox.packageName} added to inventory`,
+          description: `${itemsToAdd.length} items from ${lootBox.packageName} added to inventory`,
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
+      } catch (itemError) {
+        console.error('Error adding items to inventory:', itemError);
+        throw new Error('Failed to add items to inventory');
       }
-    } catch (acknowledgeError) {
-      console.error('Loot acknowledgement error:', acknowledgeError);
-      toast({
-        title: 'Opening Failed',
-        description: 'Could not open loot box. Please try again.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setIsAcknowledging(false);
+      
+      // ---- FIXED SECTION ENDS HERE ----
     }
-  };
+  } catch (acknowledgeError) {
+    console.error('Loot acknowledgement error:', acknowledgeError);
+    toast({
+      title: 'Opening Failed',
+      description: 'Could not open loot box. Please try again.',
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  } finally {
+    setIsAcknowledging(false);
+  }
+};
 
   // Rendering Conditions
   if (isLoading) {
@@ -326,11 +354,11 @@ const PlayerLoot: React.FC = () => {
     <Box p={4}>
       {/* Unacknowledged Loot Alert */}
       {unacknowledgedLoot.length > 0 && (
-        <Alert 
-          status="success" 
-          mb={4} 
-          bg="amber.800" 
-          color="white" 
+        <Alert
+          status="success"
+          mb={4}
+          bg="amber.800"
+          color="white"
           borderRadius="md"
         >
           <AlertIcon color="amber.300" />
@@ -339,10 +367,10 @@ const PlayerLoot: React.FC = () => {
           </Text>
         </Alert>
       )}
-      
+
       {/* View Toggle */}
       <HStack mb={4} spacing={4}>
-        <Button 
+        <Button
           colorScheme={viewMode === 'active' ? 'brand' : 'gray'}
           variant={viewMode === 'active' ? 'solid' : 'outline'}
           onClick={() => setViewMode('active')}
@@ -350,7 +378,7 @@ const PlayerLoot: React.FC = () => {
         >
           Available Loot Boxes
         </Button>
-        <Button 
+        <Button
           colorScheme={viewMode === 'history' ? 'brand' : 'gray'}
           variant={viewMode === 'history' ? 'solid' : 'outline'}
           onClick={() => setViewMode('history')}
@@ -359,7 +387,7 @@ const PlayerLoot: React.FC = () => {
           Loot History
         </Button>
       </HStack>
-      
+
       {viewMode === 'active' ? (
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
           {/* Available Loot Boxes */}
@@ -368,7 +396,7 @@ const PlayerLoot: React.FC = () => {
               <Gift className="inline mr-2" />
               Available Loot Boxes
             </Heading>
-            
+
             <ScrollArea className="h-[500px]">
               <VStack spacing={3} align="stretch">
                 {unacknowledgedLoot.length === 0 ? (
@@ -377,11 +405,11 @@ const PlayerLoot: React.FC = () => {
                   </Box>
                 ) : (
                   unacknowledgedLoot.map(loot => (
-                    <Box 
-                      key={loot.id} 
-                      p={4} 
-                      borderWidth="1px" 
-                      borderRadius="md" 
+                    <Box
+                      key={loot.id}
+                      p={4}
+                      borderWidth="1px"
+                      borderRadius="md"
                       borderColor="amber.600"
                       bg="gray.800"
                       _hover={{ borderColor: "amber.500", boxShadow: "md" }}
@@ -397,15 +425,15 @@ const PlayerLoot: React.FC = () => {
                           </HStack>
                           <Badge colorScheme="yellow">New!</Badge>
                         </HStack>
-                        
+
                         <Text fontSize="sm" color="amber.300">
                           Sponsored by: {loot.sponsor}
                         </Text>
-                        
+
                         <Text fontSize="xs" color="gray.500">
                           Received: {formatDate(loot.distributedAt)}
                         </Text>
-                        
+
                         <HStack spacing={2} width="full" justify="space-between">
                           <Badge colorScheme="brand">{loot.items.length} {loot.items.length === 1 ? 'item' : 'items'}</Badge>
 
@@ -428,7 +456,7 @@ const PlayerLoot: React.FC = () => {
               </VStack>
             </ScrollArea>
           </Box>
-          
+
           {/* Loot Box Details */}
           <Box>
             {selectedLoot ? (
@@ -444,7 +472,7 @@ const PlayerLoot: React.FC = () => {
                     <Award className="text-amber-400" size={24} />
                     <Heading size="md" color="gray.200">{selectedLoot.packageName}</Heading>
                   </HStack>
-                  
+
                   <HStack>
                     <Text fontSize="sm" color="amber.300">
                       Sponsored by: {selectedLoot.sponsor}
@@ -453,15 +481,15 @@ const PlayerLoot: React.FC = () => {
                       Received: {formatDate(selectedLoot.distributedAt)}
                     </Text>
                   </HStack>
-                  
+
                   <Divider borderColor="gray.700" />
-                  
+
                   <Box>
                     <Text fontWeight="bold" mb={2} color="gray.300">
                       <ShoppingBag className="inline mr-2" size={16} />
                       Items Inside
                     </Text>
-                    
+
                     <VStack spacing={2} align="stretch">
                       {selectedLoot.items.map(item => (
                         <Box
@@ -488,7 +516,7 @@ const PlayerLoot: React.FC = () => {
                       ))}
                     </VStack>
                   </Box>
-                  
+
                   {!selectedLoot.acknowledged && (
                     <Button
                       colorScheme="amber"
@@ -525,7 +553,7 @@ const PlayerLoot: React.FC = () => {
             <Package className="inline mr-2" />
             Loot Box History
           </Heading>
-          
+
           {acknowledgedLoot.length === 0 ? (
             <Box p={6} textAlign="center" bg="gray.800" borderRadius="md">
               <Text color="gray.400">No loot box history yet</Text>
@@ -545,8 +573,8 @@ const PlayerLoot: React.FC = () => {
                   </Thead>
                   <Tbody>
                     {acknowledgedLoot.map(loot => (
-                      <Tr 
-                        key={loot.id} 
+                      <Tr
+                        key={loot.id}
                         _hover={{ bg: "gray.750" }}
                         cursor="pointer"
                         onClick={() => setSelectedLoot(loot)}
@@ -580,7 +608,7 @@ const PlayerLoot: React.FC = () => {
               </Box>
             </ScrollArea>
           )}
-          
+
           {/* Selected Loot Box Detail */}
           {selectedLoot && (
             <Box
@@ -596,7 +624,7 @@ const PlayerLoot: React.FC = () => {
                   <Award className="text-amber-400" size={24} />
                   <Heading size="md" color="gray.200">{selectedLoot.packageName}</Heading>
                 </HStack>
-                
+
                 <HStack>
                   <Text fontSize="sm" color="amber.300">
                     Sponsored by: {selectedLoot.sponsor}
@@ -605,15 +633,15 @@ const PlayerLoot: React.FC = () => {
                     Received: {formatDate(selectedLoot.distributedAt)}
                   </Text>
                 </HStack>
-                
+
                 <Divider borderColor="gray.700" />
-                
+
                 <Box>
                   <Text fontWeight="bold" mb={2} color="gray.300">
                     <ShoppingBag className="inline mr-2" size={16} />
                     Items Received
                   </Text>
-                  
+
                   <VStack spacing={2} align="stretch">
                     {selectedLoot.items.map(item => (
                       <Box
