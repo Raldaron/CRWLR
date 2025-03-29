@@ -1,0 +1,1732 @@
+{
+    "agonyurchin": {
+        "name": "Agony Urchin",
+        "description": "Agony Urchin, the embodiment of that small, persistent pain you can't quite locate or explain. This prickly character thrives on discomfort, both physical and emotional, making them a foe no one wants to confront. Their presence alone is enough to make armor chafe and boots pinch, proving that sometimes the smallest irritants are the most effective.",
+        "primarystats": [
+            "Stamina",
+            "Dexterity",
+            "Charisma"
+        ],
+        "statbonus": {
+            "stamina": 3,
+            "dexterity": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "stealth": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "pricklyaura",
+            "agonizingtouch"
+        ],
+        "traits": [
+            "persistentirritant",
+            "paintolerance"
+        ],
+        "armorrating": 1
+    },
+    "alleycatbrawler": {
+        "name": "Alley Cat Brawler",
+        "description": "Alley Cat Brawler, because who needs martial arts when you've got street smarts and a mean right hook? This class thrives in the back alleys and shadowy corners of the world, turning every encounter into a rough-and-tumble scrap. They fight dirty, but they fight to win.",
+        "primarystats": [
+            "Dexterity",
+            "Stamina",
+            "Perception"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "stamina": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "survival": 2,
+            "intimidation": 2
+        },
+        "abilities": [
+            "dirtyfighting",
+            "ninelives"
+        ],
+        "traits": [
+            "streetsmarts",
+            "nimbleescape"
+        ],
+        "armorrating": 0
+    },
+    "animaltestsubject": {
+        "name": "Animal Test Subject",
+        "description": "Animal Test Subject, the class for those who've endured every experimental potion, device, and spell, emerging with unpredictable abilities and a justifiable wariness of scientists. Sometimes they'll sprout wings; other times, they might breathe fire. It's a bit of a gamble, but they're living proof that what doesn't kill you makes you weirder.",
+        "primarystats": [
+            "Stamina",
+            "Dexterity",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "stamina": 3,
+            "dexterity": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "survival": 3,
+            "arcana": 2,
+            "medicine": 2
+        },
+        "abilities": [
+            "mutagensurge",
+            "adaptivephysiology"
+        ],
+        "traits": [
+            "unpredictablebiology",
+            "experimentalresistance"
+        ],
+        "armorrating": -1
+    },
+    "archer": {
+        "name": "Archer",
+        "description": "Archer, because why get up close and personal when you can make your point from a hundred yards away? These sharpshooters can thread a needle with an arrow and consider \"bullseye\" too easy a target. They bring precision, patience, and a certain flair for dramatic long-distance communication, proving that sometimes, actions (and arrows) really do speak louder than words.",
+        "primarystats": [
+            "Dexterity",
+            "Perception",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "perception": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "archery": 3,
+            "firearms": 3,
+            "stealth": 2,
+            "athletics": 2
+        },
+        "abilities": [
+            "pinpointaccuracy",
+            "rapidfire"
+        ],
+        "traits": [
+            "eagleeye",
+            "quickdraw"
+        ],
+        "armorrating": 0
+    },
+    "blackinquisitorgeneral": {
+        "name": "Black Inquisitor General",
+        "description": "The Black Inquisitor General, the terror of heretics, and party poopers everywhere. This class is for those who thought Torquemada had some good ideas but lacked pizzazz. Specializing in rooting out deception and enforcing dogma, they're like the medieval FBI, but with a much worse dress code. Expect a lot of fire, brimstone, and uncomfortable questions about your last confession.",
+        "primarystats": [
+            "Intelligence",
+            "Perception",
+            "Charisma"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "perception": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "investigation": 3,
+            "intimidation": 2,
+            "sense deception": 2
+        },
+        "abilities": [
+            "righteousjudgement",
+            "confessionalinterrogation"
+        ],
+        "traits": [
+            "truthseeker",
+            "fearsomepresence"
+        ],
+        "armorrating": 1
+    },
+    "blizzardmancer": {
+        "name": "Blizzardmancer",
+        "description": "Enter the Blizzardmancer, the wizard who thought controlling fire was too mainstream and opted for the more chill option\u2014pun very much intended. These are the folks who bring a snow day to the scorching desert, making friends and foes alike shiver in their boots. Their idea of a warm welcome is a snowstorm, and they consider ice-breaking at parties quite literal. Just don't ask them to fetch a warm drink; you'll end up with an iced latte, whether you like it or not.",
+        "primarystats": [
+            "Intelligence",
+            "Wit",
+            "Stamina"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "wit": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "nature": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "frostbiteblast",
+            "icewall"
+        ],
+        "traits": [
+            "coldimmunity",
+            "frozenaura"
+        ],
+        "armorrating": -1
+    },
+    "bloodassassin": {
+        "name": "Blood Assassin",
+        "description": "The Blood Assassin, because why simply assassinate someone when you can also make it look like a horror show? These are the artists who paint in shades of crimson, turning their kills into a spectacle of gore. Not for the faint of heart, or stomach, they're the reason why \"overkill\" is just starting to get interesting. They take \"bleeding edge technology\" a bit too literally, but hey, no one's complaining\u2014mostly because they're, well, dead.",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "stealth": 3,
+            "melee": 2,
+            "intimidation": 2
+        },
+        "abilities": [
+            "crimsonstrike",
+            "bloodmist"
+        ],
+        "traits": [
+            "bloodsense",
+            "gruesomedisplay"
+        ],
+        "armorrating": 2
+    },
+    "bogatyr": {
+        "name": "Bogatyr",
+        "description": "Bogatyr, the Slavic superhero who makes knights in shining armor look like tin foil decorations. With strength that's the stuff of legends and a moral compass that always points to \"heroic,\" these warriors are like the fantasy equivalent of a blockbuster action star. They're here to kick evil's butt, save the innocent, and maybe, just maybe, sing a ballad or two about it.",
+        "primarystats": [
+            "Strength",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "athletics": 3,
+            "intimidation": 2,
+            "performance": 2
+        },
+        "abilities": [
+            "heroicsurge",
+            "epicfeat"
+        ],
+        "traits": [
+            "legendarystrength",
+            "inspiringpresence"
+        ],
+        "armorrating": 2
+    },
+    "boringolfighter": {
+        "name": "Boring Ol' Fighter",
+        "description": "The Boring Ol' Fighter, because sometimes you just need a guy with a sword who can take a hit. These are the bread and butter of any adventure, the vanilla ice cream of combat\u2014reliable, straightforward, and surprisingly effective. They're the proof that sometimes, all you need to solve a complex problem is a good swing and a can-do attitude. They're not fancy, but they get the job done.",
+        "primarystats": [
+            "Strength",
+            "Stamina",
+            "Dexterity"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "stamina": 2,
+            "dexterity": 1
+        },
+        "skillbonus": {
+            "close-combat": 3,
+            "athletics": 2,
+            "intimidation": 2,
+            "melee": 2,
+            "ranged-combat": 2,
+            "archery": 2,
+            "firearms": 2,
+            "artillery": 2,
+            "block": 2,
+            "parry": 2,
+            "dodge": 2,
+            "tactics": 2,
+            "explosives handling": 2
+        },
+        "abilities": [
+            "combatrhythm",
+            "adaptiveresilience"
+        ],
+        "traits": [
+            "unbreakable",
+            "weaponmastery"
+        ],
+        "armorrating": 2
+    },
+    "boringolmage": {
+        "name": "Boring Ol' Mage",
+        "description": "And then there's the Boring Ol' Mage, the classic spell-slinger who decided that robes are forever in fashion and that fireball solves most of life's problems. They're the ones who spend more time in libraries than is socially acceptable, emerging only to incinerate, levitate, or transform. They're the quintessential \"nerds with power,\" proving that knowledge really is power\u2014especially when it's used to summon a meteor shower.",
+        "primarystats": [
+            "Intelligence",
+            "Wit",
+            "Stamina"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "wit": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "investigation": 2,
+            "nature": 2
+        },
+        "abilities": [
+            "arcanerecovery",
+            "spellmastery"
+        ],
+        "traits": [
+            "arcaneinsight",
+            "spellsculptor"
+        ],
+        "armorrating": -2
+    },
+    "crisper": {
+        "name": "Crisper",
+        "description": "The Crisper, the culinary wizard who decided that if you can't beat them, cook them. These chefs of the battlefield specialize in flame-grilled destruction, serving up enemies with a side of roasted vegetables. They wield frying pans and flamethrowers with equal skill, proving that the kitchen really is the most dangerous room in the house. Bon app\u00e9tit!",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "survival": 2,
+            "melee": 2
+        },
+        "abilities": [
+            "flamb\u00e9fury",
+            "culinarycritique"
+        ],
+        "traits": [
+            "heatresistant",
+            "ironstomach"
+        ],
+        "armorrating": 0
+    },
+    "dbaggeek": {
+        "name": "D-Bag Geek",
+        "description": "D-Bag Geek, because every party needs its comic relief, and nothing says \"I'm here to help, but also annoy you\" quite like this class. Armed with arcane knowledge, an arsenal of gadgets, and a personality that's an acquired taste, they're like the internet troll turned unlikely hero. They'll save the day, but they'll also make sure you never hear the end of it.",
+        "primarystats": [
+            "Intelligence",
+            "Charisma",
+            "Dexterity"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "charisma": 2,
+            "dexterity": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "arcana": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "trollingmastery",
+            "gadgetoverload"
+        ],
+        "traits": [
+            "actually...",
+            "socialmediasavvy"
+        ],
+        "armorrating": -1
+    },
+    "demigodattendant": {
+        "name": "Demigod Attendant",
+        "description": "Demigod Attendant, the divine intern of the celestial realm. Serving under a demigod, they're part PA, part disciple, and all about that divine intervention life. They learn the ropes of omnipotence on the job, handling tasks that range from smiting to fetching divine dry cleaning. It's not always glamorous, but hey, the benefits are heavenly.",
+        "primarystats": [
+            "Charisma",
+            "Perception",
+            "Stamina"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "perception": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "persuasion": 3,
+            "arcana": 2,
+            "lore": 2
+        },
+        "abilities": [
+            "divinefavor",
+            "celestialbureaucracy"
+        ],
+        "traits": [
+            "heavenlyconnections",
+            "divineprotection"
+        ],
+        "armorrating": 1
+    },
+    "earthmover": {
+        "name": "Earth Mover",
+        "description": "Enter the Earth Mover, because why walk around an obstacle when you can just make the obstacle move? These terraformers take landscaping to a whole new level, shifting mountains, opening chasms, and occasionally causing seismic events by accident. They're the ultimate in \"making an entrance,\" ensuring that the battlefield conforms to their vision of it\u2014preferably flat and enemy-free.",
+        "primarystats": [
+            "Strength",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "athletics": 3,
+            "nature": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "tectonicshift",
+            "stoneshaper"
+        ],
+        "traits": [
+            "onewithearth",
+            "rockyhide"
+        ],
+        "armorrating": 2
+    },
+    "feralcatberserker": {
+        "name": "Feral Cat Berserker",
+        "description": "Feral Cat Berserker, because when you need something clawed to pieces with reckless abandon, accept no substitutes. This warrior channels the spirit of every alley cat who ever hissed at a human, fought a dog, or knocked things off a shelf for no reason. They're unpredictable, unmanageable, and utterly terrifying to anyone with allergies.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "intimidation": 2,
+            "stealth": 2
+        },
+        "abilities": [
+            "felinefury",
+            "ninelives"
+        ],
+        "traits": [
+            "cat-likereflexes",
+            "nightvision"
+        ],
+        "armorrating": 0
+    },
+    "firespiritualist": {
+        "name": "Fire Spiritualist",
+        "description": "The Fire Spiritualist is like the weird cousin of the pyromancer who decided that playing with fire wasn't enough; they wanted to be in a relationship with it. They talk to flames like old friends, and their idea of a candlelit dinner involves summoning a fire elemental as the third wheel. Warm-hearted, hot-headed, and occasionally setting their surroundings ablaze with spiritual fervor, they're the life of the party\u2014until the fire department shows up.",
+        "primarystats": [
+            "Charisma",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "persuasion": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "flamewhisperer",
+            "infernosummon"
+        ],
+        "traits": [
+            "fireaffinity",
+            "passionateaura"
+        ],
+        "armorrating": -1
+    },
+    "firecracker": {
+        "name": "Firecracker",
+        "description": "Firecracker, the personification of \"boom.\" This explosive character lights up the battlefield with a bang, leaving a trail of destruction and slightly singed enemies in their wake. They're a blast at parties, but you might want to keep them away from open flames.",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Charisma"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "sleight of hand": 3,
+            "alchemy": 2,
+            "performance": 2
+        },
+        "abilities": [
+            "explosivepersonality",
+            "dazzlingdisplay"
+        ],
+        "traits": [
+            "shortfuse",
+            "blastresistant"
+        ],
+        "armorrating": -1
+    },
+    "footballhooligan": {
+        "name": "Football Hooligan",
+        "description": "Football Hooligan, bringing team spirit\u2014and a bit of mayhem\u2014to the fray. More than just fans, these warriors turn their passion for the game into a combat strategy, proving that loyalty can indeed be a weapon. Just don't ask them to play fair.",
+        "primarystats": [
+            "Strength",
+            "Stamina",
+            "Charisma"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "stamina": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "athletics": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "rallycry",
+            "crowdsurge"
+        ],
+        "traits": [
+            "mobmentality",
+            "unbreakablespirit"
+        ],
+        "armorrating": 1
+    },
+    "forsakenaerialist": {
+        "name": "Forsaken Aerialist",
+        "description": "The Forsaken Aerialist, for those who said, \"Circus life is too tame; let's add more despair.\" Combining the elegance of flight with the emo aesthetic of the eternally damned, these performers bring a touch of grace and a lot of doom to any encounter. Think of them as the goth ballerinas of the air, pirouetting on the edge of oblivion. Just don't expect them to smile during the performance.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Charisma"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "acrobatics": 2,
+            "dodge": 2,
+            "parry": 2,
+            "survival": 2,
+            "stealth": 2,
+            "performance": 2,
+            "arcana": 2,
+            "detect trap": 2,
+            "engineering": 2,
+            "lore": 2,
+            "alchemy": 2
+        },
+        "abilities": [
+            "boomboombouquet",
+            "oopsie-daisydeadfall"
+        ],
+        "traits": [
+            "gravitydefiance",
+            "auraofgloom"
+        ],
+        "armorrating": 0
+    },
+    "freelancepsychiatrist": {
+        "name": "Freelance Psychiatrist",
+        "description": "Freelance Psychiatrist, because dungeon crawling can be mentally taxing, and someone needs to listen to all those adventurer woes. With a couch that magically fits in their backpack, they're ready to unpack your issues anywhere, from the depths of a dragon's lair to the middle of a goblin ambush. They're the reason why \"I slay, therefore I am\" is both a battle cry and a breakthrough in therapy.",
+        "primarystats": [
+            "Perception",
+            "Charisma",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "perception": 3,
+            "charisma": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "insight": 3,
+            "persuasion": 2,
+            "medicine": 2
+        },
+        "abilities": [
+            "therapeuticbreakthrough",
+            "mindpalace"
+        ],
+        "traits": [
+            "insightful",
+            "calmingpresence"
+        ],
+        "armorrating": -1
+    },
+    "fugitive": {
+        "name": "Fugitive",
+        "description": "The Fugitive: always on the run and surprisingly good at it. This class turns evasion into an art form, blending into crowds, shadows, and occasionally, in very tight spaces. Their skill set includes a mix of \"not getting caught\" and \"seriously, stop trying to catch me.\" They're like that one friend who disappears whenever it's time to pay the bill, but with more at stake than just a free meal.",
+        "primarystats": [
+            "Dexterity",
+            "Wit",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "wit": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "stealth": 3,
+            "survival": 2,
+            "sleight of hand": 2
+        },
+        "abilities": [
+            "vanishingact",
+            "quickdisguise"
+        ],
+        "traits": [
+            "alwaysprepared",
+            "suspiciousmind"
+        ],
+        "armorrating": 0
+    },
+    "glasscannon": {
+        "name": "Glass Cannon",
+        "description": "Glass Cannon, because who needs defense when you can obliterate everything in sight? This class is all about high risk, high reward, and an allergy to anything resembling armor. They can dish out tremendous damage but shatter at the first counterattack, proving that sometimes the best defense is a good, overwhelming offense\u2014and a solid escape plan.",
+        "primarystats": [
+            "Intelligence",
+            "Dexterity",
+            "Wit"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "dexterity": 2,
+            "wit": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "archery": 2,
+            "firearms": 2,
+            "dodge": 2
+        },
+        "abilities": [
+            "overwhelmingbarrage",
+            "evasivemaneuvers"
+        ],
+        "traits": [
+            "fragilepower",
+            "quickreflexes"
+        ],
+        "armorrating": -2
+    },
+    "gutrearranger": {
+        "name": "Gut Rearranger",
+        "description": "Gut Rearranger, a title that sounds more like a threat than a profession. This class takes the concept of \"internal medicine\" to a whole new, literal level. Specializing in melee that's a bit too close for comfort, they're experts in ensuring that any enemy they meet might need a very specialized surgeon. They're the reason why \"gut feeling\" can be more of a diagnosis than intuition.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "melee": 3,
+            "medicine": 2,
+            "intimidation": 2
+        },
+        "abilities": [
+            "visceralstrike",
+            "anatomicalprecision"
+        ],
+        "traits": [
+            "surgicalstrikes",
+            "gutinstinct"
+        ],
+        "armorrating": 1
+    },
+    "hammersmith": {
+        "name": "Hammersmith",
+        "description": "Hammersmith, the forger of dreams and destroyer of worlds\u2014at least, if those worlds are made of metal and require some pounding. This class turns blacksmithing into a combat skill, swinging hammers that are as deadly as any sword. They're the backbone of any adventuring party, ensuring everyone is well-armed and that every problem looks like a nail.",
+        "primarystats": [
+            "Strength",
+            "Stamina",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "stamina": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "melee": 2,
+            "athletics": 2
+        },
+        "abilities": [
+            "forgemastery",
+            "thunderousstrike"
+        ],
+        "traits": [
+            "heatresistance",
+            "mastercraftsman"
+        ],
+        "armorrating": 2
+    },
+    "holistichealer": {
+        "name": "Holistic Healer",
+        "description": "Holistic Healer, because why use boring old magic or medicine when you can use crystals, herbs, and a touch of wishful thinking? These healers believe that every potion starts with a good intention, and they're all about that natural remedy life. Side effects may include unexpected bouts of enlightenment, sudden veganism, or an unexplained affinity for patchouli. They're the ones you call when you want to be healed body, soul, and spirit\u2014just don't ask for a timeline.",
+        "primarystats": [
+            "Perception",
+            "Charisma",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "perception": 3,
+            "charisma": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "medicine": 3,
+            "nature": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "chakraalignment",
+            "herbalinfusion"
+        ],
+        "traits": [
+            "aurareading",
+            "powerofbelief"
+        ],
+        "armorrating": -1
+    },
+    "imperialsoldier": {
+        "name": "Imperial Soldier",
+        "description": "The Imperial Soldier: disciplined, loyal, and equipped with a sense of superiority that's been honed alongside their blade. These are the guys who march into battle with matching uniforms and a game plan. They're like the fantasy version of \"leave no man behind,\" except it's \"leave no man unless ordered by the emperor.\" Efficiency and obedience are their watchwords, which they follow to the letter\u2014unless the plot demands otherwise.",
+        "primarystats": [
+            "Strength",
+            "Stamina",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "stamina": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "melee": 3,
+            "tactics": 2,
+            "athletics": 2
+        },
+        "abilities": [
+            "formationfighting",
+            "imperialmandate"
+        ],
+        "traits": [
+            "unyieldingloyalty",
+            "regimentedtraining"
+        ],
+        "armorrating": 2
+    },
+    "jouster": {
+        "name": "Jouster",
+        "description": "Jouster, because nothing says \"I challenge thee\" quite like charging at your enemy with a long stick while riding a horse. This class brings the pageantry of medieval combat to the modern age, proving that chivalry isn't dead\u2014it's just heavily armored and moving at high speed.",
+        "primarystats": [
+            "Strength",
+            "Dexterity",
+            "Charisma"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "dexterity": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "animal handling": 3,
+            "athletics": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "charginglance",
+            "mountedcombatmaster"
+        ],
+        "traits": [
+            "saddlesure",
+            "honorbound"
+        ],
+        "armorrating": 1
+    },
+    "knifesharpener": {
+        "name": "Knife Sharpener",
+        "description": "Knife Sharpener, the class for those who believe that the pen might be mightier than the sword, but a well-sharpened knife beats both. These meticulous folks can turn a dull butter knife into a weapon of mass destruction with just a few swipes. Their motto? \"A sharp knife is a happy knife, and a happy knife makes for an unhappy enemy.\" They're like barbers, but for blades, and a whole lot more lethal.",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Perception"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "melee": 2,
+            "sleight of hand": 2
+        },
+        "abilities": [
+            "razor'sedge",
+            "bladedance"
+        ],
+        "traits": [
+            "keenedge",
+            "weaponwhisperer"
+        ],
+        "armorrating": 0
+    },
+    "legatus": {
+        "name": "Legatus",
+        "description": "The Legatus, for when your idea of leadership involves a lot of shouting, gesturing, and making sure everyone knows you're in charge. These battlefield commanders are part strategist, part motivational speaker, and all about that authority. They can turn a ragtag group of adventurers into a finely tuned machine of destruction\u2014all it takes is a good pep talk and maybe a threat or two. They're like the middle managers of the adventuring world, but with more swords and less paperwork.",
+        "primarystats": [
+            "Charisma",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "tactics": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "rallythetroops",
+            "tacticalmaneuver"
+        ],
+        "traits": [
+            "voiceofauthority",
+            "inspiringpresence"
+        ],
+        "armorrating": 2
+    },
+    "legendarydiva": {
+        "name": "Legendary Diva",
+        "description": "Legendary Diva, because why fight when you can simply outshine your opponents? This class wields the power of performance, captivating friends and foes alike with a voice that can soothe, inspire, or devastate. They're the centerpiece of any battle, not just for their combat prowess but for their unmatched ability to hit those high notes in the heat of battle.",
+        "primarystats": [
+            "Charisma",
+            "Dexterity",
+            "Stamina"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "dexterity": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "performance": 3,
+            "persuasion": 2,
+            "dodge": 2
+        },
+        "abilities": [
+            "shatteringcrescendo",
+            "ariaofinspiration"
+        ],
+        "traits": [
+            "centerstage",
+            "perfectpitch"
+        ],
+        "armorrating": -1
+    },
+    "mastertelephonepsychic": {
+        "name": "Master Telephone Psychic",
+        "description": "The Master Telephone Psychic, because why face your problems when you can have someone on a hotline tell you everything's going to be okay\u2014for a small fee per minute? Armed with an uncanny ability to \"sense\" things (and a quick internet search), they provide guidance, vague predictions, and a sympathetic ear, all without ever having to leave their chair.",
+        "primarystats": [
+            "Charisma",
+            "Perception",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "perception": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "persuasion": 3,
+            "deception": 2,
+            "awareness": 2
+        },
+        "abilities": [
+            "vaguepremonition",
+            "coldreading"
+        ],
+        "traits": [
+            "psychichotline",
+            "uncannyintuition"
+        ],
+        "armorrating": -2
+    },
+    "nimblefootenforcer": {
+        "name": "Nimblefoot Enforcer",
+        "description": "The Nimblefoot Enforcer, for when you absolutely, positively need someone kicked in the face discreetly and with style. These agile warriors are part acrobat, part ass-kicker, specializing in making sure their foes are too embarrassed to admit how they got those bruises. \"Stepped on a banana peel\" takes on a whole new meaning with them around, combining stealth, speed, and a bit of slapstick to the battlefield.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Wit"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "wit": 1
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "stealth": 2,
+            "melee": 2
+        },
+        "abilities": [
+            "swiftstrike",
+            "acrobaticdodge"
+        ],
+        "traits": [
+            "light-footed",
+            "embarrassingstrikes"
+        ],
+        "armorrating": 0
+    },
+    "ninetails": {
+        "name": "Nine Tails",
+        "description": "Nine Tails, the mystical fox spirit with more tricks than tails. This enchanting class wields magic and cunning in equal measure, bewitching friends and foes alike. Their charm is as potent as their spells, proving that sometimes, what you see is definitely not what you get.",
+        "primarystats": [
+            "Charisma",
+            "Intelligence",
+            "Dexterity"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "intelligence": 2,
+            "dexterity": 1
+        },
+        "skillbonus": {
+            "deception": 3,
+            "arcana": 2,
+            "stealth": 2
+        },
+        "abilities": [
+            "foxfire",
+            "shapeshifter'sguile"
+        ],
+        "traits": [
+            "vulpinecharm",
+            "illusoryescape"
+        ],
+        "armorrating": -1
+    },
+    "pestexterminator": {
+        "name": "Pest Exterminator",
+        "description": "Pest Exterminator, because no quest is too small and no creature too insignificant. Armed with an array of traps, poisons, and a deeply ingrained disdain for vermin, they're the final word in pest control. They're the reason why \"sleep tight, don't let the bedbugs bite\" is more than just a saying.",
+        "primarystats": [
+            "Intelligence",
+            "Dexterity",
+            "Stamina"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "dexterity": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "nature": 3,
+            "survival": 2,
+            "stealth": 2
+        },
+        "abilities": [
+            "verminbane",
+            "trapmastery"
+        ],
+        "traits": [
+            "pestsense",
+            "toxinresistance"
+        ],
+        "armorrating": 0
+    },
+    "physicker": {
+        "name": "Physicker",
+        "description": "Enter the Physicker, the medieval equivalent of \"I'm not a doctor, but I stayed at a Holiday Inn Express last night.\" These are the folks who can stitch you up with one hand while diagnosing a rare disease with the other. Armed with herbs, leeches, and an unsettling enthusiasm for amputations, they're your go-to for all things health-related\u2014just don't ask for anesthesia.",
+        "primarystats": [
+            "Intelligence",
+            "Dexterity",
+            "Perception"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "dexterity": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "medicine": 3,
+            "nature": 2,
+            "sleight of hand": 2
+        },
+        "abilities": [
+            "miraculousremedy",
+            "battlefieldtriage"
+        ],
+        "traits": [
+            "anatomicalexpertise",
+            "plaguedoctor"
+        ],
+        "armorrating": 1
+    },
+    "pitfighter": {
+        "name": "Pit Fighter",
+        "description": "Pit Fighter, the class for those who like their battles up close, personal, and preferably in an arena with cheering fans. These gladiators turn combat into spectacle, proving their worth in blood and sand. They're as charismatic as they are deadly, and they know how to put on a good show\u2014even if it's their last.",
+        "primarystats": [
+            "Strength",
+            "Dexterity",
+            "Charisma"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "dexterity": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "melee": 3,
+            "athletics": 2,
+            "performance": 2
+        },
+        "abilities": [
+            "crowdpleaser",
+            "brutalfinisher"
+        ],
+        "traits": [
+            "arenaveteran",
+            "showmanship"
+        ],
+        "armorrating": 2
+    },
+    "poetlaureate": {
+        "name": "Poet Laureate",
+        "description": "The Poet Laureate: because nothing terrifies the enemy more than a well-crafted sonnet about their impending doom. This class wields words with the precision of a scalpel, cutting deeper than any sword. They can inspire allies to greatness and reduce foes to existential crises, proving that the pen (or quill) is indeed mightier than the sword\u2014especially if it's enchanted.",
+        "primarystats": [
+            "Charisma",
+            "Intelligence",
+            "Wit"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "intelligence": 2,
+            "wit": 1
+        },
+        "skillbonus": {
+            "persuasion": 3,
+            "performance": 2,
+            "lore": 2
+        },
+        "abilities": [
+            "verseofinspiration",
+            "rhymeofdespair"
+        ],
+        "traits": [
+            "silvertongue",
+            "lyricalmemory"
+        ],
+        "armorrating": -1
+    },
+    "prodromoi": {
+        "name": "Prodromoi",
+        "description": "The Prodromoi, because who needs a cavalry when you can have a one-person vanguard that scares the bejesus out of everyone? These ancient scouts are so ahead of their time, they're practically in the next time zone. Equipped with speed, stealth, and a flair for dramatic entrances, they're the first to arrive and the last to leave\u2014mostly because they've already scouted all the exits.",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "stealth": 3,
+            "survival": 2,
+            "athletics": 2
+        },
+        "abilities": [
+            "swiftscout",
+            "tacticalinsight"
+        ],
+        "traits": [
+            "firststrike",
+            "terrainmastery"
+        ],
+        "armorrating": 1
+    },
+    "pterolykos": {
+        "name": "Pterolykos",
+        "description": "Pterolykos, the noble blend of wolf and wing, soaring above the battlefield with the grace of an eagle and the ferocity of a predator. This mythical warrior strikes from above, a guardian angel for some and a death sentence for others. They're the reason why \"look to the skies\" is good advice.",
+        "primarystats": [
+            "Dexterity",
+            "Perception",
+            "Strength"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "perception": 2,
+            "strength": 1
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "awareness": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "aerialassault",
+            "lupinesenses"
+        ],
+        "traits": [
+            "wingsoffreedom",
+            "predator'sinstinct"
+        ],
+        "armorrating": 0
+    },
+    "ranger": {
+        "name": "Ranger",
+        "description": "Ranger, the nature-loving, arrow-slinging loner who's friends with every critter in the forest but can't remember the last time they had a decent conversation with another humanoid. They're the ultimate trackers, able to find their way and their target in even the most confusing terrain. Their motto: \"If you can't beat 'em, lead 'em into a trap in the wilderness.\"",
+        "primarystats": [
+            "Dexterity",
+            "Perception",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "perception": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "survival": 3,
+            "archery": 2,
+            "firearms": 2,
+            "nature": 2
+        },
+        "abilities": [
+            "favoredenemy",
+            "naturalexplorer"
+        ],
+        "traits": [
+            "beastwhisperer",
+            "camouflageexpert"
+        ],
+        "armorrating": 0
+    },
+    "riotforcessupport": {
+        "name": "Riot Forces Support",
+        "description": "Riot Forces Support, the backbone of any protest turned skirmish. Equipped with shields, batons, and an unwavering sense of duty, they're here to keep the peace\u2014or at least, keep the rioters at bay. They're the reason why \"bringing a knife to a gunfight\" is still better than facing them unarmed.",
+        "primarystats": [
+            "Stamina",
+            "Strength",
+            "Charisma"
+        ],
+        "statbonus": {
+            "stamina": 3,
+            "strength": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "athletics": 3,
+            "intimidation": 2,
+            "awareness": 2
+        },
+        "abilities": [
+            "shieldwall",
+            "crowdcontrol"
+        ],
+        "traits": [
+            "unbreakableline",
+            "crowddispersal"
+        ],
+        "armorrating": 2
+    },
+    "rollerderbyjammer": {
+        "name": "Roller Derby Jammer",
+        "description": "Roller Derby Jammer, skating into combat with the grace of a gazelle and the aggression of a grizzly bear. These warriors bring the rink to the battlefield, using speed, agility, and a healthy disregard for personal safety to outmaneuver and outstrike their foes. Elbows are sharp, and so is their strategy.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "athletics": 2,
+            "intimidation": 2
+        },
+        "abilities": [
+            "whipitgood",
+            "hipcheck"
+        ],
+        "traits": [
+            "skateordie",
+            "crowdfavorite"
+        ],
+        "armorrating": 1
+    },
+    "sacredpaladin": {
+        "name": "Sacred Paladin",
+        "description": "Sacred Paladin, the holy warrior who's as righteous as they are armored. They're on a divine mission to smite evil, heal the innocent, and occasionally give long-winded speeches about virtue. With a shield in one hand and a holy symbol in the other, they're ready to face darkness, or at least lecture it into submission.",
+        "primarystats": [
+            "Strength",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "melee": 3,
+            "persuasion": 2,
+            "medicine": 2
+        },
+        "abilities": [
+            "divinesmite",
+            "layonhands"
+        ],
+        "traits": [
+            "auraofprotection",
+            "divinehealth"
+        ],
+        "armorrating": 2
+    },
+    "santero": {
+        "name": "Santero",
+        "description": "Enter the Santero, a spiritual heavyweight who packs a punch with both the divine and the dead. When they're not consulting the spirits for guidance, they're probably sending a curse your way, just for balance. They're the life of the party, assuming your party enjoys communing with ancestors and the occasional chicken sacrifice. They're a walking, talking Ouija board, but with better advice and more sass.",
+        "primarystats": [
+            "Charisma",
+            "Perception",
+            "Stamina"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "perception": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "persuasion": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "spiritcommunion",
+            "curseoftheancestors"
+        ],
+        "traits": [
+            "spiritualconduit",
+            "ritualmaster"
+        ],
+        "armorrating": -1
+    },
+    "sapper": {
+        "name": "Sapper",
+        "description": "The Sapper, the silent demolisher of hopes, dreams, and fortifications. These engineers of destruction specialize in the art of making things go \"boom\" in the most inconvenient way possible. Masters of traps, explosives, and ruining everyone's day, they're the reason why \"watch your step\" is good life advice. They're like the party's rogue, if the rogue had a penchant for pyrotechnics.",
+        "primarystats": [
+            "Intelligence",
+            "Dexterity",
+            "Perception"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "dexterity": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "stealth": 2,
+            "sleight of hand": 2
+        },
+        "abilities": [
+            "controlleddemolition",
+            "trapmastery"
+        ],
+        "traits": [
+            "demolitionsexpert",
+            "dangersense"
+        ],
+        "armorrating": 0
+    },
+    "sergeantatarms": {
+        "name": "Sergeant-at-Arms",
+        "description": "Sergeant-at-Arms, the one who ensures that order is not just a concept but a practice\u2014especially when it involves bashing a few heads together. Think of them as the ultimate party planner, if the party is a battlefield and the guests need a good thrashing. Their leadership style is a mix of motivational speaking and threat of bodily harm, surprisingly effective in keeping the ranks.",
+        "primarystats": [
+            "Strength",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "melee": 2,
+            "tactics": 2
+        },
+        "abilities": [
+            "rallyingcry",
+            "disciplinaryaction"
+        ],
+        "traits": [
+            "voiceofauthority",
+            "unbreakableformation"
+        ],
+        "armorrating": 2
+    },
+    "shepherd": {
+        "name": "Shepherd",
+        "description": "Ah, the Shepherd, because nothing prepares you for battle like herding sheep. These peaceful souls have turned the staff from a symbol of guidance into a weapon of surprisingly effective blunt force. They lead not just sheep but armies, with the uncanny ability to herd their teammates away from danger\u2014or into it, depending on the day. They're the unexpected dark horse, proving that yes, you can indeed weaponize pastoral care.",
+        "primarystats": [
+            "Perception",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "perception": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "animal ken": 3,
+            "survival": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "flockguardian",
+            "soothingpresence"
+        ],
+        "traits": [
+            "onewithnature",
+            "protectiveinstinct"
+        ],
+        "armorrating": 0
+    },
+    "shieldmaiden": {
+        "name": "Shieldmaiden",
+        "description": "The Shieldmaiden: because who needs a knight in shining armor when you can have a warrior queen who's not afraid to chip her nail polish on the shield edge? These valiant vixens specialize in the fine art of \"not today, death.\" They wield shields larger than your average dining table, turning defense into a deadly art form. They're the bouncers of the battlefield, deciding who gets in (no one) and who gets tossed out (everyone).",
+        "primarystats": [
+            "Strength",
+            "Stamina",
+            "Charisma"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "stamina": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "athletics": 3,
+            "intimidation": 2,
+            "melee": 2
+        },
+        "abilities": [
+            "shieldwall",
+            "deflectivestrike"
+        ],
+        "traits": [
+            "unbreakable",
+            "guardian'spresence"
+        ],
+        "armorrating": 2
+    },
+    "shotgunmessenger": {
+        "name": "Shotgun Messenger",
+        "description": "Finally, the Shotgun Messenger, because why deliver a message with words when you can use buckshot? These are the postal workers of the apocalypse, ensuring that every delivery is both prompt and explosive. Their motto? \"When it absolutely, positively has to be destroyed overnight.\" They're the reason why \"shooting the messenger\" is not only a bad idea but potentially fatal.",
+        "primarystats": [
+            "Dexterity",
+            "Strength",
+            "Stamina"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "strength": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "archery": 3,
+            "firearms": 3,
+            "intimidation": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "specialdelivery",
+            "rapidreload"
+        ],
+        "traits": [
+            "neithersnownorrain",
+            "returntosender"
+        ],
+        "armorrating": 1
+    },
+    "slavedriver": {
+        "name": "Slave Driver",
+        "description": "The Slave Driver, because nothing says \"team motivation\" quite like the crack of a whip. This class is all about leadership through fear, and their idea of team building involves chains and a lot of shouting. They excel in efficiency, ensuring every dungeon crawl is both swift and miserable. They're like the worst project managers, but with more leather and less concern for HR policies.",
+        "primarystats": [
+            "Strength",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "melee": 2,
+            "persuasion": 2
+        },
+        "abilities": [
+            "crackingcommand",
+            "forcedmarch"
+        ],
+        "traits": [
+            "ironwill",
+            "taskmaster"
+        ],
+        "armorrating": 1
+    },
+    "spy": {
+        "name": "Spy",
+        "description": "The Spy: because sometimes the best way to solve a problem is to make sure the problem never knows you're there. Masters of disguise, subterfuge, and having a plan B through Z, they're like the Swiss Army knife of intrigue\u2014useful in every situation, especially the ones they cause. They're the reason \"just being paranoid\" isn't as comforting as it sounds.",
+        "primarystats": [
+            "Dexterity",
+            "Intelligence",
+            "Charisma"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "intelligence": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "stealth": 3,
+            "deception": 2,
+            "investigation": 2
+        },
+        "abilities": [
+            "masterofdisguise",
+            "codedmessage"
+        ],
+        "traits": [
+            "paranoia",
+            "infiltrator"
+        ],
+        "armorrating": -1
+    },
+    "staunchbarrier": {
+        "name": "Staunch Barrier",
+        "description": "Staunch Barrier, the immovable object in a world of unstoppable forces. This defender stands tall in the face of danger, a living bulwark against all who would do harm. They're the reason why \"you shall not pass\" is more than just a meme\u2014it's a promise.",
+        "primarystats": [
+            "Stamina",
+            "Strength",
+            "Perception"
+        ],
+        "statbonus": {
+            "stamina": 3,
+            "strength": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "athletics": 3,
+            "intimidation": 2,
+            "awareness": 2
+        },
+        "abilities": [
+            "unyieldingstance",
+            "protectiveaura"
+        ],
+        "traits": [
+            "immovable",
+            "livingshield"
+        ],
+        "armorrating": 2
+    },
+    "swashbuckler": {
+        "name": "Swashbuckler",
+        "description": "Ah, the Swashbuckler, a class for those who have decided that the best way to solve problems is with panache, flair, and a good ol' rapier wit\u2014both figuratively and literally. These are the folks who will swing from chandeliers, charm the socks off a dragon, and still have time to write a sonnet about their heroics. They're as likely to talk an enemy to death as they are to skewer them, making them the life, or death, of any party.",
+        "primarystats": [
+            "Dexterity",
+            "Charisma",
+            "Wit"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "charisma": 2,
+            "wit": 2
+        },
+        "skillbonus": {
+            "acrobatics": 3,
+            "persuasion": 2,
+            "melee": 2
+        },
+        "abilities": [
+            "daringleap",
+            "silvertongue"
+        ],
+        "traits": [
+            "nimbledefense",
+            "naturalcharmer"
+        ],
+        "armorrating": 0
+    },
+    "trebuchetcommander": {
+        "name": "Trebuchet Commander",
+        "description": "Trebuchet Commander, because sometimes the best way to solve a problem is by hurling a 90kg projectile over 300 meters. This class combines engineering prowess with a love of destruction from a distance, proving that sometimes, the old ways are the best ways\u2014especially when it comes to siege warfare.",
+        "primarystats": [
+            "Intelligence",
+            "Strength",
+            "Perception"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "strength": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "engineering": 3,
+            "tactics": 2,
+            "awareness": 2
+        },
+        "abilities": [
+            "siegemaster",
+            "projectiletrajectory"
+        ],
+        "traits": [
+            "long-rangeexpert",
+            "structuralweakness"
+        ],
+        "armorrating": 1
+    },
+    "trickster": {
+        "name": "Trickster",
+        "description": "Trickster, the class that proves mischief is a valid combat strategy. These cunning characters weave confusion and chaos with a smile, turning the tide of battle without ever landing a blow. They're the reason why \"I swear it was like that when I got here\" never holds up in court.",
+        "primarystats": [
+            "Charisma",
+            "Dexterity",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "dexterity": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "deception": 3,
+            "sleight of hand": 2,
+            "performance": 2
+        },
+        "abilities": [
+            "chaosweaver",
+            "misdirection"
+        ],
+        "traits": [
+            "masterofdisguise",
+            "luckybreak"
+        ],
+        "armorrating": 0
+    },
+    "vapeshopcounterjockey": {
+        "name": "Vape Shop Counter Jockey",
+        "description": "Vape Shop Counter Jockey, because even adventurers need a place to chill and discuss their next quest over some artisanal fog. This class masters the art of concocting mystical vapors that can heal, invigorate, or just set the mood. They're the laid-back, cloud-producing heart of the social scene, proving that sometimes, the penultimate weapon is flavor.",
+        "primarystats": [
+            "Dexterity",
+            "Charisma",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "dexterity": 3,
+            "charisma": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "alchemy": 3,
+            "persuasion": 2,
+            "sleight of hand": 2
+        },
+        "abilities": [
+            "cloudconjuring",
+            "flavormastery"
+        ],
+        "traits": [
+            "vaperesistance",
+            "sociallubricant"
+        ],
+        "armorrating": -1
+    },
+    "viperqueen": {
+        "name": "Viper Queen",
+        "description": "Viper Queen, the sovereign of slither, whose mere presence commands respect, fear, and a healthy distance. This class embraces the venomous, the cunning, and the cold-blooded (literally). With an affinity for all things serpentine, they can control, command, or become vipers, proving that sometimes, the most dangerous thing in the room isn't the sword but the snake hiding in the shadows.",
+        "primarystats": [
+            "Charisma",
+            "Dexterity",
+            "Intelligence"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "dexterity": 2,
+            "intelligence": 1
+        },
+        "skillbonus": {
+            "intimidation": 3,
+            "stealth": 2,
+            "nature": 2
+        },
+        "abilities": [
+            "venomstrike",
+            "serpentform"
+        ],
+        "traits": [
+            "coldblood",
+            "hypnoticgaze"
+        ],
+        "armorrating": 1
+    },
+    "warlock": {
+        "name": "Warlock",
+        "description": "Warlock, because why ask nicely for magical powers when you can make a deal with the cosmos itself? These spellcasters trade in the currency of souls, secrets, and the occasional firstborn for powers that blur the line between awe-inspiring and utterly terrifying. Just read the fine print before signing.",
+        "primarystats": [
+            "Charisma",
+            "Stamina",
+            "Perception"
+        ],
+        "statbonus": {
+            "charisma": 3,
+            "stamina": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "persuasion": 2,
+            "intimidation": 2
+        },
+        "abilities": [
+            "eldritchblast",
+            "pactmagic"
+        ],
+        "traits": [
+            "darkone'sblessing",
+            "otherworldlypatron"
+        ],
+        "armorrating": 0
+    },
+    "weatherengineer": {
+        "name": "Weather Engineer",
+        "description": "Weather Engineer, the meteorologist with a god complex. Why predict the weather when you can create it? These elemental manipulators ensure that it's always raining on their enemies' parade\u2014literally. With a flick of their wrist, they can turn a sunny day into a tempest, proving that sometimes, the best strategy is just changing the climate.",
+        "primarystats": [
+            "Intelligence",
+            "Perception",
+            "Charisma"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "perception": 2,
+            "charisma": 1
+        },
+        "skillbonus": {
+            "nature": 3,
+            "arcana": 2,
+            "survival": 2
+        },
+        "abilities": [
+            "stormsummoner",
+            "climatecontrol"
+        ],
+        "traits": [
+            "weathersense",
+            "elementalaffinity"
+        ],
+        "armorrating": -1
+    },
+    "windmage": {
+        "name": "Wind Mage",
+        "description": "Wind Mage, the master of breezes, gusts, and the occasional hurricane. These elementalists command the air with a flick of their wrist, proving that an ill wind blows no good\u2014especially if you're on the wrong side of the battle. They're a breath of fresh air in a stalemate, turning the tide with the power of the skies.",
+        "primarystats": [
+            "Intelligence",
+            "Dexterity",
+            "Perception"
+        ],
+        "statbonus": {
+            "intelligence": 3,
+            "dexterity": 2,
+            "perception": 1
+        },
+        "skillbonus": {
+            "arcana": 3,
+            "acrobatics": 2,
+            "nature": 2
+        },
+        "abilities": [
+            "galeforce",
+            "zephyrstep"
+        ],
+        "traits": [
+            "aircushion",
+            "windwhisper"
+        ],
+        "armorrating": -1
+    },
+    "zuluwarrior": {
+        "name": "Zulu Warrior",
+        "description": "Zulu Warrior, the embodiment of \"speak softly and carry a big stick\"\u2014except their version of \"softly\" is a battle cry that chills the very soul. These masters of strategy and melee don't just fight; they turn war into performance art. Their prowess on the battlefield is matched only by their dignity off it, proving that true warriors carry their strength not just in their arms but in their hearts.",
+        "primarystats": [
+            "Strength",
+            "Charisma",
+            "Stamina"
+        ],
+        "statbonus": {
+            "strength": 3,
+            "charisma": 2,
+            "stamina": 1
+        },
+        "skillbonus": {
+            "melee": 3,
+            "intimidation": 2,
+            "athletics": 2
+        },
+        "abilities": [
+            "warcry",
+            "shieldwall"
+        ],
+        "traits": [
+            "warrior'spride",
+            "battledancer"
+        ],
+        "armorrating": 2
+    }
+}

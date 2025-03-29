@@ -1,0 +1,149 @@
+src
+├── app
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.module.css
+│   └── page.tsx
+├── components
+│   ├── actions
+│   │   ├── Abilities.tsx
+│   │   ├── Attacks.tsx
+│   │   ├── SpellCard.tsx
+│   │   └── Spells.tsx
+│   ├── arcana
+│   │   └── Arcana.tsx
+│   ├── CategoryViews
+│   │   ├── ArmorView.tsx
+│   │   ├── ExplosivesView.tsx
+│   │   ├── PotionsView.tsx
+│   │   ├── ScrollsView.tsx
+│   │   ├── TrapsView.tsx
+│   │   └── WeaponsView.tsx
+│   ├── character
+│   │   ├── Character.tsx
+│   │   ├── CharacterLevel.tsx
+│   │   ├── ClassSelectionModals.tsx
+│   │   ├── RaceSelection.tsx
+│   │   ├── RaceSelectionModals.tsx
+│   │   └── StatCard.tsx
+│   ├── equipment
+│   │   ├── Armor.tsx
+│   │   ├── ArmorEquipment.tsx
+│   │   ├── equipmentAbilitiesManager.ts
+│   │   ├── index.ts
+│   │   ├── Utility.tsx
+│   │   ├── Weapons.tsx
+│   │   └── WeaponsEquipment.tsx
+│   ├── inventory
+│   │   ├── CatalogTable.tsx
+│   │   ├── EmptyInventory.tsx
+│   │   ├── Inventory.tsx
+│   │   ├── InventoryHelpers.tsx
+│   │   ├── InventoryLoader.tsx
+│   │   ├── InventoryMain.tsx
+│   │   ├── InventoryTable.tsx
+│   │   ├── ItemCard.tsx
+│   │   ├── ItemCatalog.tsx
+│   │   └── ItemDetailModal.tsx
+│   ├── ItemCards
+│   │   ├── AmmunitionCard.tsx
+│   │   ├── ArmorCard.tsx
+│   │   ├── AttackCard.tsx
+│   │   ├── CraftingComponentCard.tsx
+│   │   ├── ExplosiveCard.tsx
+│   │   ├── ExplosivesCard.tsx
+│   │   ├── ItemDetailModal.tsx
+│   │   ├── PotionCard.tsx
+│   │   ├── ScrollCard.tsx
+│   │   ├── TrapCard.tsx
+│   │   └── WeaponCard.tsx
+│   ├── Layout
+│   │   ├── CharacterHeader.tsx
+│   │   ├── GameApp.tsx
+│   │   └── TabLayout.tsx
+│   ├── lib
+│   │   ├── chakra.ts
+│   │   └── utils.ts
+│   ├── loot
+│   │   └── Loot.tsx
+│   ├── Modals
+│   │   ├── AbilityDetailModal.tsx
+│   │   ├── AmmunitionDetailModal.tsx
+│   │   ├── ArmorDetailModal.tsx
+│   │   ├── AttackDetailModal.tsx
+│   │   ├── CraftingComponentDetailModal.tsx
+│   │   ├── ExplosivesDetailModal.tsx
+│   │   ├── ItemDetailModal.tsx
+│   │   ├── PotionDetailModal.tsx
+│   │   ├── ScrollDetailModal.tsx
+│   │   ├── SpellDetailModal.tsx
+│   │   ├── TraitDetailModal.tsx
+│   │   ├── TrapDetailModal.tsx
+│   │   └── WeaponDetailModal.tsx
+│   ├── notes
+│   │   └── Notes.tsx
+│   ├── quests
+│   │   └── Quests.tsx
+│   ├── stats
+│   │   ├── Skills.tsx
+│   │   ├── Stats.tsx
+│   │   └── Traits.tsx
+│   ├── ui
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── scroll-area.tsx
+│   │   ├── stat-card.tsx
+│   │   └── tabs.tsx
+│   └── utils.ts
+├── context
+│   ├── AuthContext.tsx
+│   ├── CharacterContext.tsx
+│   └── GameContext.tsx
+├── data
+│   ├── armor.json
+│   ├── classes.json
+│   ├── races.json
+│   └── weapons.json
+├── firebase
+│   └── firebaseConfig.ts
+├── hooks
+│   ├── useCharacter.js
+│   ├── useInventory.js
+│   └── useQuests.js
+├── Login.tsx
+├── providers
+│   └── chakra.tsx
+├── signup.tsx
+├── styles
+│   ├── components
+│   │   ├── character.css
+│   │   ├── inventory.css
+│   │   └── quests.css
+│   └── global.css
+├── types
+│   ├── ability.d.ts
+│   ├── ammunition.ts
+│   ├── armor.ts
+│   ├── character.ts
+│   ├── class.ts
+│   ├── craftingcomponent.ts
+│   ├── equipmentBonuses.ts
+│   ├── equippedItems.ts
+│   ├── explosives.ts
+│   ├── inventory.ts
+│   ├── inventoryTypes.ts
+│   ├── items.ts
+│   ├── potion.ts
+│   ├── race.ts
+│   ├── scroll.ts
+│   ├── spell.ts
+│   ├── tabs.ts
+│   ├── trap.ts
+│   └── weapon.ts
+├── types.tsx
+└── utils
+    ├── calculations.js
+    ├── formatters.js
+    └── validators.js

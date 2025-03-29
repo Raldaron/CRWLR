@@ -1,6 +1,9 @@
 {
   "name": "crwlr",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -17,14 +20,18 @@
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-scroll-area": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.1",
+    "@types/lodash": "^4.17.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^11.4.0",
     "framer-motion": "^11.18.2",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.1",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -34,6 +41,7 @@
     "@types/webpack": "^5.28.5",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "unimported": "^1.31.0"
   }
 }

@@ -1,0 +1,14 @@
+{
+    "entry": [
+      "layout.jsx"
+    ],
+
+    "rootDir": ".",
+
+    "ignorePatterns": [
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/scripts/**"
+    ]
+  }
+  

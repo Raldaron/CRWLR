@@ -1,34 +1,36 @@
-// app/layout.tsx
+// app/layout.tsx - UPDATED
 'use client';
 
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import { AuthProvider } from '@/context/AuthContext';
+import { DMProvider } from '@/context/DMContext';
 import { Inter } from 'next/font/google';
-import { CharacterProvider } from '@/context/CharacterContext';
+import darkTheme from './theme';
+import { CacheProvider } from '@chakra-ui/next-js'
+import { ForceColorMode } from '@/components/ForceColorMode';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// Create a separate component for providers to maintain proper HTML structure
-function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <ChakraProvider>
-      <CharacterProvider>
-        {children}
-      </CharacterProvider>
-    </ChakraProvider>
-  );
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <title>Dungeon Crawler World</title>
+        <meta name="description" content="Character Manager for Dungeon Crawler World" />
+      </head>
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <CacheProvider>
+          <ColorModeScript initialColorMode="dark" />
+          <ChakraProvider theme={darkTheme} resetCSS={true}>
+            <ForceColorMode>
+              <AuthProvider>
+                <DMProvider>
+                  {children}
+                </DMProvider>
+              </AuthProvider>
+            </ForceColorMode>
+          </ChakraProvider>
+        </CacheProvider>
       </body>
     </html>
   );

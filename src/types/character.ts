@@ -8,8 +8,6 @@ export interface CharacterStats {
   wit: number;
   perception: number;
   charisma: number;
-  appearance: number;
-  manipulation: number;
 }
 
 export interface Skill {

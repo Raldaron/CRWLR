@@ -1,11 +1,14 @@
+// src/components/equipment/Armor.tsx
 'use client';
+
 import React from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import ArmorEquipment from './ArmorEquipment';
 
 const Armor: React.FC = () => {
   return (
     <Box p={4}>
-      <Text>Armor Component</Text>
+      <ArmorEquipment />
     </Box>
   );
 };
