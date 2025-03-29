@@ -241,10 +241,10 @@ const PlayerLoot: React.FC = () => {
           return;
         }
         
-        // Add items to inventory
+        // Properly add ALL quantities of EACH item to inventory
         lootBox.items.forEach(item => {
-          // Add each item to inventory with its quantity
-          for (let i = 0; i < item.quantity; i++) {
+          // Add the FULL quantity of the item to inventory
+          for (let i = 0; i < (item.quantity || 1); i++) {
             addToInventory({
               ...item,
               description: item.description || ''
