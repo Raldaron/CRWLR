@@ -13,4 +13,6 @@ export interface Class {
     abilities: string[];
     traits: string[];
     armorrating: number;
-  }
+    mpbonus: number;
+    hpbonus: number;
+    }

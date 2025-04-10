@@ -1,144 +1,128 @@
+// src/components/ItemCards/AttackCard.tsx
 import React from 'react';
 import {
-  Card,
-  CardBody,
+  Box,
   VStack,
   Text,
   Badge,
-  Flex,
   HStack,
-  Box,
   Tooltip
 } from '@chakra-ui/react';
-import { Swords, Target, Zap } from 'lucide-react';
-import type { WeaponItem } from '@/types/weapon';
-
-// Define what an Attack looks like
-export interface Attack {
-  id: string;
-  name: string;
-  description: string;
-  damageAmount: string;
-  damageType: string;
-  range: string;
-  weaponType: string; 
-  weaponId: string;
-  // Weapon traits and abilities - defined as arrays
-  traits: string[];
-  abilities: string[];
-  // Additional properties that might be useful
-  accuracy?: number;
-  criticalHit?: string;
-  apCost?: number;
-  sourceItem?: string;
-}
+import { Sword, Target, Shield } from 'lucide-react';
+import DarkThemedCard from '@/components/ui/DarkThemedCard';
+import type { Attack } from '@/types/attack';
 
 interface AttackCardProps {
   attack: Attack;
-  onClick?: () => void;
+  onClick: () => void;
 }
 
-export const AttackCard: React.FC<AttackCardProps> = ({ attack, onClick }) => {
+const AttackCard: React.FC<AttackCardProps> = ({ attack, onClick }) => {
+  // Helper function to get weapon type color
+  const getWeaponTypeColor = (type: string) => {
+    switch(type.toLowerCase()) {
+      case 'sword': return 'blue';
+      case 'dagger': return 'teal';
+      case 'axe': return 'red';
+      case 'mace': return 'orange';
+      case 'hammer': return 'yellow';
+      case 'polearm': return 'purple';
+      case 'bow': return 'green';
+      case 'crossbow': return 'cyan';
+      case 'firearm': return 'pink';
+      case 'staff': return 'brand';
+      case 'wand': return 'accent';
+      default: return 'gray';
+    }
+  };
+
+  // Helper function to get damage type color
   const getDamageTypeColor = (type: string) => {
     switch(type.toLowerCase()) {
-      case 'slashing': return 'red';
-      case 'piercing': return 'blue';
-      case 'bludgeoning': return 'orange';
       case 'fire': return 'red';
       case 'cold': return 'blue';
       case 'lightning': return 'yellow';
       case 'acid': return 'green';
       case 'force': return 'purple';
+      case 'piercing': return 'orange';
+      case 'bludgeoning': return 'gray';
+      case 'slashing': return 'cyan';
+      case 'necrotic': return 'pink';
+      case 'radiant': return 'brand';
+      case 'poison': return 'teal';
+      case 'physical': return 'gray';
       default: return 'gray';
     }
   };
 
+  // Determine if this is a magical attack
+  const isMagical = attack.magicNonMagical === 'Magical';
+
+  // Get the display name for the slot
+  const slotName = attack.slot === 'primaryWeapon' ? 'Primary' : 'Secondary';
+
   return (
-    <Card 
-      h="full" 
-      _hover={{ shadow: 'md' }} 
-      transition="all 0.2s"
-      onClick={onClick}
-      cursor={onClick ? 'pointer' : 'default'}
-      borderLeft="4px solid"
-      borderColor="red.400"
+    <DarkThemedCard 
+      onClick={onClick} 
+      borderColor={attack.meleeRanged === 'Melee' ? "blue.800" : "green.800"}
+      _hover={{ 
+        transform: 'translateY(-2px)', 
+        boxShadow: 'lg',
+        borderColor: attack.meleeRanged === 'Melee' ? "blue.600" : "green.600"
+      }}
     >
-      <CardBody>
-        <VStack align="start" spacing={3}>
-          {/* Card Header */}
-          <Flex justify="space-between" w="full" align="center">
-            <HStack spacing={2}>
-              <Swords size={16} className="text-red-500" />
-              <Text fontWeight="bold" fontSize="lg">{attack.name}</Text>
-            </HStack>
-            <Badge colorScheme="gray">
-              {attack.weaponType}
+      <VStack align="start" spacing={2}>
+        <HStack justify="space-between" width="full">
+          <HStack>
+            <Sword 
+              className={attack.meleeRanged === 'Melee' ? "text-blue-500" : "text-green-500"} 
+              size={18} 
+            />
+            <Text fontWeight="bold" fontSize="md" color="gray.200">{attack.name}</Text>
+          </HStack>
+          
+          <Badge colorScheme={attack.meleeRanged === 'Melee' ? "blue" : "green"}>
+            {attack.meleeRanged}
+          </Badge>
+        </HStack>
+        
+        <HStack spacing={2} wrap="wrap">
+          <Badge colorScheme={getWeaponTypeColor(attack.weaponType)}>
+            {attack.weaponType}
+          </Badge>
+          <Badge variant="outline" colorScheme="gray">
+            {attack.handsRequired}
+          </Badge>
+          {isMagical && (
+            <Badge colorScheme="purple" variant="subtle">
+              Magical
             </Badge>
-          </Flex>
-          
-          {/* Attack Description */}
-          <Text fontSize="sm" color="gray.600" noOfLines={2}>
-            {attack.description || `Basic attack with ${attack.sourceItem || 'your weapon'}`}
-          </Text>
-          
-          {/* Attack Stats */}
-          <Box w="full">
-            {/* Damage */}
-            <HStack spacing={2} mb={2}>
-              <Text fontSize="sm" fontWeight="bold">Damage:</Text>
-              <Text fontSize="sm">{attack.damageAmount}</Text>
-              <Badge colorScheme={getDamageTypeColor(attack.damageType)}>
-                {attack.damageType}
-              </Badge>
-            </HStack>
-
-            {/* Range */}
-            <HStack spacing={2} mb={2}>
-              <Target size={14} />
-              <Text fontSize="sm">Range: {attack.range || 'Melee'}</Text>
-            </HStack>
-          </Box>
-
-          {/* Traits and Abilities Preview */}
-          {(attack.traits.length > 0 || attack.abilities.length > 0) && (
-            <Box>
-              {attack.traits.length > 0 && (
-                <HStack spacing={1} mb={1} flexWrap="wrap">
-                  <Text fontSize="xs" fontWeight="semibold">Traits:</Text>
-                  {attack.traits.slice(0, 2).map((trait, idx) => (
-                    <Badge key={idx} colorScheme="green" fontSize="xs">
-                      {trait}
-                    </Badge>
-                  ))}
-                  {attack.traits.length > 2 && (
-                    <Badge colorScheme="green" fontSize="xs">
-                      +{attack.traits.length - 2} more
-                    </Badge>
-                  )}
-                </HStack>
-              )}
-              
-              {attack.abilities.length > 0 && (
-                <HStack spacing={1} flexWrap="wrap">
-                  <Text fontSize="xs" fontWeight="semibold">Abilities:</Text>
-                  {attack.abilities.slice(0, 2).map((ability, idx) => (
-                    <Badge key={idx} colorScheme="purple" fontSize="xs">
-                      {ability}
-                    </Badge>
-                  ))}
-                  {attack.abilities.length > 2 && (
-                    <Badge colorScheme="purple" fontSize="xs">
-                      +{attack.abilities.length - 2} more
-                    </Badge>
-                  )}
-                </HStack>
-              )}
-            </Box>
           )}
-
-        </VStack>
-      </CardBody>
-    </Card>
+        </HStack>
+        
+        <Text fontSize="xs" color="gray.400" noOfLines={2}>
+          {attack.description}
+        </Text>
+        
+        <HStack spacing={2} width="full" justify="space-between">
+          <HStack>
+            <Tooltip label={`${attack.damageAmount} ${attack.damageType} damage`}>
+              <Badge colorScheme={getDamageTypeColor(attack.damageType)} px={2}>
+                {attack.damageAmount}
+              </Badge>
+            </Tooltip>
+          </HStack>
+          
+          <HStack spacing={1}>
+            <Tooltip label={`${slotName} Weapon`}>
+              <Box>
+                <Shield size={14} className="text-gray-400" />
+              </Box>
+            </Tooltip>
+          </HStack>
+        </HStack>
+      </VStack>
+    </DarkThemedCard>
   );
 };
 

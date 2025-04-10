@@ -1,0 +1,130 @@
+// src/services/spellDataService.ts
+import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import { db } from '../../firebase/firebaseConfig';
+import { Spell } from '../../types/spell';
+
+/**
+ * Fetches all spells from Firestore
+ */
+export const fetchAllSpells = async (): Promise<Spell[]> => {
+  try {
+    const spellsCollection = collection(db, 'spells');
+    const spellsSnapshot = await getDocs(spellsCollection);
+    
+    const spells: Spell[] = [];
+    spellsSnapshot.forEach((doc) => {
+      const spellData = doc.data() as Omit<Spell, 'id'>;
+      spells.push({
+        id: doc.id,
+        ...spellData
+      });
+    });
+    
+    return spells;
+  } catch (error) {
+    console.error('Error fetching spells:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches a single spell by ID
+ */
+export const fetchSpellById = async (spellId: string): Promise<Spell | null> => {
+  try {
+    const spellDoc = await getDoc(doc(db, 'spells', spellId));
+    
+    if (spellDoc.exists()) {
+      return {
+        ...spellDoc.data() as Omit<Spell, 'id'>,
+        id: spellDoc.id
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error fetching spell ${spellId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches spells by archetype
+ */
+export const fetchSpellsByArchetype = async (archetype: string): Promise<Spell[]> => {
+  try {
+    const spellsQuery = query(
+      collection(db, 'spells'),
+      where('archetype', '==', archetype)
+    );
+    
+    const spellsSnapshot = await getDocs(spellsQuery);
+    
+    const spells: Spell[] = [];
+    spellsSnapshot.forEach((doc) => {
+      spells.push({
+        id: doc.id,
+        ...doc.data() as Omit<Spell, 'id'>
+      });
+    });
+    
+    return spells;
+  } catch (error) {
+    console.error(`Error fetching spells for archetype ${archetype}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Loads spells from a local JSON file
+ */
+export const loadSpellsFromJson = async (filePath: string): Promise<Spell[]> => {
+  try {
+    const response = await fetch(filePath);
+    const data = await response.json();
+    
+    // Convert from object format to array format
+    return Object.entries(data).map(([key, spellData]) => ({
+      id: key,
+      ...(spellData as Spell)
+    }));
+  } catch (error) {
+    console.error('Error loading spells from JSON:', error);
+    throw error;
+  }
+};
+
+/**
+ * Formats a spell description by replacing escaped newlines
+ */
+export const formatSpellDescription = (description: string | undefined): string => {
+  if (!description) return '';
+  return description
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '')
+    .replace(/\n\n/g, '\n')
+    .trim();
+};
+
+/**
+ * Gets the spell level effects up to a particular level
+ */
+export const getSpellLevelEffects = (
+  spell: Spell, 
+  currentLevel: number
+): { level: number; effect: string }[] => {
+  const effects: { level: number; effect: string }[] = [];
+  
+  if (!spell.scaling) return effects;
+  
+  for (let i = 1; i <= currentLevel; i++) {
+    const levelKey = `level ${i}`;
+    const effect = spell.scaling[levelKey];
+    
+    if (effect && effect.trim() !== '') {
+      effects.push({ level: i, effect });
+    }
+  }
+  
+  return effects;
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // Remove useState, useEffect
 import {
   Modal,
   ModalOverlay,
@@ -10,205 +10,151 @@ import {
   VStack,
   Badge,
   Box,
-  Spinner,
+  // Remove Spinner,
   Divider,
   SimpleGrid,
   HStack,
-  Button,
+  // Remove Button,
 } from '@chakra-ui/react';
 import { Star, Clock, Zap } from 'lucide-react';
 
+// Use the detailed AbilityData interface
+interface AbilityData {
+    id?: string;
+    name: string;
+    description: string;
+    effect: string;
+    range: string;
+    damage: string;
+    damageType: string;
+    scaling: { [key: string]: string };
+    abilitypointcost: number;
+    cooldown: string;
+    specialrules?: Record<string, string>;
+}
+
+// --- FIX: Change prop name and type ---
 interface AbilityDetailModalProps {
-  abilityName: string;
+  ability: AbilityData | null; // Expect the full object or null
   isOpen: boolean;
   onClose: () => void;
 }
+// ------------------------------------
 
-interface Ability {
-  name: string;
-  description: string;
-  effect: string;
-  range: string;
-  damage: string;
-  damagetype: string;
-  scaling: {
-    [key: string]: string;
-  };
-  abilitypointcost: number;
-  cooldown: string;
-  specialrules?: {
-    [key: string]: string;
-  };
-}
-
-const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({ 
-  abilityName, 
-  isOpen, 
-  onClose 
+const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({
+  ability, // Use the ability prop
+  isOpen,
+  onClose
 }) => {
-  const [ability, setAbility] = useState<Ability | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchAbilityData = async () => {
-      if (!abilityName) return;
-      
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch('/data/abilities.json');
-        const data = await response.json();
-        
-        // Find the ability by name (case-insensitive)
-        const abilityKey = Object.keys(data.abilities).find(
-          key => data.abilities[key].name.toLowerCase() === abilityName.toLowerCase()
-        );
-        
-        if (abilityKey) {
-          setAbility(data.abilities[abilityKey]);
-        } else {
-          // If we can't find an exact match, try to find a partial match
-          const partialMatch = Object.values(data.abilities).find(
-            (a: any) => a.name.toLowerCase().includes(abilityName.toLowerCase())
-          );
-          
-          if (partialMatch) {
-            setAbility(partialMatch as Ability);
-          } else {
-            setError(`Could not find ability: ${abilityName}`);
-            // Create a placeholder ability
-            setAbility({
-              name: abilityName,
-              description: 'Ability details not found in database.',
-              effect: 'Unknown effect',
-              range: 'Unknown',
-              damage: 'N/A',
-              damagetype: 'N/A',
-              scaling: {},
-              abilitypointcost: 0,
-              cooldown: 'Unknown'
-            });
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching ability data:', err);
-        setError('Failed to load ability data');
-        // Create a placeholder ability
-        setAbility({
-          name: abilityName,
-          description: 'Error loading ability details.',
-          effect: 'Unknown effect',
-          range: 'Unknown',
-          damage: 'N/A',
-          damagetype: 'N/A',
-          scaling: {},
-          abilitypointcost: 0,
-          cooldown: 'Unknown'
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (isOpen && abilityName) {
-      fetchAbilityData();
-    }
-  }, [abilityName, isOpen]);
+  // --- FIX: Remove internal fetching state and useEffect ---
+  // const [ability, setAbility] = useState<Ability | null>(null);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
+  // useEffect(() => { /* ... remove this ... */ }, [abilityName, isOpen]);
+  // -----------------------------------------------------
 
   // Fix: Replace /n/n with actual line breaks and apply white-space: pre-wrap
-  const formatDescription = (text: string) => {
+  const formatDescription = (text: string | undefined) => {
     // Replace "/n/n" with actual line breaks if present
+    if (!text) return '';
     return text.replace(/\/n\/n/g, '\n\n');
   };
+
+  // Check if the passed ability prop is null
+  if (!ability) {
+    // Optionally render nothing or a placeholder if the modal is open but ability is null
+     if (isOpen) {
+        return (
+            <Modal isOpen={isOpen} onClose={onClose} size="lg">
+                <ModalOverlay />
+                <ModalContent bg="gray.800" borderColor="gray.700">
+                    <ModalHeader color="gray.100">Ability Details</ModalHeader>
+                    <ModalCloseButton color="gray.400"/>
+                    <ModalBody pb={6}><Text color="gray.400">No ability data provided.</Text></ModalBody>
+                </ModalContent>
+            </Modal>
+        );
+     }
+     return null; // Don't render if not open
+  }
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent bg="gray.800" borderColor="gray.700">
         <ModalHeader>
-          {isLoading ? (
-            <Text>Loading ability...</Text>
-          ) : (
-            <VStack align="start" spacing={2}>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Star size={18} className="text-purple-500" />
-                <Text>{ability?.name || abilityName}</Text>
-              </Box>
-              <Badge colorScheme="purple">Ability</Badge>
-            </VStack>
-          )}
+           {/* Use the ability prop directly */}
+           <VStack align="start" spacing={2}>
+             <Box display="flex" alignItems="center" gap={2}>
+               <Star size={18} className="text-purple-400" /> {/* Adjusted color */}
+               <Text color="gray.100">{ability.name}</Text>
+             </Box>
+             <Badge colorScheme="purple">Ability</Badge>
+           </VStack>
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton color="gray.400"/>
         <ModalBody pb={6}>
-          {isLoading ? (
-            <Box display="flex" justifyContent="center" p={8}>
-              <Spinner size="xl" color="purple.500" />
-            </Box>
-          ) : error ? (
-            <Text color="red.500">{error}</Text>
-          ) : ability ? (
-            <VStack align="start" spacing={4}>
-              <Box>
-                <Text fontWeight="semibold" mb={2}>Description</Text>
-                {/* Fix: Apply white-space: pre-wrap to preserve line breaks */}
-                <Text 
-                  whiteSpace="pre-wrap" 
-                  style={{ whiteSpace: 'pre-wrap' }}
-                >
-                  {formatDescription(ability.description)}
-                </Text>
-              </Box>
-              
-              <Box>
-                <Text fontWeight="semibold" mb={2}>Effect</Text>
-                <Text whiteSpace="pre-wrap">{formatDescription(ability.effect)}</Text>
-              </Box>
-              
-              <SimpleGrid columns={2} spacing={4} width="100%">
-                <Box>
-                  <Text fontWeight="semibold">Range</Text>
-                  <Text>{ability.range}</Text>
-                </Box>
-                {ability.damage !== "N/A" && (
-                  <Box>
-                    <Text fontWeight="semibold">Damage</Text>
-                    <Text>{ability.damage} {ability.damagetype}</Text>
-                  </Box>
-                )}
-              </SimpleGrid>
+           {/* Use the ability prop directly */}
+           <VStack align="start" spacing={4}>
+             <Box>
+               <Text fontWeight="semibold" mb={1} color="gray.300">Description</Text>
+               <Text whiteSpace="pre-wrap" color="gray.400">
+                 {formatDescription(ability.description)}
+               </Text>
+             </Box>
 
-              <Divider />
-
-              <Box width="100%">
-                <HStack justify="space-between" mb={4}>
-                  <Text fontWeight="semibold">
-                    Cooldown
-                  </Text>
-                </HStack>
-                
-                <Text>{ability.cooldown}</Text>
-              </Box>
-              
-              {/* Special Rules Section (if present in the ability data) */}
-              {ability.specialrules && (
+             {ability.effect && ability.effect !== '-' && ability.effect !== 'N/A' && ( // Check effect
                 <>
-                  <Divider />
-                  <Box width="100%">
-                    <Text fontWeight="semibold" mb={2}>Special Rules</Text>
-                    <VStack align="start" spacing={2}>
-                      {Object.entries(ability.specialrules).map(([key, rule]) => (
-                        <Text key={key}>{key}. {rule}</Text>
-                      ))}
-                    </VStack>
-                  </Box>
+                <Divider borderColor="gray.600"/>
+                <Box>
+                    <Text fontWeight="semibold" mb={1} color="gray.300">Effect</Text>
+                    <Text whiteSpace="pre-wrap" color="gray.400">{formatDescription(ability.effect)}</Text>
+                </Box>
                 </>
-              )}
-            </VStack>
-          ) : (
-            <Text>No ability data available</Text>
-          )}
+             )}
+
+             <SimpleGrid columns={2} spacing={4} width="100%">
+               {ability.range && ability.range !== '-' && ability.range !== 'N/A' && (
+                 <Box>
+                   <Text fontWeight="semibold" color="gray.300">Range</Text>
+                   <Text color="gray.400">{ability.range}</Text>
+                 </Box>
+               )}
+               {ability.damage && ability.damage !== "N/A" && (
+                 <Box>
+                   <Text fontWeight="semibold" color="gray.300">Damage</Text>
+                   <Text color="gray.400">{ability.damage} {ability.damageType}</Text>
+                 </Box>
+               )}
+                {/* Display cost and cooldown */}
+                 <Box>
+                   <Text fontWeight="semibold" color="gray.300">AP Cost</Text>
+                   <Text color="gray.400">{ability.abilitypointcost}</Text>
+                 </Box>
+                 <Box>
+                   <Text fontWeight="semibold" color="gray.300">Cooldown</Text>
+                   <Text color="gray.400">{ability.cooldown}</Text>
+                 </Box>
+             </SimpleGrid>
+
+
+             {/* Special Rules Section (if present in the ability data) */}
+             {ability.specialrules && Object.keys(ability.specialrules).length > 0 && (
+               <>
+                 <Divider borderColor="gray.600"/>
+                 <Box width="100%">
+                   <Text fontWeight="semibold" mb={2} color="gray.300">Special Rules</Text>
+                   <VStack align="start" spacing={1}>
+                     {Object.entries(ability.specialrules).map(([key, rule]) => (
+                       <Text key={key} fontSize="sm" color="gray.400">{key}. {rule}</Text>
+                     ))}
+                   </VStack>
+                 </Box>
+               </>
+             )}
+           </VStack>
         </ModalBody>
       </ModalContent>
     </Modal>

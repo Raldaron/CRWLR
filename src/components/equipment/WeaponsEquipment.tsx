@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   SimpleGrid,
@@ -12,10 +12,14 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { Sword } from 'lucide-react';
 import { useCharacter } from '@/context/CharacterContext';
 import { WeaponCard } from '@/components/ItemCards/WeaponCard';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 import type { WeaponItem } from '@/types/weapon';
 import DarkThemedCard from '@/components/ui/DarkThemedCard';
 
@@ -90,8 +94,44 @@ const WeaponsEquipment = () => {
   // State to track which slot we're equipping
   const [activeSlot, setActiveSlot] = useState<'primaryWeapon' | 'secondaryWeapon' | null>(null);
   
+  // Loading state and weapons list
+  const [isLoading, setIsLoading] = useState(false);
+  const [weaponsList, setWeaponsList] = useState<WeaponItem[]>([]);
+  
   // Modal control
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Fetch weapons from Firestore when needed
+  useEffect(() => {
+    // Only fetch when modal is opened
+    if (!isOpen) return;
+    
+    const fetchWeapons = async () => {
+      setIsLoading(true);
+      try {
+        const weaponsCollection = collection(db, 'weapons');
+        const weaponSnapshot = await getDocs(weaponsCollection);
+        const weapons: WeaponItem[] = [];
+        
+        weaponSnapshot.forEach(doc => {
+          const data = doc.data() as WeaponItem;
+          weapons.push({
+            ...data,
+            id: doc.id, // Ensure we have the document ID
+            itemType: 'Weapon' // Ensure we have the correct item type
+          });
+        });
+        
+        setWeaponsList(weapons);
+      } catch (error) {
+        console.error('Error fetching weapons:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchWeapons();
+  }, [isOpen]);
 
   // Get weapons from inventory
   const myWeapons = getInventoryByType('Weapon').filter(
@@ -149,24 +189,30 @@ const WeaponsEquipment = () => {
           </ModalHeader>
           <ModalCloseButton color="gray.400" />
           <ModalBody pb={6}>
-            <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-              {myWeapons.length === 0 ? (
-                <Text color="gray.400" p={4}>No weapons available in inventory</Text>
-              ) : (
-                myWeapons.map((inventoryItem) => (
-                  <Box 
-                    key={inventoryItem.item.id}
-                    onClick={() => handleWeaponSelect(inventoryItem.item)}
-                    cursor="pointer"
-                  >
-                    <WeaponCard
-                      item={inventoryItem.item}
+            {isLoading ? (
+              <Center py={6}>
+                <Spinner size="xl" color="brand.400" />
+              </Center>
+            ) : (
+              <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+                {myWeapons.length === 0 ? (
+                  <Text color="gray.400" p={4}>No weapons available in inventory</Text>
+                ) : (
+                  myWeapons.map((inventoryItem) => (
+                    <Box 
+                      key={inventoryItem.item.id}
                       onClick={() => handleWeaponSelect(inventoryItem.item)}
-                    />
-                  </Box>
-                ))
-              )}
-            </SimpleGrid>
+                      cursor="pointer"
+                    >
+                      <WeaponCard
+                        item={inventoryItem.item}
+                        onClick={() => handleWeaponSelect(inventoryItem.item)}
+                      />
+                    </Box>
+                  ))
+                )}
+              </SimpleGrid>
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

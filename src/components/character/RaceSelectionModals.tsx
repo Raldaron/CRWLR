@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -16,17 +16,21 @@ import {
   VStack,
   HStack,
   Badge,
-  Spinner,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
   useBreakpointValue,
+  Spinner,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import { Shield, Sword, Star } from 'lucide-react';
 import { useCharacter } from '@/context/CharacterContext';
 import type { Race } from '@/types/race';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 const RaceSelectionModals = () => {
   const { selectedRace, setSelectedRace } = useCharacter();
@@ -35,26 +39,50 @@ const RaceSelectionModals = () => {
   const [selectedRaceDetails, setSelectedRaceDetails] = useState<Race | null>(null);
   const [racesData, setRacesData] = useState<{[key: string]: Race}>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Responsive layout
   const gridColumns = useBreakpointValue({ base: 1, sm: 2, md: 3 }) || 1;
   const modalSize = useBreakpointValue({ base: "full", md: "2xl", lg: "4xl" }) || "full";
 
-  // Load race data from JSON file
+  // Load race data from Firestore
   useEffect(() => {
-    const loadRacesData = async () => {
+    const fetchRacesFromFirestore = async () => {
       try {
-        const response = await fetch('/data/races.json');
-        const data = await response.json();
-        setRacesData(data);
+        setIsLoading(true);
+        setError(null);
+        
+        // Create a reference to the 'races' collection
+        const racesRef = collection(db, 'races');
+        
+        // Get all documents from the collection
+        const querySnapshot = await getDocs(racesRef);
+        
+        // Check if we got data
+        if (querySnapshot.empty) {
+          setError('No races found in the database.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Convert the query snapshot to an object
+        const racesObject: { [key: string]: Race } = {};
+        
+        querySnapshot.forEach((doc) => {
+          const raceData = doc.data() as Race;
+          racesObject[doc.id] = raceData;
+        });
+        
+        setRacesData(racesObject);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error loading races data:', error);
+        console.error('Error fetching races from Firestore:', error);
+        setError('Failed to load races data. Please try again.');
         setIsLoading(false);
       }
     };
 
-    loadRacesData();
+    fetchRacesFromFirestore();
   }, []);
 
   const handleRaceClick = (race: Race) => {

@@ -1,4 +1,5 @@
 export interface Ability {
+  id?: string;  // Make id optional
     name: string;
     description: string;
     effect: string;

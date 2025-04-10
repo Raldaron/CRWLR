@@ -15,12 +15,18 @@ import {
   useDisclosure,
   Button,
   Divider,
+  Spinner,
+  Center,
 } from '@chakra-ui/react';
 import { useCharacter } from '@/context/CharacterContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import DarkThemedCard from '@/components/ui/DarkThemedCard';
-import type { Ability, AbilitiesData } from '@/types/ability';
+import type { Ability } from '@/types/ability';
+
+// Import Firebase utilities
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 interface AbilityCardProps {
   ability: Ability & { sources?: string[] };
@@ -238,27 +244,59 @@ const Abilities: React.FC = () => {
     selectedClass, 
     equippedItems 
   } = useCharacter();
-  const [abilitiesData, setAbilitiesData] = React.useState<AbilitiesData | null>(null);
+  
+  const [abilities, setAbilities] = React.useState<{[key: string]: Ability}>({});
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     const loadAbilitiesData = async (): Promise<void> => {
       try {
-        const response = await fetch('/data/abilities.json');
-        const data: AbilitiesData = await response.json();
-        setAbilitiesData(data);
+        setIsLoading(true);
+        // Get reference to the abilities collection
+        const abilitiesRef = collection(db, 'abilities');
+        
+        // Get all documents from the collection
+        const abilitiesSnapshot = await getDocs(abilitiesRef);
+        
+        // Convert the snapshot to a map of ability objects
+        const abilitiesMap: {[key: string]: Ability} = {};
+        
+        abilitiesSnapshot.forEach((doc) => {
+          // Use the document ID as the key and the data as the ability
+          const abilityData = doc.data() as Ability;
+          abilitiesMap[doc.id.toLowerCase()] = {
+            ...abilityData,
+            id: doc.id  // Add ID to the ability object
+          };
+          
+          // Also index by name for easier lookup
+          if (abilityData.name) {
+            abilitiesMap[abilityData.name.toLowerCase()] = {
+              ...abilityData,
+              id: doc.id  // Add ID to the ability object
+            };
+          }
+        });
+        
+        setAbilities(abilitiesMap);
       } catch (error) {
         console.error('Error loading abilities:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadAbilitiesData();
   }, []);
 
-  if (!abilitiesData) {
+  if (isLoading) {
     return (
-      <Box p={4} textAlign="center">
-        <Text color="gray.400">Loading abilities...</Text>
-      </Box>
+      <Center h="400px">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="brand.500" />
+          <Text color="gray.300">Loading abilities...</Text>
+        </VStack>
+      </Center>
     );
   }
 
@@ -269,8 +307,8 @@ const Abilities: React.FC = () => {
     .filter(item => item !== null)
     .flatMap(item => {
       // Each item can have an abilities array 
-      if ('abilities' in item && Array.isArray((item as any).abilities)) {
-        return (item as any).abilities || [];
+      if (item && typeof item === 'object' && 'abilities' in item) {
+        return Array.isArray((item as any).abilities) ? (item as any).abilities : [];
       }
       return [];
     });
@@ -295,14 +333,14 @@ const Abilities: React.FC = () => {
 
   const abilityDetails = allAbilities.map((abilityName: string) => {
     // First try to lookup ability by exact key matching (case-sensitive)
-    let ability = abilitiesData.abilities[abilityName.toLowerCase()];
+    let ability = abilities[abilityName.toLowerCase()];
     
     // If not found by key, try to find by name (case-insensitive)
     if (!ability) {
       const normalizedName = abilityName.toLowerCase();
-      for (const key in abilitiesData.abilities) {
-        if (abilitiesData.abilities[key].name.toLowerCase() === normalizedName) {
-          ability = abilitiesData.abilities[key];
+      for (const key in abilities) {
+        if (abilities[key].name.toLowerCase() === normalizedName) {
+          ability = abilities[key];
           break;
         }
       }

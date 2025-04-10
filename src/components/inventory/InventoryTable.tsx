@@ -1,4 +1,5 @@
-// components/inventory/InventoryTable.tsx
+// Modified version of InventoryTable.tsx to better handle item rendering
+
 import React, { useState } from 'react';
 import {
   Box,
@@ -16,6 +17,7 @@ import {
   HStack,
   IconButton,
   TableContainer,
+  useToast,
 } from '@chakra-ui/react';
 import { Search, Eye, Trash } from 'lucide-react';
 import { InventoryItem } from '@/types/inventory';
@@ -38,20 +40,44 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const toast = useToast();
+
+  // Debug message to help identify items that might not be showing up
+  React.useEffect(() => {
+    console.log(`InventoryTable received ${items.length} items`);
+    // Log the item types to help with debugging
+    const itemTypes = new Set(items.map(item => item.item.itemType));
+    console.log(`Item types in inventory: ${Array.from(itemTypes).join(', ')}`);
+  }, [items]);
 
   // Filter items based on search term
   const filteredItems = items.filter(inventoryItem => {
     const item = inventoryItem.item;
+    if (!item) {
+      console.warn("Found undefined item in inventory");
+      return false;
+    }
     return (
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      (item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+      (item.description?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
     );
   });
 
+  // Safeguard against sorting errors
+  const getSafeValue = (item: InventoryItem, column: string): string => {
+    try {
+      const value = getColumnValue(item, column);
+      return value !== null && value !== undefined ? String(value) : '';
+    } catch (error) {
+      console.error(`Error getting value for column ${column}:`, error);
+      return '';
+    }
+  };
+
   // Sort items based on sort column and direction
   const sortedItems = [...filteredItems].sort((a, b) => {
-    const aValue = getColumnValue(a.item, sortColumn) as string;
-    const bValue = getColumnValue(b.item, sortColumn) as string;
+    const aValue = getSafeValue(a.item, sortColumn);
+    const bValue = getSafeValue(b.item, sortColumn);
     return sortDirection === 'asc'
       ? aValue.localeCompare(bValue)
       : bValue.localeCompare(aValue);
@@ -87,6 +113,30 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
     }
   };
 
+  // Handle item removal with better error handling
+  const handleRemoveItem = (itemId: string) => {
+    try {
+      if (onRemoveItem) {
+        onRemoveItem(itemId);
+        toast({
+          title: "Item Removed",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+      toast({
+        title: "Error",
+        description: "Could not remove item from inventory",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box width="100%">
       <InputGroup mb={4}>
@@ -99,6 +149,12 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
+      
+      {/* Debug info - can be commented out in production */}
+      <Text fontSize="sm" color="gray.500" mb={2}>
+        Total items: {items.length} | Filtered: {filteredItems.length}
+      </Text>
+      
       {/* TableContainer provides horizontal scrolling */}
       <TableContainer overflowX="auto">
         <Table variant="simple" size="sm" width="100%" minWidth={['600px', '800px', '1000px']}>
@@ -128,7 +184,12 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
               </Tr>
             ) : (
               sortedItems.map(({ item, quantity }) => (
-                <Tr key={item.id} _hover={{ bg: 'gray.50' }}>
+                <Tr
+                  key={item.id}
+                  _hover={{ bg: 'gray.50' }}
+                  cursor="pointer"
+                  onClick={() => onViewDetails(item)}
+                >
                   <Td>
                     <Badge colorScheme="blue" borderRadius="full">
                       {quantity}
@@ -152,7 +213,10 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
                         icon={<Eye size={16} />}
                         size="xs"
                         colorScheme="blue"
-                        onClick={() => onViewDetails(item)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onViewDetails(item);
+                        }}
                       />
                       {onRemoveItem && (
                         <IconButton
@@ -160,7 +224,10 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
                           icon={<Trash size={16} />}
                           size="xs"
                           colorScheme="red"
-                          onClick={() => onRemoveItem(item.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveItem(item.id);
+                          }}
                         />
                       )}
                     </HStack>

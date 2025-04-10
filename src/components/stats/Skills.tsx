@@ -217,6 +217,7 @@ const Skills: React.FC = () => {
     { name: "Artillery", attribute: "Intelligence", level: 0 },
     { name: "Athletics", attribute: "Strength", level: 0 },
     { name: "Awareness", attribute: "Perception", level: 0 },
+    { name: "Bare Knuckle", attribute: "Strength", level: 0 },
     { name: "Block", attribute: "Strength", level: 0 },
     { name: "Deception", attribute: "Wit", level: 0 },
     { name: "Detect Trap", attribute: "Perception", level: 0 },

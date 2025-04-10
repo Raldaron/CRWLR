@@ -1,251 +1,252 @@
-import React, { useState } from 'react';
+// src/components/Modals/AttackDetailModal.tsx
+import React from 'react';
 import {
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalBody,
+  ModalFooter,
   ModalCloseButton,
   VStack,
   HStack,
   Text,
   Badge,
   Divider,
+  SimpleGrid,
   Box,
+  Icon,
   Button,
-  useToast,
-  Wrap,
-  WrapItem,
+  Tooltip,
 } from '@chakra-ui/react';
-import { Swords, Target, Zap, Shield, Star, Award } from 'lucide-react';
-import type { Attack } from '@/components/ItemCards/AttackCard';
-import { useCharacter } from '@/context/CharacterContext';
-import TraitDetailModal from '@/components/Modals/TraitDetailModal';
-import AbilityDetailModal from '@/components/Modals/AbilityDetailModal';
+import { 
+  Sword, 
+  Target, 
+  Star, 
+  ShieldOff, 
+  Power, 
+  Sparkles 
+} from 'lucide-react';
+import type { Attack } from '@/types/attack';
 
 interface AttackDetailModalProps {
   attack: Attack | null;
   isOpen: boolean;
   onClose: () => void;
+  onExecuteAttack?: (attackId: string) => void;
 }
 
 const AttackDetailModal: React.FC<AttackDetailModalProps> = ({ 
   attack, 
   isOpen, 
-  onClose 
+  onClose,
+  onExecuteAttack
 }) => {
-  const toast = useToast();
-  const { executeAttack } = useCharacter();
-  
-  // States for trait and ability detail modals
-  const [selectedTrait, setSelectedTrait] = useState<string | null>(null);
-  const [selectedAbility, setSelectedAbility] = useState<string | null>(null);
-  const [isTraitModalOpen, setIsTraitModalOpen] = useState(false);
-  const [isAbilityModalOpen, setIsAbilityModalOpen] = useState(false);
-  
   if (!attack) return null;
 
+  // Helper function to get damage type color
   const getDamageTypeColor = (type: string) => {
     switch(type.toLowerCase()) {
-      case 'slashing': return 'red';
-      case 'piercing': return 'blue';
-      case 'bludgeoning': return 'orange';
       case 'fire': return 'red';
       case 'cold': return 'blue';
       case 'lightning': return 'yellow';
       case 'acid': return 'green';
       case 'force': return 'purple';
+      case 'piercing': return 'orange';
+      case 'bludgeoning': return 'gray';
+      case 'slashing': return 'cyan';
+      case 'necrotic': return 'pink';
+      case 'radiant': return 'brand';
+      case 'poison': return 'teal';
+      case 'physical': return 'gray';
       default: return 'gray';
     }
   };
-  
-  const handleAttackAction = () => {
-    // Execute the attack using the context function
-    if (attack) {
-      executeAttack(attack.id);
-      
-      // Show feedback to the user
-      toast({
-        title: "Attack executed!",
-        description: `You attacked with ${attack.name} dealing ${attack.damageAmount} ${attack.damageType} damage`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
+
+  // Handle executing the attack
+  const handleExecute = () => {
+    if (onExecuteAttack && attack) {
+      onExecuteAttack(attack.id);
     }
   };
 
+  // Get display name for slot
+  const slotName = attack.slot === 'primaryWeapon' ? 'Primary' : 'Secondary';
+
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <HStack spacing={2}>
-              <Swords className="text-red-500" />
-              <Text>{attack.name}</Text>
-            </HStack>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <VStack align="start" spacing={4} width="100%">
-              <Text>{attack.description || `Basic attack with ${attack.sourceItem || 'your weapon'}`}</Text>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <ModalOverlay />
+      <ModalContent bg="gray.800" borderColor="gray.700">
+        <ModalHeader color="gray.100">
+          <HStack>
+            <Icon 
+              as={Sword} 
+              color={attack.meleeRanged === 'Melee' ? "blue.400" : "green.400"} 
+            />
+            <Text>{attack.name}</Text>
+          </HStack>
+        </ModalHeader>
+        <ModalCloseButton color="gray.400" />
+        <ModalBody pb={6}>
+          <VStack spacing={4} align="start">
+            <Text color="gray.300" whiteSpace="pre-wrap">
+              {attack.description}
+            </Text>
+            
+            <Divider borderColor="gray.600" />
+            
+            <SimpleGrid columns={2} spacing={4} width="full">
+              <Box>
+                <Text fontWeight="semibold" color="gray.300">Weapon Slot</Text>
+                <Badge mt={1} colorScheme={slotName === 'Primary' ? 'blue' : 'cyan'}>
+                  {slotName}
+                </Badge>
+              </Box>
               
-              <Divider />
-              
-              {/* Damage Information */}
-              <Box width="100%">
-                <HStack spacing={2} mb={2}>
-                  <Swords size={16} />
-                  <Text fontWeight="semibold">Damage</Text>
+              <Box>
+                <Text fontWeight="semibold" color="gray.300">Type</Text>
+                <HStack mt={1}>
+                  <Badge colorScheme={attack.meleeRanged === 'Melee' ? "blue" : "green"}>
+                    {attack.meleeRanged}
+                  </Badge>
+                  <Badge variant="outline">
+                    {attack.weaponType}
+                  </Badge>
                 </HStack>
-                <HStack ml={6}>
-                  <Text fontSize="lg" fontWeight="bold">{attack.damageAmount}</Text>
+              </Box>
+              
+              <Box>
+                <Text fontWeight="semibold" color="gray.300">Hands Required</Text>
+                <Badge mt={1}>{attack.handsRequired}</Badge>
+              </Box>
+              
+              <Box>
+                <Text fontWeight="semibold" color="gray.300">Damage</Text>
+                <HStack mt={1}>
+                  <Text fontWeight="bold" color="gray.100">{attack.damageAmount}</Text>
                   <Badge colorScheme={getDamageTypeColor(attack.damageType)}>
                     {attack.damageType}
                   </Badge>
                 </HStack>
               </Box>
-
-              {/* Range Information */}
-              <Box width="100%">
-                <HStack spacing={2} mb={2}>
-                  <Target size={16} />
-                  <Text fontWeight="semibold">Range</Text>
-                </HStack>
-                <Text ml={6}>{attack.range || 'Melee'}</Text>
-              </Box>
-
-              {/* AP Cost */}
-              <Box width="100%">
-                <HStack spacing={2} mb={2}>
-                  <Zap size={16} />
-                  <Text fontWeight="semibold">AP Cost</Text>
-                </HStack>
-                <Text ml={6}>{attack.apCost || 1} Action Points</Text>
-              </Box>
-
-              {/* Weapon Information */}
-              <Box width="100%">
-                <HStack spacing={2} mb={2}>
-                  <Shield size={16} />
-                  <Text fontWeight="semibold">Weapon Type</Text>
-                </HStack>
-                <Text ml={6}>{attack.weaponType}</Text>
-              </Box>
-
-              {/* Traits Section */}
-              {attack.traits && attack.traits.length > 0 && (
-                <>
-                  <Divider />
-                  <Box width="100%">
-                    <HStack spacing={2} mb={2}>
-                      <Award size={16} />
-                      <Text fontWeight="semibold">Weapon Traits</Text>
-                    </HStack>
-                    <Wrap spacing={2} ml={6}>
-                      {attack.traits.map((trait, index) => (
-                        <WrapItem key={index}>
-                          <Badge 
-                            colorScheme="green" 
-                            cursor="pointer"
-                            onClick={() => {
-                              setSelectedTrait(trait);
-                              setIsTraitModalOpen(true);
-                            }}
-                            p={1}
-                            _hover={{ bg: 'green.100' }}
-                          >
-                            {trait}
-                          </Badge>
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                    <Text fontSize="xs" color="gray.500" mt={1} ml={6}>
-                      Click on a trait to see details
-                    </Text>
-                  </Box>
-                </>
-              )}
-
-              {/* Abilities Section */}
-              {attack.abilities && attack.abilities.length > 0 && (
-                <>
-                  <Divider />
-                  <Box width="100%">
-                    <HStack spacing={2} mb={2}>
-                      <Star size={16} />
-                      <Text fontWeight="semibold">Weapon Abilities</Text>
-                    </HStack>
-                    <Wrap spacing={2} ml={6}>
-                      {attack.abilities.map((ability, index) => (
-                        <WrapItem key={index}>
-                          <Badge 
-                            colorScheme="purple" 
-                            cursor="pointer"
-                            onClick={() => {
-                              setSelectedAbility(ability);
-                              setIsAbilityModalOpen(true);
-                            }}
-                            p={1}
-                            _hover={{ bg: 'purple.100' }}
-                          >
-                            {ability}
-                          </Badge>
-                        </WrapItem>
-                      ))}
-                    </Wrap>
-                    <Text fontSize="xs" color="gray.500" mt={1} ml={6}>
-                      Click on an ability to see details
-                    </Text>
-                  </Box>
-                </>
-              )}
-
-              {attack.sourceItem && (
-                <>
-                  <Divider />
-                  <Text fontSize="sm" color="gray.500">
-                    Source: {attack.sourceItem}
-                  </Text>
-                </>
-              )}
-
-              <Divider />
               
-              {/* Attack Action Button */}
-              <Button 
-                colorScheme="red" 
-                width="100%"
-                leftIcon={<Swords size={16} />}
-                onClick={handleAttackAction}
-              >
-                Execute Attack
-              </Button>
-            </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-
-      {/* Trait Detail Modal */}
-      {selectedTrait && (
-        <TraitDetailModal
-          traitName={selectedTrait}
-          isOpen={isTraitModalOpen}
-          onClose={() => setIsTraitModalOpen(false)}
-        />
-      )}
-
-      {/* Ability Detail Modal */}
-      {selectedAbility && (
-        <AbilityDetailModal
-          abilityName={selectedAbility}
-          isOpen={isAbilityModalOpen}
-          onClose={() => setIsAbilityModalOpen(false)}
-        />
-      )}
-    </>
+              {attack.magicNonMagical && (
+                <Box>
+                  <Text fontWeight="semibold" color="gray.300">Magic Type</Text>
+                  <Badge mt={1} colorScheme={attack.magicNonMagical === 'Magical' ? "purple" : "gray"}>
+                    {attack.magicNonMagical}
+                  </Badge>
+                </Box>
+              )}
+            </SimpleGrid>
+            
+            {/* Stat Bonuses Section */}
+            {attack.statBonus && Object.keys(attack.statBonus).length > 0 && (
+              <>
+                <Divider borderColor="gray.600" />
+                <Box width="full">
+                  <Text fontWeight="semibold" mb={2} color="gray.300">
+                    <HStack>
+                      <Icon as={Star} color="yellow.400" />
+                      <Text>Stat Bonuses</Text>
+                    </HStack>
+                  </Text>
+                  <SimpleGrid columns={3} spacing={2}>
+                    {Object.entries(attack.statBonus).map(([stat, bonus]) => (
+                      <Badge key={stat} colorScheme="yellow" variant="outline">
+                        +{bonus} {stat.charAt(0).toUpperCase() + stat.slice(1)}
+                      </Badge>
+                    ))}
+                  </SimpleGrid>
+                </Box>
+              </>
+            )}
+            
+            {/* Skill Bonuses Section */}
+            {attack.skillBonus && Object.keys(attack.skillBonus).length > 0 && (
+              <>
+                <Divider borderColor="gray.600" />
+                <Box width="full">
+                  <Text fontWeight="semibold" mb={2} color="gray.300">
+                    <HStack>
+                      <Icon as={ShieldOff} color="teal.400" />
+                      <Text>Skill Bonuses</Text>
+                    </HStack>
+                  </Text>
+                  <SimpleGrid columns={3} spacing={2}>
+                    {Object.entries(attack.skillBonus).map(([skill, bonus]) => (
+                      <Badge key={skill} colorScheme="teal" variant="outline">
+                        +{bonus} {skill.charAt(0).toUpperCase() + skill.slice(1)}
+                      </Badge>
+                    ))}
+                  </SimpleGrid>
+                </Box>
+              </>
+            )}
+            
+            {/* Abilities Section */}
+            {attack.abilities && attack.abilities.length > 0 && (
+              <>
+                <Divider borderColor="gray.600" />
+                <Box width="full">
+                  <Text fontWeight="semibold" mb={2} color="gray.300">
+                    <HStack>
+                      <Icon as={Power} color="brand.400" />
+                      <Text>Abilities</Text>
+                    </HStack>
+                  </Text>
+                  <VStack align="start" spacing={2}>
+                    {attack.abilities.map((ability, index) => (
+                      <HStack key={index}>
+                        <Icon as={Sparkles} color="brand.200" boxSize={3} />
+                        <Text color="gray.300">{ability}</Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </Box>
+              </>
+            )}
+            
+            {/* Traits Section */}
+            {attack.traits && attack.traits.length > 0 && (
+              <>
+                <Divider borderColor="gray.600" />
+                <Box width="full">
+                  <Text fontWeight="semibold" mb={2} color="gray.300">
+                    <HStack>
+                      <Icon as={Star} color="orange.400" />
+                      <Text>Traits</Text>
+                    </HStack>
+                  </Text>
+                  <VStack align="start" spacing={2}>
+                    {attack.traits.map((trait, index) => (
+                      <HStack key={index}>
+                        <Icon as={Sparkles} color="orange.200" boxSize={3} />
+                        <Text color="gray.300">{trait}</Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </Box>
+              </>
+            )}
+          </VStack>
+        </ModalBody>
+        
+        <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose} color="gray.300">
+            Close
+          </Button>
+          
+          <Button 
+              colorScheme={attack.meleeRanged === 'Melee' ? "blue" : "green"}
+              leftIcon={<Sword size={16} />}
+              onClick={handleExecute}
+          >
+              Execute Attack
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

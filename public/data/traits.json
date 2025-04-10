@@ -1260,6 +1260,16 @@
       "name": "Winged Juggernaut",
       "description": "Expand colossal wings that don’t just lift you—they flatten anyone foolish enough to stand in your flight path.",
       "effect": "When you take flight, create a 10-foot gust of wind that forces enemies to make a Strength save or be knocked prone."
+    },
+    "stunning_blow": {
+      "name": "Stunning Blow",
+      "description": "When you land a successful melee hit, there is a 2% chance to stun the target until the end of its next turn.",
+      "effect": ""
+    },
+    "heresy_against_grull": {
+      "name": "Heresy Against Grull",
+      "description": "If you strike an adherent of Grull with this gauntlet, there is a 1.5% chance to transfigure it into the war-god Grull himself. Pro tip: Don’t do that.",
+      "effect": ""
     }
   }
 }

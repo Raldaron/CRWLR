@@ -71,6 +71,24 @@ const getColumnValue = (item: any, column: string): React.ReactNode => {
   }
 };
 
+// Create a unique key for each item row
+const createUniqueRowKey = (item: any, index: number): string => {
+  // If the item has an id, use that
+  if (item.id) {
+    return `catalog-item-${item.id}`;
+  }
+  
+  // If item has a name, use that with index
+  if (item.name) {
+    const normalizedName = item.name.replace(/\s+/g, '-').toLowerCase();
+    return `catalog-item-${normalizedName}-${index}`;
+  }
+  
+  // Fallback to a generic row key with a random component
+  const randomSuffix = Math.random().toString(36).substring(2, 9);
+  return `catalog-row-${index}-${randomSuffix}`;
+};
+
 // Define a type that is compatible with InventoryItem but only requires the fields we need
 interface CatalogItem {
   id: string;
@@ -164,55 +182,66 @@ const CatalogTable: React.FC<CatalogTableProps> = ({
           placeholder="Search items..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          bg="gray.700"
+          borderColor="gray.600"
+          color="gray.200"
+          _hover={{ borderColor: "brand.400" }}
+          _focus={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}
         />
       </InputGroup>
 
       <ScrollArea className="h-[600px]">
         <Table variant="simple" size="sm">
-          <Thead position="sticky" top={0} bg="white" zIndex={1}>
+          <Thead position="sticky" top={0} bg="gray.800" zIndex={1}>
             <Tr>
               {columns.map((column) => (
                 <Th 
-                  key={column} 
+                  key={`header-${column}`} 
                   cursor="pointer" 
                   onClick={() => handleSortClick(column)}
+                  color="gray.400"
+                  borderColor="gray.700"
                 >
                   {column.charAt(0).toUpperCase() + column.slice(1)}
                   {getSortIndicator(column)}
                 </Th>
               ))}
-              <Th width="120px">Actions</Th>
+              <Th width="120px" color="gray.400" borderColor="gray.700">Actions</Th>
             </Tr>
           </Thead>
           <Tbody>
             {sortedItems.length === 0 ? (
               <Tr>
-                <Td colSpan={columns.length + 1} textAlign="center" py={8}>
+                <Td colSpan={columns.length + 1} textAlign="center" py={8} borderColor="gray.700">
                   <Box py={8}>
-                    <Text color="gray.500">No items found</Text>
-                    <Text fontSize="sm" color="gray.400" mt={2}>
+                    <Text color="gray.400">No items found</Text>
+                    <Text fontSize="sm" color="gray.500" mt={2}>
                       Try adjusting your search criteria
                     </Text>
                   </Box>
                 </Td>
               </Tr>
             ) : (
-              sortedItems.map((item) => (
-                <Tr key={item.id} _hover={{ bg: "gray.50" }}>
+              sortedItems.map((item, index) => (
+                <Tr 
+                  key={createUniqueRowKey(item, index)} 
+                  _hover={{ bg: "gray.750" }}
+                  borderColor="gray.700"
+                >
                   {columns.map((column) => (
-                    <Td key={`${item.id}-${column}`}>
+                    <Td key={`${createUniqueRowKey(item, index)}-${column}`} borderColor="gray.700">
                       {column === 'name' ? (
-                        <Text fontWeight="medium">{item.name}</Text>
+                        <Text fontWeight="medium" color="gray.300">{item.name}</Text>
                       ) : column === 'rarity' ? (
                         <Badge colorScheme={getRarityColor(item.rarity as string)}>
                           {item.rarity}
                         </Badge>
                       ) : (
-                        getColumnValue(item, column)
+                        <Text color="gray.400">{getColumnValue(item, column)}</Text>
                       )}
                     </Td>
                   ))}
-                  <Td>
+                  <Td borderColor="gray.700">
                     <HStack spacing={2}>
                       <IconButton
                         aria-label="View details"
@@ -227,7 +256,7 @@ const CatalogTable: React.FC<CatalogTableProps> = ({
                         size="xs"
                         colorScheme="green"
                         onClick={() => onAddToInventory(item)}
-                        title="Add to inventory" // Added tooltip
+                        title="Add to inventory"
                       />
                     </HStack>
                   </Td>

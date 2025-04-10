@@ -34,8 +34,8 @@ const GameInitializer = () => {
         return;
       }
 
-      const characterId = searchParams.get('characterId');
-      const isNewCharacter = searchParams.get('new') === 'true';
+      const characterId = searchParams?.get('characterId') ?? null;
+      const isNewCharacter = searchParams?.get('new') === 'true';
 
       // Force create a new character if requested
       if (isNewCharacter) {
@@ -134,7 +134,7 @@ const GameInitializer = () => {
     );
   }
 
-  const characterId = searchParams.get('characterId') || '';
+  const characterId = searchParams?.get('characterId') || '';
   return <GameApp characterId={characterId} isNewCharacter={newCharacterRef.current} />;
 };
 

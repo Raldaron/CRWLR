@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   SimpleGrid,
@@ -6,10 +6,13 @@ import {
   VStack,
   HStack,
   Badge,
+  Spinner,
+  Center, // Import Center for loading state
 } from '@chakra-ui/react';
-import { Card } from '@/components/ui/card';
 import { useCharacter } from '@/context/CharacterContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 interface Trait {
   name: string;
@@ -17,92 +20,124 @@ interface Trait {
   effect: string;
 }
 
-interface TraitsData {
-  traits: {
-    [key: string]: Trait;
-  };
-}
-
 const Traits = () => {
-  const { 
-    selectedRace, 
-    selectedClass, 
-    getEquipmentTraits 
+  const {
+    selectedRace,
+    selectedClass,
+    getEquipmentTraits
   } = useCharacter();
-  
-  const [traitsData, setTraitsData] = React.useState<TraitsData | null>(null);
 
-  React.useEffect(() => {
-    const loadTraitsData = async () => {
+  // Store traits keyed by their *lowercase* ID/key for consistent lookup
+  const [traitsData, setTraitsData] = useState<{ [key: string]: Trait }>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTraitsFromFirestore = async () => {
       try {
-        const response = await fetch('/data/traits.json');
-        const data = await response.json();
-        setTraitsData(data);
+        setIsLoading(true);
+        setError(null);
+
+        const traitsRef = collection(db, 'traits');
+        const querySnapshot = await getDocs(traitsRef);
+
+        // Store traits keyed by their lowercase document ID
+        const traitsObject: { [key: string]: Trait } = {};
+        querySnapshot.forEach((doc) => {
+          const traitData = doc.data() as Trait;
+          // Ensure the name field exists, fallback to doc.id if needed
+          const traitName = traitData.name || doc.id;
+          traitsObject[doc.id.toLowerCase()] = {
+            ...traitData,
+            name: traitName // Use fetched name or ID as fallback
+          };
+        });
+
+        setTraitsData(traitsObject);
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error loading traits:', error);
+        console.error('Error fetching traits from Firestore:', error);
+        setError('Failed to load traits data. Please try again.');
+        setIsLoading(false);
       }
     };
 
-    loadTraitsData();
+    fetchTraitsFromFirestore();
   }, []);
 
-  if (!traitsData) {
+  if (isLoading) {
+    return (
+      <Center h="400px"> {/* Use Center for better alignment */}
+        <VStack spacing={4}>
+          <Spinner size="xl" color="brand.500" /> {/* Use theme color */}
+          <Text mt={4} color="gray.300">Loading traits...</Text>
+        </VStack>
+      </Center>
+    );
+  }
+
+  if (error) {
     return (
       <Box p={4} textAlign="center">
-        <Text color="gray.400">Loading traits...</Text>
+        <Text color="red.400">{error}</Text>
       </Box>
     );
   }
 
-  // Get all traits from different sources
+  // Get all trait keys/IDs from different sources
   const racialTraits = selectedRace?.traits || [];
   const classTraits = selectedClass?.traits || [];
   const equipmentTraits = getEquipmentTraits();
 
-  // No traits message if no sources are selected
-  if (!selectedRace && !selectedClass && equipmentTraits.length === 0) {
-    return (
-      <Box p={4} textAlign="center">
-        <Text color="gray.400">Select a race, class, or equip items to view traits</Text>
-      </Box>
-    );
-  }
-
-  // Combine all traits and remove duplicates
-  const allTraits = Array.from(new Set([
+  // Combine all trait keys/IDs and remove duplicates
+  const allTraitKeys = Array.from(new Set([
     ...racialTraits,
     ...classTraits,
     ...equipmentTraits
   ]));
 
-  // Get trait details and track sources
-  const traitDetails = allTraits.map(traitName => {
-    const trait = Object.values(traitsData.traits).find(
-      t => t.name.toLowerCase() === traitName.toLowerCase()
+  // No traits message if no sources are selected or no traits found
+  if (allTraitKeys.length === 0) {
+    return (
+      <Box p={4} textAlign="center">
+        <Text color="gray.400">No traits found for this character.</Text>
+        <Text color="gray.500" fontSize="sm">Select a race, class, or equip items to view traits.</Text>
+      </Box>
     );
-    
-    // Track where this trait comes from
+  }
+
+  // --- FIX START: Modified Trait Lookup Logic ---
+  const traitDetails = allTraitKeys.map(traitKey => {
+    // Normalize the key from race/class/equipment for lookup
+    const normalizedKey = traitKey.toLowerCase();
+    // Directly look up the trait using the normalized key in our fetched data
+    const trait = traitsData[normalizedKey];
+
+    // Track where this trait comes from (using the original key for includes check)
     const sources = [];
-    if (racialTraits.includes(traitName)) sources.push('Race');
-    if (classTraits.includes(traitName)) sources.push('Class');
-    if (equipmentTraits.includes(traitName)) sources.push('Equipment');
-    
+    if (racialTraits.includes(traitKey)) sources.push('Race');
+    if (classTraits.includes(traitKey)) sources.push('Class');
+    if (equipmentTraits.includes(traitKey)) sources.push('Equipment');
+
+    // Return the found trait details or a fallback object
     return {
-      ...trait || { 
-        name: traitName, 
-        description: "Trait details not found",
+      ...(trait || { // Use found trait details or fallback
+        name: traitKey, // Fallback name is the original key
+        description: "Trait details not found in database.",
         effect: ""
-      },
+      }),
+      key: traitKey, // Store the original key for React list keys
       sources
     };
   });
+  // --- FIX END ---
 
   return (
     <ScrollArea className="h-[600px] pr-4">
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} p={4}>
-        {traitDetails.map((trait, index) => (
+        {traitDetails.map((trait) => ( // Use the original key for React's key prop
           <Box
-            key={index}
+            key={trait.key} // Use the original key here
             bg="gray.800"
             borderRadius="lg"
             boxShadow="sm"
@@ -114,18 +149,18 @@ const Traits = () => {
           >
             <VStack align="start" spacing={2}>
               <Box w="full">
-                <Text 
-                  fontSize="lg" 
-                  fontWeight="bold" 
+                <Text
+                  fontSize="lg"
+                  fontWeight="bold"
                   color="orange.400"
                   mb={2}
                 >
-                  {trait.name}
+                  {trait.name} {/* Display the correct name */}
                 </Text>
                 {/* Source badges */}
                 <HStack spacing={2} mb={2}>
                   {trait.sources.map((source, idx) => (
-                    <Badge 
+                    <Badge
                       key={idx}
                       colorScheme={
                         source === 'Race' ? 'green' :
@@ -143,9 +178,9 @@ const Traits = () => {
                 {trait.description}
               </Text>
               {trait.effect && (
-                <Text 
-                  color="gray.400" 
-                  fontSize="sm" 
+                <Text
+                  color="gray.400"
+                  fontSize="sm"
                   fontStyle="italic"
                 >
                   Effect: {trait.effect}

@@ -1,0 +1,36 @@
+{
+  "clockworkTriplicate": {
+      "name": "Clockwork Triplicate",
+      "spelldescription": "Ever wanted to be in three places at once? Clockwork Triplicate is like the magical version of copy-and-paste, but for people! ",
+      "effectdescription": "Creates two independent duplicates of the caster that act autonomously.",
+      "range": "Self",
+      "duration": "1 min per spell level",
+      "castingTime": "1 Action",
+      "manaPointCost": "5",
+      "cooldown": "1 hour",
+      "keywords": "summoning, illusion",
+      "savingThrow": " ",
+      "scaling": {
+  "level 1": "Clockwork Coordination. The target gains a +2 bonus to initiative rolls if at least one duplicate is present.",
+  "level 2": "Metallic Misdirection. Each duplicate can use the Help action as a bonus action once per turn.",
+  "level 3": "",
+  "level 4": "Duplicates' attacks count as magical for overcoming resistances and immunities.",
+  "level 5": "Duration increases to 2 minutes per spell level.",
+  "level 6": "Reinforced Frames. Each duplicate's Armor Class increases by +1 while the spell persists.",
+  "level 7": "Silent Network. A telepathic link connects the target and its duplicates, allowing wordless communication.",
+  "level 8": "Improved Explosion. Exploding duplicates deal 1d8 piercing damage (Dex save for half).",
+  "level 9": "Clockwork Reflexes. Each duplicate can use the Dash or Disengage action as a bonus action.",
+  "level 10": "Arcane Echo. Replicas can cast spells known by the caster (subject to any resource limitations).",
+  "level 11": "Precision Craftsmanship. Duplicates add the caster's proficiency bonus to their damage rolls.",
+  "level 12": "Adaptive Armor. Each duplicate gains resistance to one damage type of your choice when cast.",
+  "level 13": "Clockwork Teamwork. If two or more duplicates are within 5 feet of an enemy, that enemy has disadvantage on its next saving throw caused by one of the duplicates or the original.",
+  "level 14": "Robust Construction. Duplicates have advantage on Strength and Constitution saving throws.",
+  "level 15": "Shared Vitality. Replicas gain 50% of the caster's total hit points instead of copying current HP.",
+  "level 16": "Accelerated Servos. Each duplicate's speed increases by 10 feet.",
+  "level 17": "Enhanced Shrapnel. If duplicates explode due to dispel or forced termination, they deal 2d6 piercing damage in a 10-foot radius (Dex save for half).",
+  "level 18": "Unbreakable Programming. The duplicates are immune to being charmed or frightened.",
+  "level 19": "Cog in the Machine. If concentration is lost, duplicates persist for up to 1 minute autonomously before disintegrating.",
+  "level 20": "Everlasting Assembly. No longer requires concentration. Duplicates remain indefinitely until destroyed or dismissed."
+}
+    }
+   }

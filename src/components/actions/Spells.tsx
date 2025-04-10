@@ -1,73 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Scroll, Clock, Zap, Target } from 'lucide-react';
 import {
   Box,
   SimpleGrid,
   VStack,
   Text,
-  Badge,
-  HStack,
+  Spinner,
+  Center,
 } from '@chakra-ui/react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useCharacter } from '@/context/CharacterContext';
 import type { Spell } from '@/types/spell';
 import SpellDetailModal from '../Modals/SpellDetailModal';
-import DarkThemedCard from '@/components/ui/DarkThemedCard';
+import SpellCard from './SpellCard';
+
+// Import Firebase utilities if you're using them
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 interface SpellWithSource {
   spell: Spell;
   sourceItem: string;
 }
 
-const SpellCard = ({ 
-  spell, 
-  onClick, 
-  sourceItem,
-  spellLevel 
-}: { 
-  spell: Spell; 
-  onClick: () => void;
-  sourceItem: string;
-  spellLevel: number;
-}) => (
-  <DarkThemedCard onClick={onClick} borderColor="blue.800">
-    <VStack align="start" spacing={3}>
-      <HStack>
-        <Scroll className="text-blue-500" />
-        <Text fontWeight="bold" fontSize="lg" color="blue.300">{spell.name}</Text>
-      </HStack>
-      
-      <Text fontSize="sm" color="gray.400" noOfLines={2}>
-        {spell.description}
-      </Text>
-      
-      <Text fontSize="xs" color="gray.500">
-        Source: {sourceItem}
-      </Text>
-
-      <HStack spacing={4}>
-        <HStack spacing={1}>
-          <Clock size={14} className="text-gray-500" />
-          <Text fontSize="sm" color="gray.400">{spell.castingTime}</Text>
-        </HStack>
-        <Badge colorScheme="purple">
-          {spell.archetype}
-        </Badge>
-        <Badge colorScheme="blue">
-          Level {spellLevel}
-        </Badge>
-      </HStack>
-
-      {spell.damage !== "N/A" && (
-        <Text fontSize="sm" color="accent.400">
-          Damage: {spell.damage} {spell.damageType}
-        </Text>
-      )}
-    </VStack>
-  </DarkThemedCard>
-);
-
-const Spells = () => {
+const Spells: React.FC = () => {
   const { 
     equippedItems, 
     learnedSpells, 
@@ -80,6 +35,7 @@ const Spells = () => {
   const [selectedSpell, setSelectedSpell] = useState<SpellWithSource | null>(null);
   const [selectedSpellLevel, setSelectedSpellLevel] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Get spell level from character state
   const getSpellLevel = (spellName: string) => {
@@ -88,22 +44,54 @@ const Spells = () => {
 
   useEffect(() => {
     const loadSpells = async () => {
+      setIsLoading(true);
       try {
-        const response = await fetch('/data/spells.json');
-        const data = await response.json();
-        
         const allLoadedSpells: SpellWithSource[] = [];
+        
+        // Get all spells from the spells collection
+        const spellsRef = collection(db, 'spells');
+        const spellsSnapshot = await getDocs(spellsRef);
+        
+        // Create a map of spell IDs to spell objects for quick lookup
+        const spellsMap = new Map();
+        spellsSnapshot.forEach((doc) => {
+          const spell = {
+            id: doc.id,
+            ...doc.data() as Spell
+          };
+          spellsMap.set(doc.id.toLowerCase(), spell);
+        });
         
         // Add spells from equipped items
         Object.entries(equippedItems).forEach(([slot, item]) => {
           if (item?.spellsGranted && Array.isArray(item.spellsGranted)) {
-            item.spellsGranted.forEach((spellId: string) => {
-              const spell = data.spells[spellId.toLowerCase()];
-              if (spell) {
+            item.spellsGranted.forEach(async (spellId: string) => {
+              // Try to find the spell in our map
+              const normalizedSpellId = spellId.toLowerCase();
+              
+              if (spellsMap.has(normalizedSpellId)) {
+                const spell = spellsMap.get(normalizedSpellId);
                 allLoadedSpells.push({
                   spell,
                   sourceItem: `Granted by: ${item.name}`
                 });
+              } else {
+                // If not found in the map, try to fetch it directly
+                try {
+                  const spellDoc = await getDoc(doc(db, 'spells', normalizedSpellId));
+                  if (spellDoc.exists()) {
+                    const spell = {
+                      id: spellDoc.id,
+                      ...spellDoc.data() as Spell
+                    };
+                    allLoadedSpells.push({
+                      spell,
+                      sourceItem: `Granted by: ${item.name}`
+                    });
+                  }
+                } catch (error) {
+                  console.warn(`Failed to load spell ${spellId} from item ${item.name}:`, error);
+                }
               }
             });
           }
@@ -120,6 +108,8 @@ const Spells = () => {
         setAllSpells(allLoadedSpells);
       } catch (error) {
         console.error('Error loading spells:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -144,6 +134,17 @@ const Spells = () => {
       }, 500);
     }
   };
+
+  if (isLoading) {
+    return (
+      <Center h="400px">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="brand.500" />
+          <Text color="gray.300">Loading spells...</Text>
+        </VStack>
+      </Center>
+    );
+  }
 
   return (
     <Box p={4}>

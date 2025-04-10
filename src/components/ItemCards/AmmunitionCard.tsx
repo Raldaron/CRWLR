@@ -17,19 +17,20 @@ interface AmmunitionCardProps {
 
 export const AmmunitionCard: React.FC<AmmunitionCardProps> = ({ item, onClick }) => {
   const getRarityScheme = (rarity: string = 'common') => {
-    switch(rarity.toLowerCase()) {
+    switch(rarity?.toLowerCase()) { // Added safety check for rarity
       case 'ordinary': return 'gray';
       case 'common': return 'gray';
       case 'uncommon': return 'green';
       case 'rare': return 'blue';
       case 'epic': return 'purple';
       case 'legendary': return 'orange';
+      case 'very rare': return 'red'; // Added very rare
       default: return 'gray';
     }
   };
 
-  const getDamageTypeColor = (type: string) => {
-    switch(type.toLowerCase()) {
+  const getDamageTypeColor = (type?: string) => { // Added safety check for type
+    switch(type?.toLowerCase()) {
       case 'fire': return 'red';
       case 'cold': return 'blue';
       case 'lightning': return 'yellow';
@@ -42,9 +43,9 @@ export const AmmunitionCard: React.FC<AmmunitionCardProps> = ({ item, onClick })
   };
 
   return (
-    <Card 
-      h="full" 
-      _hover={{ shadow: 'md' }} 
+    <Card
+      h="full"
+      _hover={{ shadow: 'md' }}
       transition="all 0.2s"
       onClick={onClick}
       cursor={onClick ? 'pointer' : 'default'}
@@ -57,12 +58,13 @@ export const AmmunitionCard: React.FC<AmmunitionCardProps> = ({ item, onClick })
               {item.rarity}
             </Badge>
           </Flex>
-          
+
           <Text fontSize="sm" color="gray.600" noOfLines={2}>
             {item.description}
           </Text>
 
           <HStack spacing={2}>
+            {/* Use damageAmount */}
             {item.damageAmount && (
               <Text fontSize="sm" fontWeight="semibold">
                 {item.damageAmount}
@@ -77,13 +79,13 @@ export const AmmunitionCard: React.FC<AmmunitionCardProps> = ({ item, onClick })
 
           {item.range && (
             <Text fontSize="sm">
-              Range: {item.range} ft
+              Range: {item.range}
             </Text>
           )}
 
-          {item.radius && (
+          {item.blastRadius && (
             <Text fontSize="sm">
-              Blast Radius: {item.radius} ft
+              Blast Radius: {item.blastRadius}
             </Text>
           )}
 

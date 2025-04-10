@@ -17,12 +17,15 @@ import {
   VStack,
   HStack,
   Badge,
-  useBreakpointValue
+  useBreakpointValue,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Sword, Star } from 'lucide-react';
 import { useCharacter } from '@/context/CharacterContext';
 import type { Class } from '@/types/class';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 // Helper function to standardize skill names
 const standardizeSkillName = (skillName: string): string => {
@@ -46,26 +49,50 @@ const ClassSelectionModals = () => {
   const [selectedClassDetails, setSelectedClassDetails] = useState<Class | null>(null);
   const [classesData, setClassesData] = useState<{[key: string]: Class}>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Responsive layout
   const gridColumns = useBreakpointValue({ base: 1, sm: 2, md: 3 }) || 1;
   const modalSize = useBreakpointValue({ base: "full", md: "2xl", lg: "4xl" }) || "full";
 
-  // Load classes data from JSON file
+  // Load classes data from Firestore
   useEffect(() => {
-    const loadClassesData = async () => {
+    const fetchClassesFromFirestore = async () => {
       try {
-        const response = await fetch('/data/classes.json');
-        const data = await response.json();
-        setClassesData(data);
+        setIsLoading(true);
+        setError(null);
+        
+        // Create a reference to the 'classes' collection
+        const classesRef = collection(db, 'classes');
+        
+        // Get all documents from the collection
+        const querySnapshot = await getDocs(classesRef);
+        
+        // Check if we got data
+        if (querySnapshot.empty) {
+          setError('No classes found in the database.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Convert the query snapshot to an object
+        const classesObject: { [key: string]: Class } = {};
+        
+        querySnapshot.forEach((doc) => {
+          const classData = doc.data() as Class;
+          classesObject[doc.id] = classData;
+        });
+        
+        setClassesData(classesObject);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error loading classes data:', error);
+        console.error('Error fetching classes from Firestore:', error);
+        setError('Failed to load classes data. Please try again.');
         setIsLoading(false);
       }
     };
 
-    loadClassesData();
+    fetchClassesFromFirestore();
   }, []);
 
   const handleClassClick = (classData: Class) => {
@@ -107,6 +134,11 @@ const ClassSelectionModals = () => {
               <Flex justify="center" align="center" h="200px">
                 <Spinner color="purple.400" />
               </Flex>
+            ) : error ? (
+              <Alert status="error" bg="red.800" color="white">
+                <AlertIcon color="red.300" />
+                {error}
+              </Alert>
             ) : (
               <SimpleGrid columns={gridColumns} spacing={3} pb={4}>
                 {Object.entries(classesData).map(([key, classData]) => (

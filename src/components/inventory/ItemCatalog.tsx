@@ -1,220 +1,210 @@
 // components/inventory/ItemCatalog.tsx
-import React, { useState, useEffect } from 'react';
+'use client'; // Add this if it's a client component
+
+import React, { useState, useEffect, Suspense, lazy, useMemo, useCallback } from 'react';
 import {
-  Box,
-  Flex,
-  Text,
-  Badge,
-  SimpleGrid,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Select,
-  IconButton,
-  Button,
-  Spinner,
-  Center,
-  useToast,
-  useBreakpointValue,
-  VStack,
-  HStack,
-  Collapse,
-  Divider,
+    Box, Flex, Text, Badge, SimpleGrid, Input, InputGroup, InputLeftElement, Button,
+    Spinner, Center, useToast, useBreakpointValue, VStack, HStack, Collapse,
 } from '@chakra-ui/react';
-import { 
-  Search, 
-  Filter,
-  Plus,
-  Eye,
-  Sword, 
-  Shield, 
-  Crosshair, 
-  Beaker, 
-  ScrollText, 
-  Wrench, 
-  Key, 
-  Bomb,
-  ChevronDown,
-  ChevronUp,
+import {
+    Search, Filter, Plus, Eye, Sword, Shield, Crosshair, Beaker, ScrollText,
+    Wrench, Key, Bomb, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DarkThemedCard from '@/components/ui/DarkThemedCard';
 import { useCharacter } from '@/context/CharacterContext';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 import type { InventoryItem } from '@/types/inventory';
+import type { WeaponItem } from '@/types/weapon';
+import type { ArmorItem } from '@/types/armor';
+import type { AmmunitionItem } from '@/types/ammunition';
+import type { PotionItem } from '@/types/potion';
+import type { ScrollItem } from '@/types/scroll';
+import type { TrapItem } from '@/types/trap';
+import type { CraftingComponentItem } from '@/types/craftingcomponent';
+import type { ExplosiveItem } from '@/types/explosives';
 
-// Import our modals
-import WeaponDetailModal from '../Modals/WeaponDetailModal';
-import ArmorDetailModal from '../Modals/ArmorDetailModal';
-import AmmunitionDetailModal from '../Modals/AmmunitionDetailModal';
-import PotionDetailModal from '../Modals/PotionDetailModal';
-import ScrollDetailModal from '../Modals/ScrollDetailModal';
-import TrapDetailModal from '../Modals/TrapDetailModal';
-import CraftingComponentDetailModal from '../Modals/CraftingComponentDetailModal';
-import ExplosivesDetailModal from '../Modals/ExplosivesDetailModal';
-import QuantitySelectorModal from '../Modals/QuantitySelectorModal';
+// Lazy load the detail modals
+const WeaponDetailModal = lazy(() => import('../Modals/WeaponDetailModal'));
+const ArmorDetailModal = lazy(() => import('../Modals/ArmorDetailModal'));
+const AmmunitionDetailModal = lazy(() => import('../Modals/AmmunitionDetailModal'));
+const PotionDetailModal = lazy(() => import('../Modals/PotionDetailModal'));
+const ScrollDetailModal = lazy(() => import('../Modals/ScrollDetailModal'));
+const TrapDetailModal = lazy(() => import('../Modals/TrapDetailModal'));
+const CraftingComponentDetailModal = lazy(() => import('../Modals/CraftingComponentDetailModal'));
+const ExplosivesDetailModal = lazy(() => import('../Modals/ExplosivesDetailModal'));
+const QuantitySelectorModal = lazy(() => import('../Modals/QuantitySelectorModal'));
 
-// Define a simpler version of InventoryItem that works for our catalog
+// Catalog Item Interface
 interface CatalogItem {
   id: string;
   name: string;
   description: string;
   itemType: string;
   rarity: string;
-  [key: string]: any;  // Allow for any additional properties
+  _collectionName?: string;
+  _uniqueKey?: string;
+  [key: string]: any;
 }
 
-// Item card component
-const ItemCard = ({ item, onViewDetails, onAddToInventory }: { 
-  item: CatalogItem;
-  onViewDetails: () => void;
-  onAddToInventory: () => void;
-}) => {
-  // Get rarity color for badges
-  const getRarityColor = (rarity: string = 'common') => {
-    switch(rarity.toLowerCase()) {
-      case 'common': return 'gray';
-      case 'uncommon': return 'green';
-      case 'rare': return 'blue';
-      case 'epic': return 'purple';
-      case 'legendary': return 'orange';
-      case 'unique': return 'yellow';
-      case 'exceedingly rare': return 'pink';
-      case 'very rare': return 'red';
-      default: return 'gray';
-    }
-  };
-
-  return (
-    <DarkThemedCard>
-      <VStack spacing={2} align="stretch" h="full">
-        <Text fontWeight="bold" fontSize="md" noOfLines={1} color="gray.200">{item.name}</Text>
-        
-        <HStack>
-          <Badge colorScheme={getRarityColor(item.rarity)} variant="solid">
-            {item.rarity}
-          </Badge>
-          <Badge variant="outline" color="gray.300">{item.itemType}</Badge>
-        </HStack>
-        
-        <Text fontSize="sm" color="gray.400" noOfLines={2} flexGrow={1}>
-          {item.description}
-        </Text>
-        
-        <HStack spacing={2} justify="space-between" mt="auto">
-          <IconButton
-            aria-label="View details"
-            icon={<Eye size={18} />}
-            size="sm"
-            variant="ghost"
-            colorScheme="brand"
-            onClick={(e) => {
-              e.stopPropagation();
-              onViewDetails();
-            }}
-          />
-          <IconButton
-            aria-label="Add to inventory"
-            icon={<Plus size={18} />}
-            size="sm"
-            colorScheme="brand"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToInventory();
-            }}
-          />
-        </HStack>
-      </VStack>
-    </DarkThemedCard>
-  );
+// Helper: Create Unique Key
+const createUniqueKey = (collectionName: string, item: { id?: string; [key: string]: any }, index: number): string => {
+  if (item.id) return `${collectionName}-${item.id}`;
+  return `${collectionName}-item-${index}`;
 };
 
-// The main ItemCatalog component
+// Helper: Get Rarity Color
+const getRarityColor = (rarity: string = 'common') => {
+    switch(rarity.toLowerCase()) {
+        case 'common': return 'gray';
+        case 'uncommon': return 'green';
+        case 'rare': return 'blue';
+        case 'epic': return 'purple';
+        case 'legendary': return 'orange';
+        case 'unique': return 'yellow';
+        case 'exceedingly rare': return 'pink';
+        case 'very rare': return 'red';
+        default: return 'gray';
+    }
+};
+
+// Item Card Component
+const ItemCard = React.memo(({ item, onViewDetails, onAddToInventory }: {
+    item: CatalogItem;
+    onViewDetails: () => void;
+    onAddToInventory: () => void;
+}) => (
+    <DarkThemedCard>
+        <VStack spacing={2} align="stretch" h="full">
+            <Text fontWeight="bold" fontSize="md" noOfLines={1} color="gray.200">{item.name}</Text>
+            <HStack>
+                <Badge colorScheme={getRarityColor(item.rarity)} variant="solid">{item.rarity}</Badge>
+                <Badge variant="outline" color="gray.300">{item.itemType}</Badge>
+            </HStack>
+            <Text fontSize="sm" color="gray.400" noOfLines={2} flexGrow={1}>{item.description}</Text>
+            <HStack spacing={2} justify="space-between" mt="auto">
+                <Button aria-label="View details" leftIcon={<Eye size={18} />} size="sm" variant="ghost" colorScheme="brand" onClick={(e) => { e.stopPropagation(); onViewDetails(); }}>Details</Button>
+                <Button aria-label="Add to inventory" leftIcon={<Plus size={18} />} size="sm" colorScheme="brand" onClick={(e) => { e.stopPropagation(); onAddToInventory(); }}>Add</Button>
+            </HStack>
+        </VStack>
+    </DarkThemedCard>
+));
+ItemCard.displayName = 'ItemCard'; // Add display name for React DevTools
+
+// Main ItemCatalog Component
 const ItemCatalog: React.FC = () => {
-  const { addToInventory } = useCharacter();
+  // Use the direct addItemsWithQuantity function from the character context
+  const { addItemsWithQuantity } = useCharacter();
   const toast = useToast();
-  
-  // State for filtering and search
+
+  // --- State ---
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Modal states
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState<{[key: string]: boolean}>({
-    Weapon: false,
-    Armor: false,
-    Ammunition: false,
-    Potion: false,
-    Scroll: false,
-    'Crafting Component': false,
-    Trap: false,
-    Explosive: false,
-    Throwable: false
-  });
-
-  // Quantity selector modal
+  const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<{[key: string]: boolean}>({});
   const [isQuantitySelectorOpen, setIsQuantitySelectorOpen] = useState(false);
   const [itemToAdd, setItemToAdd] = useState<InventoryItem | null>(null);
   const [isAddingItem, setIsAddingItem] = useState(false);
-
-  // Catalog data state
-  const [catalog, setCatalog] = useState<{[key: string]: CatalogItem[]}>({
-    Weapon: [],
-    Armor: [],
-    Ammunition: [],
-    Potion: [],
-    Scroll: [],
-    'Crafting Component': [],
-    Trap: [],
-    Explosive: [],
-    Throwable: []
-  });
-  
+  const [catalog, setCatalog] = useState<{[key: string]: CatalogItem[]}>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Item category configuration
-  const itemCategories = [
-    { id: 'All', label: 'All Items', icon: Filter },
-    { id: 'Weapon', label: 'Weapons', icon: Sword },
-    { id: 'Armor', label: 'Armor', icon: Shield },
-    { id: 'Ammunition', label: 'Ammunition', icon: Crosshair },
-    { id: 'Potion', label: 'Potions', icon: Beaker },
-    { id: 'Scroll', label: 'Scrolls', icon: ScrollText },
-    { id: 'Crafting Component', label: 'Crafting', icon: Wrench },
-    { id: 'Trap', label: 'Traps', icon: Key },
+  // Item Categories Config
+  const itemCategories = useMemo(() => [ // Use useMemo if categories don't change often
+    { id: 'All', label: 'All Items', icon: Filter }, { id: 'Weapon', label: 'Weapons', icon: Sword },
+    { id: 'Armor', label: 'Armor', icon: Shield }, { id: 'Ammunition', label: 'Ammunition', icon: Crosshair },
+    { id: 'Potion', label: 'Potions', icon: Beaker }, { id: 'Scroll', label: 'Scrolls', icon: ScrollText },
+    { id: 'Crafting Component', label: 'Crafting', icon: Wrench }, { id: 'Trap', label: 'Traps', icon: Key },
     { id: 'Explosive', label: 'Explosives', icon: Bomb },
-  ];
+  ], []);
 
-  // Determine grid columns based on screen size
+  // Responsive Columns
   const columns = useBreakpointValue({ base: 1, sm: 2, md: 3, lg: 4 }) || 1;
-  
-  // Function to view item details
-  const handleViewDetails = (item: CatalogItem) => {
-    if (!item || !item.itemType) return;
-    
+
+  // --- Load Catalog Data ---
+  useEffect(() => {
+    const loadCatalogData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const newCatalog: {[key: string]: CatalogItem[]} = { Weapon: [], Armor: [], Ammunition: [], Potion: [], Scroll: [], 'Crafting Component': [], Trap: [], Explosive: [], Throwable: [] };
+        const collections = ['weapons', 'armor', 'ammunition', 'potions', 'scrolls', 'crafting_components', 'traps', 'explosives'];
+
+        for (const collectionName of collections) {
+          try {
+            const collectionRef = collection(db, collectionName);
+            const querySnapshot = await getDocs(collectionRef);
+            const items: CatalogItem[] = Array.from(querySnapshot.docs).map((doc, index) => {
+              const itemData = doc.data();
+              let itemType = '';
+              switch(collectionName) {
+                  case 'weapons': itemType = 'Weapon'; break; case 'armor': itemType = 'Armor'; break;
+                  case 'ammunition': itemType = 'Ammunition'; break; case 'potions': itemType = 'Potion'; break;
+                  case 'scrolls': itemType = 'Scroll'; break; case 'crafting_components': itemType = 'Crafting Component'; break;
+                  case 'traps': itemType = 'Trap'; break;
+                  case 'explosives': itemType = itemData.itemType === 'Throwable' ? 'Throwable' : 'Explosive'; break;
+                  default: itemType = 'Unknown';
+              }
+              const uniqueKey = createUniqueKey(collectionName, { id: doc.id, ...itemData }, index);
+              return {
+                id: doc.id,
+                name: itemData.name || 'Unnamed',
+                description: itemData.description || '',
+                itemType: itemData.itemType || itemType,
+                rarity: itemData.rarity || 'Common',
+                _collectionName: collectionName,
+                _uniqueKey: uniqueKey,
+                ...itemData
+              };
+            });
+
+            if (collectionName === 'explosives') {
+                newCatalog['Explosive'] = items.filter(item => item.itemType === 'Explosive' || !item.itemType);
+                newCatalog['Throwable'] = items.filter(item => item.itemType === 'Throwable');
+            } else {
+                  let categoryKey = '';
+                  switch(collectionName) {
+                      case 'weapons': categoryKey = 'Weapon'; break; case 'armor': categoryKey = 'Armor'; break;
+                      case 'ammunition': categoryKey = 'Ammunition'; break; case 'potions': categoryKey = 'Potion'; break;
+                      case 'scrolls': categoryKey = 'Scroll'; break; case 'crafting_components': categoryKey = 'Crafting Component'; break;
+                      case 'traps': categoryKey = 'Trap'; break;
+                      default: categoryKey = 'Unknown';
+                  }
+                  if (categoryKey !== 'Unknown') { newCatalog[categoryKey] = items; }
+            }
+          } catch (collectionError) {
+            console.error(`Error loading collection ${collectionName}:`, collectionError);
+          }
+        }
+        setCatalog(newCatalog);
+      } catch (error) {
+        console.error('Error loading catalog:', error); 
+        setError('Failed to load item catalog.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadCatalogData();
+  }, []); // Empty dependency array - load once
+
+  // --- Event Handlers ---
+  const handleViewDetails = useCallback((item: CatalogItem) => {
+    if (!item?.itemType) return;
     setSelectedItem(item);
-    setIsModalOpen({ 
-      ...isModalOpen, 
-      [item.itemType]: true 
-    });
-  };
+    const modalKey = (item.itemType === 'Explosive' || item.itemType === 'Throwable') ? 'Explosive' : item.itemType;
+    setIsModalOpen(prev => ({ ...prev, [modalKey]: true }));
+  }, []);
 
-  // Function to close modal
-  const handleCloseModal = (itemType: string) => {
-    setIsModalOpen({ 
-      ...isModalOpen, 
-      [itemType]: false 
-    });
+  const handleCloseModal = useCallback((itemType: string) => {
+    const modalKey = (itemType === 'Explosive' || itemType === 'Throwable') ? 'Explosive' : itemType;
+    setIsModalOpen(prev => ({ ...prev, [modalKey]: false }));
     setSelectedItem(null);
-  };
+  }, []);
 
-  // Function to open quantity selector
-  const handleOpenQuantitySelector = (item: CatalogItem) => {
-    // Prevent opening when already adding
+  const handleOpenQuantitySelector = useCallback((item: CatalogItem) => {
     if (isAddingItem) return;
-    
-    // Convert CatalogItem to InventoryItem
     const inventoryItem: InventoryItem = {
       ...item,
       id: item.id,
@@ -223,292 +213,169 @@ const ItemCatalog: React.FC = () => {
       itemType: item.itemType,
       rarity: item.rarity,
     };
-    
     setItemToAdd(inventoryItem);
     setIsQuantitySelectorOpen(true);
-  };
+  }, [isAddingItem]);
 
-  // Function to add item to inventory with quantity
-  const handleAddToInventoryWithQuantity = async (item: InventoryItem, quantity: number) => {
+  const handleAddToInventoryWithQuantity = useCallback(async (item: InventoryItem, quantity: number) => {
+    if (isAddingItem || !item?.id || quantity <= 0) return;
+    
+    setIsAddingItem(true);
     try {
-      // Prevent multiple calls
-      if (isAddingItem) return;
-      setIsAddingItem(true);
+      console.log(`Adding ${quantity} × ${item.name} to inventory`);
       
-      if (!item || !item.id) {
-        toast({
-          title: "Error",
-          description: "Unable to add invalid item to inventory",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-        setIsAddingItem(false);
-        setIsQuantitySelectorOpen(false);
-        return;
-      }
-      
-      if (quantity <= 0) {
-        setIsAddingItem(false);
-        setIsQuantitySelectorOpen(false);
-        return;
-      }
-  
-      // Using a simpler approach - just add the item multiple times
-      for (let i = 0; i < quantity; i++) {
-        addToInventory(item);
-      }
+      // Use the direct function from context - this is the key fix
+      addItemsWithQuantity(item, quantity);
       
       toast({
-        title: "Items added",
-        description: `${quantity} × ${item.name} added to your inventory`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+        title: "Items added", 
+        description: `${quantity} × ${item.name} added`,
+        status: "success", 
+        duration: 2000, 
+        isClosable: true, 
+        position: 'bottom-right'
       });
       
-      // Use setTimeout to prevent UI freeze - this gives React time to process state updates
-      setTimeout(() => {
-        setIsQuantitySelectorOpen(false);
-        setItemToAdd(null);
-        setIsAddingItem(false);
-      }, 100);
-      
+      setIsQuantitySelectorOpen(false);
+      setItemToAdd(null);
     } catch (error) {
-      console.error("Error adding items to inventory:", error);
-      toast({
-        title: "Error",
-        description: "Failed to add items to inventory",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
+      console.error("Error adding items:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to add items", 
+        status: "error", 
+        duration: 3000, 
+        isClosable: true 
       });
+    } finally {
       setIsAddingItem(false);
     }
-  };
+  }, [addItemsWithQuantity, isAddingItem, toast]);
 
-  // Load catalog data
-  useEffect(() => {
-    const loadCatalogData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Map of file names to item types
-        const fileToItemType: {[key: string]: string} = {
-          'weapons': 'Weapon',
-          'armor': 'Armor',
-          'ammunition': 'Ammunition',
-          'potions': 'Potion',
-          'scrolls': 'Scroll',
-          'crafting_components': 'Crafting Component',
-          'traps': 'Trap',
-          'explosives': 'Explosive'
-        };
-
-        // Files to load
-        const filesToLoad = Object.keys(fileToItemType);
-        const newCatalog: {[key: string]: CatalogItem[]} = { ...catalog };
-
-        // Load each file
-        for (const fileName of filesToLoad) {
-          const response = await fetch(`/data/${fileName}.json`);
-          const data = await response.json();
-          
-          // Get items based on file structure
-          let items: any[] = [];
-          
-          if (data[fileName]) {
-            // For files like weapons.json where data is in format { "weapons": { ... } }
-            items = Object.values(data[fileName]);
-          } else if (data.hasOwnProperty(fileName.replace(/s$/, ''))) {
-            // For files that might be singular in the JSON (e.g., "weapon" instead of "weapons")
-            items = Object.values(data[fileName.replace(/s$/, '')]);
-          } else {
-            // Just take all values if we don't find a matching key
-            items = Object.values(data);
-          }
-
-          // Process items for catalog
-          const itemType = fileToItemType[fileName];
-          const processedItems = items.map((item: any) => {
-            // Make sure each item has an ID
-            if (!item.id) {
-              item.id = `${fileName}-${Math.random().toString(36).substring(2, 9)}`;
-            }
-            
-            // Make sure itemType is set correctly
-            return {
-              ...item,
-              itemType: item.itemType || itemType
-            };
-          });
-          
-          // Special handling for Explosives - they might be "Explosive" or "Throwable"
-          if (itemType === 'Explosive') {
-            const explosives = processedItems.filter((item: any) => 
-              item.itemType === 'Explosive' || !item.itemType
-            );
-            const throwables = processedItems.filter((item: any) => 
-              item.itemType === 'Throwable'
-            );
-            
-            newCatalog['Explosive'] = explosives;
-            newCatalog['Throwable'] = throwables;
-          } else {
-            newCatalog[itemType] = processedItems;
-          }
-        }
-        
-        setCatalog(newCatalog);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading catalog data:', error);
-        setError('Failed to load item data. Please try again later.');
-        setIsLoading(false);
-      }
-    };
-
-    loadCatalogData();
-  }, []);
-
-  // Get filtered items based on selected category and search term
-  const getFilteredItems = () => {
+  // --- Filtering Logic ---
+  const filteredItems = useMemo(() => {
     let items: CatalogItem[] = [];
-    
-    // Get items for the selected category
     if (activeFilter === 'All') {
-      // Combine all categories
-      Object.values(catalog).forEach(categoryItems => {
-        items = [...items, ...categoryItems];
+      Object.entries(catalog).forEach(([category, categoryItems]) => {
+        items.push(...categoryItems.map((item, index) => ({ 
+          ...item, 
+          _uniqueKey: item._uniqueKey || createUniqueKey(category, item, index) 
+        })));
       });
     } else if (activeFilter === 'Explosive') {
-      // Combine Explosive and Throwable items
-      items = [...(catalog['Explosive'] || []), ...(catalog['Throwable'] || [])];
+      items = [
+        ...(catalog['Explosive'] || []).map((item, index) => ({ 
+          ...item, 
+          _uniqueKey: item._uniqueKey || createUniqueKey('Explosive', item, index) 
+        })),
+        ...(catalog['Throwable'] || []).map((item, index) => ({ 
+          ...item, 
+          _uniqueKey: item._uniqueKey || createUniqueKey('Throwable', item, index) 
+        }))
+      ];
     } else {
-      // Get items for the specific category
-      items = catalog[activeFilter] || [];
+      items = (catalog[activeFilter] || []).map((item, index) => ({ 
+        ...item, 
+        _uniqueKey: item._uniqueKey || createUniqueKey(activeFilter, item, index) 
+      }));
     }
     
-    // Apply search filter if there's a search term
     if (searchTerm.trim() !== '') {
       const searchLower = searchTerm.toLowerCase();
-      items = items.filter(item => 
-        item.name.toLowerCase().includes(searchLower) || 
+      items = items.filter(item =>
+        item.name.toLowerCase().includes(searchLower) ||
         item.description.toLowerCase().includes(searchLower)
       );
     }
     
     return items;
-  };
+  }, [catalog, activeFilter, searchTerm]);
 
-  // If loading, show spinner
-  if (isLoading) {
-    return (
-      <Center h="400px">
-        <VStack spacing={4}>
-          <Spinner size="xl" color="brand.500" />
-          <Text color="gray.300">Loading item catalog...</Text>
-        </VStack>
-      </Center>
-    );
-  }
-
-  // If error, show error message
-  if (error) {
-    return (
-      <Center h="300px">
-        <Text color="accent.400">{error}</Text>
-      </Center>
-    );
-  }
-
-  // Get the items to display
-  const filteredItems = getFilteredItems();
-
+  // --- Render ---
   return (
     <Box p={4}>
       <VStack spacing={4} align="stretch">
-        {/* Search and Filter UI */}
+        {/* Search & Filter */}
         <Box borderRadius="md" bg="gray.800" p={4} shadow="sm" borderWidth="1px" borderColor="gray.700">
           <VStack spacing={3}>
-            {/* Search Input */}
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <Search size={18} className="text-gray-400" />
               </InputLeftElement>
               <Input 
                 placeholder="Search items..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                borderRadius="md"
-                bg="gray.750"
-                borderColor="gray.600"
-                _hover={{ borderColor: "brand.600" }}
-                _focus={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}
-                color="gray.200"
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                borderRadius="md" 
+                bg="gray.750" 
+                borderColor="gray.600" 
+                _hover={{ borderColor: "brand.600" }} 
+                _focus={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }} 
+                color="gray.200" 
               />
             </InputGroup>
             
-            {/* Filter Toggle */}
             <Button 
               variant="ghost" 
-              rightIcon={showFilters ? <ChevronUp /> : <ChevronDown />}
-              onClick={() => setShowFilters(!showFilters)}
-              width="full"
-              justifyContent="space-between"
-              fontWeight="normal"
+              rightIcon={showFilters ? <ChevronUp /> : <ChevronDown />} 
+              onClick={() => setShowFilters(!showFilters)} 
+              width="full" 
+              justifyContent="space-between" 
+              fontWeight="normal" 
               color="gray.300"
             >
               {showFilters ? "Hide Filters" : "Show Filters"}
             </Button>
             
-            {/* Filter Options */}
             <Collapse in={showFilters} animateOpacity>
               <SimpleGrid columns={{ base: 3, md: 5 }} spacing={2} width="full">
                 {itemCategories.map(category => (
-                  <Button
-                    key={category.id}
-                    size="sm"
-                    variant={activeFilter === category.id ? "solid" : "outline"}
-                    colorScheme={activeFilter === category.id ? "brand" : "gray"}
-                    leftIcon={<category.icon size={14} />}
-                    onClick={() => setActiveFilter(category.id)}
+                  <Button 
+                    key={category.id} 
+                    size="sm" 
+                    variant={activeFilter === category.id ? "solid" : "outline"} 
+                    colorScheme={activeFilter === category.id ? "brand" : "gray"} 
+                    leftIcon={<category.icon size={14} />} 
+                    onClick={() => setActiveFilter(category.id)} 
                     width="full"
                   >
-                    {category.label === 'Crafting' ? 'Crafting' : category.label}
+                    {category.label === 'Crafting Component' ? 'Crafting' : category.label}
                   </Button>
                 ))}
               </SimpleGrid>
             </Collapse>
           </VStack>
         </Box>
-        
-        {/* Results Count */}
+
+        {/* Results Info */}
         <HStack justify="space-between">
           <Text fontSize="sm" color="gray.400">
             {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'} found
           </Text>
           <Badge colorScheme="brand">{activeFilter === 'All' ? 'All Items' : activeFilter}</Badge>
         </HStack>
-        
+
         {/* Items Grid */}
-        {filteredItems.length === 0 ? (
+        {isLoading ? (
+          <Center h="400px"><Spinner size="xl" color="brand.500" /></Center>
+        ) : error ? (
+          <Center h="300px"><Text color="accent.400">{error}</Text></Center>
+        ) : filteredItems.length === 0 ? (
           <Center h="200px" bg="gray.800" borderRadius="md" p={4} borderWidth="1px" borderColor="gray.700">
             <VStack spacing={2}>
               <Text color="gray.300">No items found</Text>
-              <Text fontSize="sm" color="gray.500">Try adjusting your search or filters</Text>
+              <Text fontSize="sm" color="gray.500">Try adjusting filters</Text>
             </VStack>
           </Center>
         ) : (
           <ScrollArea className="h-[450px] pr-2">
             <SimpleGrid columns={columns} spacing={4}>
               {filteredItems.map(item => (
-                <ItemCard 
-                  key={item.id} 
-                  item={item} 
-                  onViewDetails={() => handleViewDetails(item)} 
-                  onAddToInventory={() => handleOpenQuantitySelector(item)} 
+                <ItemCard
+                  key={item._uniqueKey || `${item._collectionName || 'item'}-${item.id}`}
+                  item={item}
+                  onViewDetails={() => handleViewDetails(item)}
+                  onAddToInventory={() => handleOpenQuantitySelector(item)}
                 />
               ))}
             </SimpleGrid>
@@ -516,70 +383,89 @@ const ItemCatalog: React.FC = () => {
         )}
       </VStack>
 
-      {/* Item Detail Modals */}
-      <WeaponDetailModal
-        weapon={selectedItem && selectedItem.itemType === 'Weapon' ? selectedItem : null}
-        isOpen={isModalOpen['Weapon']}
-        onClose={() => handleCloseModal('Weapon')}
-      />
-      
-      <ArmorDetailModal
-        armor={selectedItem && selectedItem.itemType === 'Armor' ? selectedItem : null}
-        isOpen={isModalOpen['Armor']}
-        onClose={() => handleCloseModal('Armor')}
-      />
-      
-      <AmmunitionDetailModal
-        ammunition={selectedItem && selectedItem.itemType === 'Ammunition' ? selectedItem : null}
-        isOpen={isModalOpen['Ammunition']}
-        onClose={() => handleCloseModal('Ammunition')}
-      />
-      
-      <PotionDetailModal
-        potion={selectedItem && selectedItem.itemType === 'Potion' ? selectedItem : null}
-        isOpen={isModalOpen['Potion']}
-        onClose={() => handleCloseModal('Potion')}
-      />
-      
-      <ScrollDetailModal
-        scroll={selectedItem && selectedItem.itemType === 'Scroll' ? selectedItem : null}
-        isOpen={isModalOpen['Scroll']}
-        onClose={() => handleCloseModal('Scroll')}
-      />
-      
-      <TrapDetailModal
-        trap={selectedItem && selectedItem.itemType === 'Trap' ? selectedItem : null}
-        isOpen={isModalOpen['Trap']}
-        onClose={() => handleCloseModal('Trap')}
-      />
-      
-      <CraftingComponentDetailModal
-        component={selectedItem && selectedItem.itemType === 'Crafting Component' ? selectedItem : null}
-        isOpen={isModalOpen['Crafting Component']}
-        onClose={() => handleCloseModal('Crafting Component')}
-      />
-      
-      <ExplosivesDetailModal
-        explosive={selectedItem && (selectedItem.itemType === 'Explosive' || selectedItem.itemType === 'Throwable') ? selectedItem : null}
-        isOpen={isModalOpen['Explosive'] || isModalOpen['Throwable']}
-        onClose={() => {
-          handleCloseModal('Explosive');
-          handleCloseModal('Throwable');
-        }}
-      />
+      {/* Modals */}
+      <Suspense fallback={<Center><Spinner color="brand.500" /></Center>}>
+          {selectedItem && isModalOpen['Weapon'] && (
+            <WeaponDetailModal 
+              weapon={selectedItem as WeaponItem} 
+              isOpen={isModalOpen['Weapon']} 
+              onClose={() => handleCloseModal('Weapon')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Armor'] && (
+            <ArmorDetailModal 
+              armor={selectedItem as ArmorItem} 
+              isOpen={isModalOpen['Armor']} 
+              onClose={() => handleCloseModal('Armor')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Ammunition'] && (
+            <AmmunitionDetailModal 
+              ammunition={selectedItem as AmmunitionItem} 
+              isOpen={isModalOpen['Ammunition']} 
+              onClose={() => handleCloseModal('Ammunition')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Potion'] && (
+            <PotionDetailModal 
+              potion={selectedItem as PotionItem} 
+              isOpen={isModalOpen['Potion']} 
+              onClose={() => handleCloseModal('Potion')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Scroll'] && (
+            <ScrollDetailModal 
+              scroll={selectedItem as ScrollItem} 
+              isOpen={isModalOpen['Scroll']} 
+              onClose={() => handleCloseModal('Scroll')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Trap'] && (
+            <TrapDetailModal 
+              trap={selectedItem as TrapItem} 
+              isOpen={isModalOpen['Trap']} 
+              onClose={() => handleCloseModal('Trap')} 
+            />
+          )}
+          
+          {selectedItem && isModalOpen['Crafting Component'] && (
+            <CraftingComponentDetailModal 
+              component={selectedItem as CraftingComponentItem} 
+              isOpen={isModalOpen['Crafting Component']} 
+              onClose={() => handleCloseModal('Crafting Component')} 
+            />
+          )}
+          
+          {selectedItem && (isModalOpen['Explosive'] || isModalOpen['Throwable']) && (
+            <ExplosivesDetailModal 
+              explosive={selectedItem as ExplosiveItem} 
+              isOpen={isModalOpen['Explosive'] || isModalOpen['Throwable']} 
+              onClose={() => { 
+                handleCloseModal('Explosive'); 
+                handleCloseModal('Throwable'); 
+              }} 
+            />
+          )}
 
-      {/* Quantity Selector Modal */}
-      <QuantitySelectorModal
-        item={itemToAdd}
-        isOpen={isQuantitySelectorOpen}
-        onClose={() => {
-          if (!isAddingItem) {
-            setIsQuantitySelectorOpen(false);
-            setItemToAdd(null);
-          }
-        }}
-        onAddToInventory={handleAddToInventoryWithQuantity}
-      />
+        {isQuantitySelectorOpen && itemToAdd && (
+          <QuantitySelectorModal
+            item={itemToAdd}
+            isOpen={isQuantitySelectorOpen}
+            onClose={() => { 
+              if (!isAddingItem) { 
+                setIsQuantitySelectorOpen(false); 
+                setItemToAdd(null); 
+              } 
+            }}
+            onAddToInventory={handleAddToInventoryWithQuantity}
+          />
+        )}
+      </Suspense>
     </Box>
   );
 };

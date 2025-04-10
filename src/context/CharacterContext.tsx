@@ -1,3 +1,5 @@
+// --- START OF FILE CharacterContext.tsx ---
+// --- (Keep imports and other code the same) ---
 'use client';
 
 import React, {
@@ -7,14 +9,17 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
-import type { CharacterStats, Race } from '@/types/character';
+import type { CharacterStats } from '@/types/character';
 import type { Class } from '@/types/class';
 import type { WeaponItem } from '@/types/weapon';
 import type { ArmorItem } from '@/types/armor';
-import type { InventoryItem } from '@/types/inventory';
+import type { InventoryItem, InventoryItemWithQuantity } from '@/types/inventory';
 import type { Spell } from '@/types/spell';
-import { Attack } from '@/components/ItemCards/AttackCard';
+import AttackCard from '@/components/ItemCards/AttackCard'; // Import the component
+import type { Attack } from '@/types/attack'; // Import the TYPE from the correct types file
+import type { Race } from '@/types/race';
 import {
   collection,
   doc,
@@ -25,37 +30,22 @@ import {
   deleteDoc,
   query,
   where,
+  serverTimestamp, // Use server timestamp for saves
+  Timestamp,
+  limit,
+  orderBy,       // For handling loaded timestamps
 } from 'firebase/firestore';
-import { useToast } from '@chakra-ui/react';
+import { Center, Spinner, useToast } from '@chakra-ui/react';
 import { db } from '@/firebase/firebaseConfig';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useDM } from '@/context/DMContext';
+import { EquipmentBonusManager } from '@/types/equipmentBonuses'; // Keep this import
+// Removed: import { EquipmentAbilitiesManager } from '@/types/equipmentAbilitiesManager';
 
 // -------------------------------------------------------------------------
-// Type: UtilitySlot
-// -------------------------------------------------------------------------
-// Utility Slot Type Definitions
-interface UtilitySlot {
-  id: string;
-  name: string;
-  stack: {
-    item: InventoryItem;
-    quantity: number;
-  } | null;
-}
-
-// Utility Slot Interface (keep this outside)
-interface UtilitySlot {
-  id: string;
-  name: string;
-  stack: {
-    item: InventoryItem;
-    quantity: number;
-  } | null;
-}
-
-// -------------------------------------------------------------------------
-// Equipment Features Manager Class
+// Reinstated FeatureManager Class (from original CharacterContext.tsx)
+// You could also move this to its own file e.g., src/managers/FeatureManager.ts and import it
 // -------------------------------------------------------------------------
 class FeatureManager {
   private abilities: Set<string> = new Set();
@@ -77,7 +67,7 @@ class FeatureManager {
     }
   }
 
-  private addFeatures(item: WeaponItem | ArmorItem) {
+  addFeatures(item: WeaponItem | ArmorItem) { // Make public if needed by equipMultipleItems logic
     // Add abilities if the item has them
     if (item.abilities && Array.isArray(item.abilities)) {
       item.abilities.forEach((ability: string) => {
@@ -93,7 +83,7 @@ class FeatureManager {
     }
   }
 
-  private removeFeatures(item: WeaponItem | ArmorItem | null) {
+  removeFeatures(item: WeaponItem | ArmorItem | null) { // Make public if needed by equipMultipleItems logic
     if (!item) return;
 
     // Remove abilities if the item has them
@@ -134,309 +124,106 @@ class FeatureManager {
   }
 }
 
-// Updated code for EquipmentBonusManager class
-class EquipmentBonusManager {
-  private statBonuses: { [key: string]: number } = {};
-  private skillBonuses: { [key: string]: number } = {};
-  private equippedItems: { [slot: string]: WeaponItem | ArmorItem | null } = {};
-
-  equipItem(slot: string, item: WeaponItem | ArmorItem | null) {
-    // First remove any existing item in that slot
-    if (this.equippedItems[slot]) {
-      this.removeItemBonuses(this.equippedItems[slot]);
-    }
-
-    // Store the new item
-    this.equippedItems[slot] = item;
-
-    // Add the new item's bonuses if an item was provided
-    if (item) {
-      this.addItemBonuses(item);
-    }
-  }
-
-  // Remove an item and its bonuses
-  unequipItem(slot: string) {
-    const item = this.equippedItems[slot];
-    if (item) {
-      this.removeItemBonuses(item);
-      delete this.equippedItems[slot];
-    }
-  }
-
-  // Add bonuses from an item (private method)
-  private addItemBonuses(item: WeaponItem | ArmorItem) {
-    // Handle stat bonuses for weapons
-    if ('vitalBonus' in item && item.vitalBonus) {
-      Object.entries(item.vitalBonus).forEach(([stat, bonus]) => {
-        this.statBonuses[stat] = (this.statBonuses[stat] || 0) + Number(bonus);
-      });
-    }
-
-    // Handle stat bonuses for armor
-    if ('statBonus' in item && item.statBonus) {
-      Object.entries(item.statBonus).forEach(([stat, bonus]) => {
-        this.statBonuses[stat] = (this.statBonuses[stat] || 0) + Number(bonus);
-      });
-    }
-
-    // Handle skill bonuses
-    if ('skillBonus' in item && item.skillBonus) {
-      Object.entries(item.skillBonus).forEach(([skill, bonus]) => {
-        this.skillBonuses[skill] = (this.skillBonuses[skill] || 0) + Number(bonus);
-      });
-    }
-  }
-
-  // Remove bonuses from an item (private method)
-  private removeItemBonuses(item: WeaponItem | ArmorItem | null) {
-    if (!item) return;
-
-    // Remove stat bonuses for weapons
-    if ('vitalBonus' in item && item.vitalBonus) {
-      Object.entries(item.vitalBonus).forEach(([stat, bonus]) => {
-        this.statBonuses[stat] = (this.statBonuses[stat] || 0) - Number(bonus);
-        if (this.statBonuses[stat] === 0) {
-          delete this.statBonuses[stat];
-        }
-      });
-    }
-
-    // Remove stat bonuses for armor
-    if ('statBonus' in item && item.statBonus) {
-      Object.entries(item.statBonus).forEach(([stat, bonus]) => {
-        this.statBonuses[stat] = (this.statBonuses[stat] || 0) - Number(bonus);
-        if (this.statBonuses[stat] === 0) {
-          delete this.statBonuses[stat];
-        }
-      });
-    }
-
-    // Remove skill bonuses
-    if ('skillBonus' in item && item.skillBonus) {
-      Object.entries(item.skillBonus).forEach(([skill, bonus]) => {
-        this.skillBonuses[skill] = (this.skillBonuses[skill] || 0) - Number(bonus);
-        if (this.skillBonuses[skill] === 0) {
-          delete this.skillBonuses[skill];
-        }
-      });
-    }
-  }
-
-  // Get all stat bonuses as a new object
-  getStatBonuses(): { [key: string]: number } {
-    return { ...this.statBonuses };
-  }
-
-  // Get all skill bonuses as a new object
-  getSkillBonuses(): { [key: string]: number } {
-    return { ...this.skillBonuses };
-  }
-
-  // Get a specific stat bonus
-  getStatBonus(stat: string): number {
-    return this.statBonuses[stat] || 0;  // Return 0 if the stat has no bonus
-  }
-
-  // Get a specific skill bonus
-  getSkillBonus(skill: string): number {
-    return this.skillBonuses[skill] || 0;  // Return 0 if the skill has no bonus
-  }
-
-  // Reset all bonuses and equipped items to 0
-  reset() {
-    this.statBonuses = {};  // Clear stat bonuses
-    this.skillBonuses = {};  // Clear skill bonuses
-    this.equippedItems = {};  // Clear equipped items
-  }
-}
 
 // -------------------------------------------------------------------------
-// Types & Default Values
+// Interfaces & Types
 // -------------------------------------------------------------------------
-interface InventoryItemWithQuantity {
-  item: InventoryItem;
-  quantity: number;
-}
 
-interface EquippedItems {
-  // Weapon slots
-  primaryWeapon: WeaponItem | null;
-  secondaryWeapon: WeaponItem | null;
-
-  // Head region
-  head: ArmorItem | null;
-  face0: ArmorItem | null;
-  face1: ArmorItem | null;
-  neck: ArmorItem | null;
-
-  // Upper body
-  shoulders: ArmorItem | null;
-  torso: ArmorItem | null;
-
-  // Arms
-  arm0: ArmorItem | null;
-  arm1: ArmorItem | null;
-  wrist0: ArmorItem | null;
-  wrist1: ArmorItem | null;
-
-  // Hands and fingers
-  finger0: ArmorItem | null;
-  finger1: ArmorItem | null;
-  finger2: ArmorItem | null;
-  finger3: ArmorItem | null;
-
-  // Lower body
-  waist: ArmorItem | null;
-  legs: ArmorItem | null;
-  thighs: ArmorItem | null;
-  knees: ArmorItem | null;
-  shins: ArmorItem | null;
-
-  // Feet
-  ankle0: ArmorItem | null;
-  ankle1: ArmorItem | null;
-  feet: ArmorItem | null;
-  toes0: ArmorItem | null;
-  toes1: ArmorItem | null;
-  toes2: ArmorItem | null;
-  toes3: ArmorItem | null;
-}
-
-interface AbilityLevels {
-  [key: string]: number;
-}
-
-interface CharacterSkills {
-  [key: string]: number;
-}
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  lastEdited: number; // timestamp
-}
-
-interface NoteCategory {
+// Utility Slot Type Definitions
+interface UtilitySlot {
   id: string;
   name: string;
-  notes: Note[];
+  stack: {
+    item: InventoryItem;
+    quantity: number;
+  } | null;
 }
 
+// Gold Transaction Interface
+interface GoldTransaction {
+  amount: number; // Positive for gain, negative for loss
+  reason: string;
+  timestamp: number; // Store as milliseconds timestamp
+  by?: string; // Optional: DM ID or 'system' or 'player'
+}
+
+// Equipped Items Interface
+interface EquippedItems {
+  primaryWeapon: WeaponItem | null; secondaryWeapon: WeaponItem | null;
+  head: ArmorItem | null; face0: ArmorItem | null; face1: ArmorItem | null;
+  neck: ArmorItem | null; shoulders: ArmorItem | null; torso: ArmorItem | null;
+  arm0: ArmorItem | null; arm1: ArmorItem | null; wrist0: ArmorItem | null; wrist1: ArmorItem | null;
+  finger0: ArmorItem | null; finger1: ArmorItem | null; finger2: ArmorItem | null; finger3: ArmorItem | null;
+  waist: ArmorItem | null; legs: ArmorItem | null; thighs: ArmorItem | null;
+  knees: ArmorItem | null; shins: ArmorItem | null; ankle0: ArmorItem | null;
+  ankle1: ArmorItem | null; feet: ArmorItem | null; toes0: ArmorItem | null;
+  toes1: ArmorItem | null; toes2: ArmorItem | null; toes3: ArmorItem | null;
+}
+
+// Other Interfaces
+interface AbilityLevels { [key: string]: number; }
+interface CharacterSkills { [key: string]: number; }
+interface Note { id: string; title: string; content: string; lastEdited: number; } // timestamp
+interface NoteCategory { id: string; name: string; notes: Note[]; }
 type NotesState = NoteCategory[];
 
-// -------------------------------------------------------------------------
-// Consolidated Character State Interface
-// -------------------------------------------------------------------------
+// Consolidated Character State Interface (Combined)
 interface CharacterState {
-  baseStats: CharacterStats;
-  selectedRace: Race | null;
-  selectedClass: Class | null;
-  abilityLevels: AbilityLevels;
-  inventory: InventoryItemWithQuantity[];
-  equippedItems: EquippedItems;
-  learnedSpells: Spell[];
-  characterName: string;
-  currentHp: number;
-  currentMp: number;
-  currentAp: number;
-  characterLevel: number;
-  baseSkills: CharacterSkills;
-  utilitySlots: UtilitySlot[];
-  availableStatPoints: number;
-  availableSkillPoints: number;
-  lastUpdated: number;
-  notes: NotesState;
+  baseStats: CharacterStats; selectedRace: Race | null; selectedClass: Class | null;
+  abilityLevels: AbilityLevels; inventory: InventoryItemWithQuantity[]; equippedItems: EquippedItems;
+  learnedSpells: Spell[]; characterName: string; currentHp: number; currentMp: number;
+  currentAp: number; characterLevel: number; baseSkills: CharacterSkills;
+  utilitySlots: UtilitySlot[]; availableStatPoints: number; availableSkillPoints: number;
+  lastUpdated: number; // Store as milliseconds timestamp
+  notes: NotesState; gold: number; goldTransactionHistory: GoldTransaction[];
 }
 
-const defaultStats: CharacterStats = {
-  strength: 0,
-  dexterity: 0,
-  stamina: 0,
-  intelligence: 0,
-  perception: 0,
-  wit: 0,
-  charisma: 0,
-};
-
+// -------------------------------------------------------------------------
+// Default Values
+// -------------------------------------------------------------------------
+const defaultStats: CharacterStats = { strength: 0, dexterity: 0, stamina: 0, intelligence: 0, perception: 0, wit: 0, charisma: 0 };
 const defaultEquippedItems: EquippedItems = {
-  primaryWeapon: null,
-  secondaryWeapon: null,
-  head: null,
-  face0: null,
-  face1: null,
-  neck: null,
-  shoulders: null,
-  torso: null,
-  arm0: null,
-  arm1: null,
-  wrist0: null,
-  wrist1: null,
-  finger0: null,
-  finger1: null,
-  finger2: null,
-  finger3: null,
-  waist: null,
-  legs: null,
-  thighs: null,
-  knees: null,
-  shins: null,
-  ankle0: null,
-  ankle1: null,
-  feet: null,
-  toes0: null,
-  toes1: null,
-  toes2: null,
-  toes3: null,
+  primaryWeapon: null, secondaryWeapon: null, head: null, face0: null, face1: null, neck: null,
+  shoulders: null, torso: null, arm0: null, arm1: null, wrist0: null, wrist1: null,
+  finger0: null, finger1: null, finger2: null, finger3: null, waist: null, legs: null,
+  thighs: null, knees: null, shins: null, ankle0: null, ankle1: null, feet: null,
+  toes0: null, toes1: null, toes2: null, toes3: null,
 };
-
-const defaultNotes: NotesState = [
-  {
-    id: 'general-' + Date.now(),
-    name: 'General',
-    notes: [
-      {
-        id: 'welcome-' + Date.now(),
-        title: 'Welcome to Notes',
-        content: 'Use this tab to keep track of important information during your adventures. You can create different categories to organize your notes!',
-        lastEdited: Date.now()
-      }
-    ]
-  },
-  {
-    id: 'quests-' + Date.now(),
-    name: 'Quests',
-    notes: []
-  },
-  {
-    id: 'npcs-' + Date.now(),
-    name: 'NPCs',
-    notes: []
-  }
-];
-
-const defaultUtilitySlots: UtilitySlot[] = Array.from({ length: 10 }, (_, i) => ({
-  id: `utility${i}`,
-  name: `Utility Slot ${i + 1}`,
-  stack: null,
-}));
+const defaultNotes: NotesState = [ { id: 'general-' + Date.now(), name: 'General', notes: [ { id: 'welcome-' + Date.now(), title: 'Welcome to Notes', content: 'Use this tab to keep track of important information during your adventures. You can create different categories to organize your notes!', lastEdited: Date.now() } ] }, { id: 'quests-' + Date.now(), name: 'Quests', notes: [] }, { id: 'npcs-' + Date.now(), name: 'NPCs', notes: [] } ];
+const defaultUtilitySlots: UtilitySlot[] = Array.from({ length: 10 }, (_, i) => ({ id: `utility${i}`, name: `Utility Slot ${i + 1}`, stack: null }));
 
 // -------------------------------------------------------------------------
-// Context Interface (exposing both consolidated state & derived values)
+// Context Interface (Combined & Fully Typed)
 // -------------------------------------------------------------------------
 export interface CharacterContextType {
-  baseStats: CharacterStats;
-  currentStats: CharacterStats;
-  setBaseStats: (stats: CharacterStats) => void;
-  selectedRace: Race | null;
-  setSelectedRace: (race: Race | null) => void;
-  selectedClass: Class | null;
-  setSelectedClass: (cls: Class | null) => void;
-  abilityLevels: AbilityLevels;
-  setAbilityLevel: (abilityName: string, level: number) => void;
+  // Basic Info
+  characterName: string; setCharacterName: (name: string) => void;
+  characterLevel: number; setCharacterLevel: (level: number) => void;
+  // Core Attributes
+  baseStats: CharacterStats; setBaseStats: (stats: CharacterStats) => void;
+  currentStats: CharacterStats; // Derived
+  selectedRace: Race | null; setSelectedRace: (race: Race | null) => void;
+  selectedClass: Class | null; setSelectedClass: (cls: Class | null) => void;
+  // Vitals
+  docId: string | null;
+  currentHp: number; setCurrentHp: (hp: number) => void;
+  getMaxHp: () => number; // Derived
+  currentMp: number; setCurrentMp: (mp: number) => void;
+  getMaxMp: () => number; // Derived
+  currentAp: number; setCurrentAp: (ap: number) => void;
+  getMaxAp: () => number; // Derived
+  // Skills & Abilities
+  baseSkills: CharacterSkills; currentSkills: CharacterSkills; // Derived
+  abilityLevels: AbilityLevels; setAbilityLevel: (abilityName: string, level: number) => void;
+  getEquipmentAbilities: () => string[]; // Derived from manager
+  getEquipmentTraits: () => string[]; // Derived from manager
+  hasAbility: (ability: string) => boolean; // Derived from manager
+  hasTrait: (trait: string) => boolean; // Derived from manager
+  // Equipment & Inventory
   inventory: InventoryItemWithQuantity[];
   addToInventory: (item: InventoryItem) => void;
+  addItemsWithQuantity: (item: InventoryItem, quantity: number) => void;
+  addMultipleItemsToInventory: (items: InventoryItem[]) => void;
   removeFromInventory: (itemId: string) => void;
   updateInventoryItemQuantity: (itemId: string, quantity: number) => void;
   getInventoryByType: (itemType: string) => InventoryItemWithQuantity[];
@@ -446,1456 +233,1087 @@ export interface CharacterContextType {
   equipItem: (slot: keyof EquippedItems, item: InventoryItem | null) => void;
   getEquippedItem: (slot: keyof EquippedItems) => WeaponItem | ArmorItem | null;
   equipMultipleItems: (equipmentUpdates: Partial<Record<keyof EquippedItems, InventoryItem | null>>) => void;
-  getStatBonus: (stat: string) => number;
-  getSkillBonus: (skill: string) => number;
-  getEquipmentAbilities: () => string[];
-  getEquipmentTraits: () => string[];
-  hasAbility: (ability: string) => boolean;
-  hasTrait: (trait: string) => boolean;
-  resetCharacter: () => void;
-  deleteCharacter: () => Promise<void>;
-  currentSkills: CharacterSkills;
-  baseSkills: CharacterSkills;
-  spellList: Spell[];
-  learnedSpells: Spell[];
-  addToLearnedSpells: (spell: Spell) => void;
-  characterLevel: number;
-  setCharacterLevel: (level: number) => void;
-  getMaxHp: () => number;
-  getMaxMp: () => number;
-  getMaxAp: () => number;
-  availableStatPoints: number;
-  incrementStat: (stat: keyof CharacterStats) => void;
-  decrementStat: (stat: keyof CharacterStats) => void;
-  availableSkillPoints: number;
-  increaseSkill: (skillName: string) => void;
-  decreaseSkill: (skillName: string) => void;
-  attacks: Attack[];
-  getAttacksFromEquipment: () => Attack[];
-  executeAttack: (attackId: string) => void;
-  characterName: string;
-  setCharacterName: (name: string) => void;
-  currentHp: number;
-  setCurrentHp: (hp: number) => void;
-  currentMp: number;
-  setCurrentMp: (mp: number) => void;
-  currentAp: number;
-  setCurrentAp: (ap: number) => void;
-  utilitySlots: UtilitySlot[];
-  setUtilitySlots: (slots: UtilitySlot[]) => void;
+  getStatBonus: (stat: string) => number; // Derived from manager
+  getSkillBonus: (skill: string) => number; // Derived from manager
+  // Utility Slots
+  utilitySlots: UtilitySlot[]; setUtilitySlots: (slots: UtilitySlot[]) => void;
   addItemToUtilitySlot: (slotId: string, item: InventoryItem, quantity: number) => void;
   removeItemFromUtilitySlot: (slotId: string) => void;
   updateUtilitySlotQuantity: (slotId: string, quantityChange: number) => void;
-  isDirty: boolean;
-  isSaving: boolean;
+  // Points & Advancement
+  availableStatPoints: number; incrementStat: (stat: keyof CharacterStats) => void; decrementStat: (stat: keyof CharacterStats) => void;
+  availableSkillPoints: number; increaseSkill: (skillName: string) => void; decreaseSkill: (skillName: string) => void;
+  // Combat
+  attacks: Attack[]; // Derived
+  getAttacksFromEquipment: () => Attack[]; executeAttack: (attackId: string) => void;
+  // Spells
+  learnedSpells: Spell[]; addToLearnedSpells: (spell: Spell) => void;
+  spellList: Spell[]; // Kept for compatibility, same as learnedSpells
+  // Notes
+  notes: NotesState; updateNotes: (notes: NotesState) => void;
+  addNoteCategory: (category: NoteCategory) => void; updateNoteCategory: (categoryId: string, updates: Partial<NoteCategory>) => void;
+  deleteNoteCategory: (categoryId: string) => void; addNote: (categoryId: string, note: Note) => void;
+  updateNote: (categoryId: string, noteId: string, updates: Partial<Note>) => void; deleteNote: (categoryId: string, noteId: string) => void;
+  // Gold & Economy
+  gold: number; setGold: (amount: number, reason: string) => void;
+  goldTransactionHistory: GoldTransaction[];
+  addGold: (amount: number, reason: string) => void;
+  subtractGold: (amount: number, reason: string) => void;
+  processTransaction: (details: {
+    itemId: string;
+    item?: InventoryItem; // Required for 'buy'
+    quantity: number;
+    goldChange: number;
+    transactionType: 'buy' | 'sell';
+    reason: string
+  }) => Promise<void>;
+  // Save & Reset
+  isDirty: boolean; isSaving: boolean; lastSaveTime: number; // lastSaveTime tracks local JS time of last *successful* save
   saveCharacterManually: () => Promise<void>;
-  lastSaveTime: number;
-  notes: NotesState;
-  updateNotes: (notes: NotesState) => void;
-  addNoteCategory: (category: NoteCategory) => void;
-  updateNoteCategory: (categoryId: string, updates: Partial<NoteCategory>) => void;
-  deleteNoteCategory: (categoryId: string) => void;
-  addNote: (categoryId: string, note: Note) => void;
-  updateNote: (categoryId: string, noteId: string, updates: Partial<Note>) => void;
-  deleteNote: (categoryId: string, noteId: string) => void;
+  resetCharacter: () => void; deleteCharacter: () => Promise<void>;
 }
 
 // Create the context
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 // -------------------------------------------------------------------------
-// CharacterProvider Component
+// CharacterProvider Component (Merged Logic)
 // -------------------------------------------------------------------------
-
 export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCharacterId = searchParams?.get('characterId') || null;
+  const isNewCharacterMode = searchParams?.get('new') === 'true';
+  const { isDM } = useDM();
+  const toast = useToast();
 
-  // Local storage utilities
-  const LOCAL_STORAGE_KEY = 'dcw-character-state';
-
-  const saveToLocalStorage = (characterData: any) => {
-    if (typeof window === 'undefined') return;
-    try {
-      const dataToSave = {
-        ...characterData,
-        localSaveTime: Date.now()
-      };
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
-    } catch (error) {
-      console.error('Error saving to local storage:', error);
-    }
-  };
-
-  const loadFromLocalStorage = () => {
-    if (typeof window === 'undefined') return null;
-    try {
-      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!savedData) return null;
-      return JSON.parse(savedData);
-    } catch (error) {
-      console.error('Error loading from local storage:', error);
-      return null;
-    }
-  };
-
-  // New state variables for save tracking
-  const [pendingSave, setPendingSave] = useState(false);
-  const [lastSaveTime, setLastSaveTime] = useState(0);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-
-  // Track which parts of the character state have changed
-  interface DirtyFields {
-    inventory: boolean;
-    equippedItems: boolean;
-    baseStats: boolean;
-    race: boolean;
-    class: boolean;
-    abilities: boolean;
-    spells: boolean;
-    characterInfo: boolean; // name, level, HP, MP, AP
-    skills: boolean;
-    utilitySlots: boolean;
-  }
-
-  const [dirtyFields, setDirtyFields] = useState<DirtyFields>({
-    inventory: false,
-    equippedItems: false,
-    baseStats: false,
-    race: false,
-    class: false,
-    abilities: false,
-    spells: false,
-    characterInfo: false,
-    skills: false,
-    utilitySlots: false
-  });
-
-  const defaultNotes: NotesState = [
-    {
-      id: 'general-' + Date.now(),
-      name: 'General',
-      notes: [
-        {
-          id: 'welcome-' + Date.now(),
-          title: 'Welcome to Notes',
-          content: 'Use this tab to keep track of important information during your adventures. You can create different categories to organize your notes!',
-          lastEdited: Date.now()
-        }
-      ]
-    },
-    {
-      id: 'quests-' + Date.now(),
-      name: 'Quests',
-      notes: []
-    },
-    {
-      id: 'npcs-' + Date.now(),
-      name: 'NPCs',
-      notes: []
-    }
-  ];
+  // Equipment Managers (Instantiated once using imported/internal classes)
+  const equipmentBonuses = useMemo(() => new EquipmentBonusManager(), []);
+  const featureManager = useMemo(() => new FeatureManager(), []); // Use internal or imported FeatureManager
 
   // Consolidated character state
   const [characterState, setCharacterState] = useState<CharacterState>({
-    baseStats: defaultStats,
-    selectedRace: null,
-    selectedClass: null,
-    abilityLevels: {},
-    inventory: [],
-    equippedItems: defaultEquippedItems,
-    learnedSpells: [],
-    characterName: '',
-    currentHp: 8,
-    currentMp: 5,
-    currentAp: 2,
-    characterLevel: 1,
-    baseSkills: {},
-    utilitySlots: defaultUtilitySlots,
-    availableStatPoints: 7,
-    availableSkillPoints: 16,
-    lastUpdated: Date.now(),
-    notes: defaultNotes,
+    baseStats: defaultStats, selectedRace: null, selectedClass: null,
+    abilityLevels: {}, inventory: [], equippedItems: defaultEquippedItems,
+    learnedSpells: [], characterName: '', currentHp: 8, currentMp: 5,
+    currentAp: 2, characterLevel: 1, baseSkills: {}, utilitySlots: defaultUtilitySlots,
+    availableStatPoints: 7, availableSkillPoints: 16, lastUpdated: 0, // Initialize timestamp
+    notes: defaultNotes, gold: 0, goldTransactionHistory: [],
   });
 
   // Other non-persistent states
   const [loaded, setLoaded] = useState(false);
-  const [docId, setDocId] = useState<string | null>(initialCharacterId);
-  const [previousLevel, setPreviousLevel] = useState<number>(characterState.characterLevel);
+  const [isLoading, setIsLoading] = useState(true); // Loading indicator state
+  const [docId, setDocId] = useState<string | null>(null); // Start null, set during load
+  const [previousLevel, setPreviousLevel] = useState<number>(0); // Initialize to 0 before load
   const [attacks, setAttacks] = useState<Attack[]>([]);
 
-  // Equipment managers
-  const [featureManager] = useState(() => new FeatureManager());
-  const [equipmentBonuses] = useState(() => new EquipmentBonusManager());
+  // Save tracking states
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [lastSaveTime, setLastSaveTime] = useState(0); // Tracks JS time of last Firestore save attempt success
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref for debounced save timeout
+  const dirtyFieldsRef = useRef<{ [key: string]: boolean }>({}); // Tracks specific dirty fields
 
-  // Updater function for the consolidated state
-  const updateCharacterState = (updates: Partial<CharacterState>) => {
-    const newDirtyFields = { ...dirtyFields };
-    if (updates.inventory) newDirtyFields.inventory = true;
-    if (updates.equippedItems) newDirtyFields.equippedItems = true;
-    if (updates.baseStats) newDirtyFields.baseStats = true;
-    if (updates.selectedRace) newDirtyFields.race = true;
-    if (updates.selectedClass) newDirtyFields.class = true;
-    if (updates.abilityLevels) newDirtyFields.abilities = true;
-    if (updates.learnedSpells) newDirtyFields.spells = true;
-    if (
-      updates.characterName ||
-      updates.characterLevel ||
-      updates.currentHp ||
-      updates.currentMp ||
-      updates.currentAp ||
-      updates.availableStatPoints ||
-      updates.availableSkillPoints
-    ) {
-      newDirtyFields.characterInfo = true;
-    }
-    if (updates.baseSkills) newDirtyFields.skills = true;
-    if (updates.utilitySlots) newDirtyFields.utilitySlots = true;
-
-    setDirtyFields(newDirtyFields);
-    setIsDirty(true);
-
-    setCharacterState((prev) => ({
-      ...prev,
-      ...updates,
-      lastUpdated: Date.now(),
-    }));
-  };
-
-
-  // -----------------------------------------------------------------------
-  // Derived Values (currentStats and currentSkills) computed via memoization
-  // -----------------------------------------------------------------------
+  // --- Derived Values ---
   const currentStats = useMemo(() => {
     let stats = { ...characterState.baseStats };
-    if (characterState.selectedRace) {
-      Object.entries(characterState.selectedRace.statbonus).forEach(([stat, bonus]) => {
-        if (stat in stats) {
-          stats[stat as keyof CharacterStats] += bonus;
-        }
-      });
-    }
-    if (characterState.selectedClass) {
-      Object.entries(characterState.selectedClass.statbonus).forEach(([stat, bonus]) => {
-        if (stat in stats) {
-          stats[stat as keyof CharacterStats] += bonus;
-        }
-      });
-    }
+    if (characterState.selectedRace) Object.entries(characterState.selectedRace.statbonus).forEach(([st, bn]) => { stats[st as keyof CharacterStats] = (stats[st as keyof CharacterStats] || 0) + bn; });
+    if (characterState.selectedClass) Object.entries(characterState.selectedClass.statbonus).forEach(([st, bn]) => { stats[st as keyof CharacterStats] = (stats[st as keyof CharacterStats] || 0) + bn; });
     const eqStatBonuses = equipmentBonuses.getStatBonuses();
-    Object.entries(eqStatBonuses).forEach(([stat, bonus]) => {
-      if (stat in stats) {
-        stats[stat as keyof CharacterStats] += bonus;
-      }
-    });
+    Object.entries(eqStatBonuses).forEach(([st, bn]) => { stats[st as keyof CharacterStats] = (stats[st as keyof CharacterStats] || 0) + bn; });
     return stats;
-  }, [
-    characterState.baseStats,
-    characterState.selectedRace,
-    characterState.selectedClass,
-    characterState.equippedItems,
-    equipmentBonuses,
-  ]);
+  }, [characterState.baseStats, characterState.selectedRace, characterState.selectedClass, equipmentBonuses]);
 
   const currentSkills = useMemo(() => {
     let skills = { ...characterState.baseSkills };
-    if (characterState.selectedRace) {
-      Object.entries(characterState.selectedRace.skillbonus).forEach(([skill, bonus]) => {
-        skills[skill] = (skills[skill] || 0) + bonus;
-      });
-    }
-    if (characterState.selectedClass) {
-      Object.entries(characterState.selectedClass.skillbonus).forEach(([skill, bonus]) => {
-        skills[skill] = (skills[skill] || 0) + bonus;
-      });
-    }
+    if (characterState.selectedRace) Object.entries(characterState.selectedRace.skillbonus).forEach(([sk, bn]) => { skills[sk] = (skills[sk] || 0) + bn; });
+    if (characterState.selectedClass) Object.entries(characterState.selectedClass.skillbonus).forEach(([sk, bn]) => { skills[sk] = (skills[sk] || 0) + bn; });
     const eqSkillBonuses = equipmentBonuses.getSkillBonuses();
-    Object.entries(eqSkillBonuses).forEach(([skill, bonus]) => {
-      skills[skill] = (skills[skill] || 0) + bonus;
-    });
+    Object.entries(eqSkillBonuses).forEach(([sk, bn]) => { skills[sk] = (skills[sk] || 0) + bn; });
     return skills;
-  }, [
-    characterState.baseSkills,
-    characterState.selectedRace,
-    characterState.selectedClass,
-    characterState.equippedItems,
-    equipmentBonuses,
-  ]);
+  }, [characterState.baseSkills, characterState.selectedRace, characterState.selectedClass, equipmentBonuses]);
 
-  // -----------------------------------------------------------------------
-  // Derived Getters
-  // -----------------------------------------------------------------------
-  const getMaxHp = () => 8 * currentStats.stamina + characterState.characterLevel;
-  const getMaxMp = () => 5 * currentStats.intelligence + characterState.characterLevel;
-  const getMaxAp = () => characterState.characterLevel * 2;
+  // --- Derived Getters (FIXED case sensitivity) ---
+  const getMaxHp = useCallback(() => (currentStats.stamina || 0) * 8 + (characterState.characterLevel || 0) + (characterState.selectedRace?.hpbonus || 0) + (characterState.selectedClass?.hpbonus || 0), [currentStats.stamina, characterState.characterLevel, characterState.selectedRace, characterState.selectedClass]);
+  const getMaxMp = useCallback(() => (currentStats.intelligence || 0) * 5 + (characterState.characterLevel || 0) + (characterState.selectedRace?.mpbonus || 0) + (characterState.selectedClass?.mpbonus || 0), [currentStats.intelligence, characterState.characterLevel, characterState.selectedRace, characterState.selectedClass]);
+  const getMaxAp = useCallback(() => (characterState.characterLevel || 0) * 2, [characterState.characterLevel]);
 
-  // -----------------------------------------------------------------------
-  // Save Function (extracted so that it can be debounced)
-  // -----------------------------------------------------------------------
-  const saveCharacterData = async () => {
-    if (!loaded || !currentUser) return false;
+
+  // Updater function for consolidated state with dirty tracking
+  const updateCharacterState = useCallback((updates: Partial<CharacterState>) => {
+    let hasChanges = false;
+    const newState = { ...characterState, ...updates, lastUpdated: Date.now() }; // Calculate new state first
+
+    // Mark fields as dirty only if the value actually changed
+    Object.keys(updates).forEach(key => {
+        const typedKey = key as keyof CharacterState;
+        if (characterState[typedKey] !== newState[typedKey]) {
+             dirtyFieldsRef.current[key] = true;
+             hasChanges = true;
+        }
+        // Add deep comparisons for complex objects if simple reference check isn't enough
+        if (key === 'inventory' && JSON.stringify(characterState.inventory) !== JSON.stringify(newState.inventory)) { dirtyFieldsRef.current.inventory = true; hasChanges = true; }
+        if (key === 'equippedItems' && JSON.stringify(characterState.equippedItems) !== JSON.stringify(newState.equippedItems)) { dirtyFieldsRef.current.equippedItems = true; hasChanges = true; }
+        if (key === 'notes' && JSON.stringify(characterState.notes) !== JSON.stringify(newState.notes)) { dirtyFieldsRef.current.notes = true; hasChanges = true; }
+        if (key === 'baseStats' && JSON.stringify(characterState.baseStats) !== JSON.stringify(newState.baseStats)) { dirtyFieldsRef.current.baseStats = true; hasChanges = true; }
+        if (key === 'baseSkills' && JSON.stringify(characterState.baseSkills) !== JSON.stringify(newState.baseSkills)) { dirtyFieldsRef.current.baseSkills = true; hasChanges = true; }
+         // Add others if needed (utilitySlots, learnedSpells, goldTransactionHistory, abilityLevels)
+    });
+
+    if (hasChanges) {
+        setIsDirty(true); // Set overall dirty flag if any field changed
+        setCharacterState(newState); // Apply the update
+    }
+  }, [characterState]); // Dependency: characterState is needed for comparison
+
+
+  // --- Save Character Data Function ---
+  const saveCharacterData = useCallback(async (isManualSave = false): Promise<boolean> => {
+    if (!loaded || !currentUser || isSaving) return false;
+    if (!isDirty && !isManualSave) return true;
+
+    const currentDocId = docId;
+    const needsCreation = isNewCharacterMode && !currentDocId;
+
+    if (!currentDocId && !needsCreation) {
+      console.error("Cannot save: No document ID available and not in new character mode.");
+      toast({ title: "Save Error", description: "Character ID missing.", status: "error" });
+      return false;
+    }
+
+    setIsSaving(true);
+    if (!isManualSave) console.log(`Auto-saving character ID: ${currentDocId || '(new)'}`);
+
     try {
-      setIsSaving(true);
-      const updates: Record<string, any> = {
+      const dataToSave: Record<string, any> = {
         userId: currentUser.uid,
-        lastUpdated: Date.now(),
+        baseStats: characterState.baseStats,
+        baseSkills: characterState.baseSkills,
+        selectedRace: characterState.selectedRace,
+        selectedClass: characterState.selectedClass,
+        characterName: characterState.characterName,
+        characterLevel: characterState.characterLevel,
+        currentHp: characterState.currentHp,
+        currentMp: characterState.currentMp,
+        currentAp: characterState.currentAp,
+        availableStatPoints: characterState.availableStatPoints,
+        availableSkillPoints: characterState.availableSkillPoints,
+        gold: characterState.gold,
+        lastUpdated: serverTimestamp(),
+        // --- Include all potentially changed fields for save ---
+        inventory: characterState.inventory,
+        equippedItems: characterState.equippedItems,
+        learnedSpells: characterState.learnedSpells,
+        abilityLevels: characterState.abilityLevels,
+        utilitySlots: characterState.utilitySlots,
+        notes: characterState.notes,
+        goldTransactionHistory: characterState.goldTransactionHistory,
       };
 
-      if (dirtyFields.inventory) {
-        updates.inventory = characterState.inventory;
-      }
-      if (dirtyFields.equippedItems) {
-        updates.equippedItems = characterState.equippedItems;
-      }
-      if (dirtyFields.baseStats) {
-        updates.baseStats = characterState.baseStats;
-      }
-      if (dirtyFields.race) {
-        updates.selectedRace = characterState.selectedRace;
-      }
-      if (dirtyFields.class) {
-        updates.selectedClass = characterState.selectedClass;
-      }
-      if (dirtyFields.abilities) {
-        updates.abilityLevels = characterState.abilityLevels;
-      }
-      if (dirtyFields.spells) {
-        updates.learnedSpells = characterState.learnedSpells;
-      }
-      if (dirtyFields.characterInfo) {
-        updates.characterName = characterState.characterName;
-        updates.characterLevel = characterState.characterLevel;
-        updates.currentHp = characterState.currentHp;
-        updates.currentMp = characterState.currentMp;
-        updates.currentAp = characterState.currentAp;
-        updates.availableStatPoints = characterState.availableStatPoints;
-        updates.availableSkillPoints = characterState.availableSkillPoints;
-      }
-      if (dirtyFields.skills) {
-        updates.baseSkills = characterState.baseSkills;
-      }
-      if (dirtyFields.utilitySlots) {
-        updates.utilitySlots = characterState.utilitySlots;
-      }
+      // --- Determine which fields to actually save ---
+      const fieldsToSave = (isManualSave || needsCreation)
+          ? Object.keys(dataToSave) // Save everything on manual or creation
+          : Object.keys(dirtyFieldsRef.current).filter(key => dirtyFieldsRef.current[key]); // Only save dirty fields on auto-save
 
-      // If only the default keys exist, no real changes have been made.
-      if (Object.keys(updates).length <= 2) {
-        console.log('No changes to save');
-        setIsSaving(false);
-        return true;
-      }
+      const finalDataToSave: Record<string, any> = { userId: currentUser.uid, lastUpdated: serverTimestamp() }; // Always include userId and timestamp
 
-      const isNewCharacterMode = searchParams?.get('new') === 'true';
-      if (isNewCharacterMode) {
-        const newDocRef = await addDoc(collection(db, 'characters'), {
-          ...characterState,
-          ...updates,
-          lastUpdated: new Date().getTime(),
+      fieldsToSave.forEach(key => {
+          // Make sure the key is actually part of our intended data
+          if (key in dataToSave && key !== 'userId' && key !== 'lastUpdated') {
+              finalDataToSave[key] = dataToSave[key];
+          }
+      });
+
+      // --- Ensure arrays/objects aren't saved as undefined ---
+      Object.keys(finalDataToSave).forEach(key => {
+        if (finalDataToSave[key] === undefined) {
+            finalDataToSave[key] = null; // Use null instead of undefined for Firestore compatibility
+        }
+        // Ensure array fields are saved as empty arrays if they become null/undefined, prevents errors
+        if (['inventory', 'learnedSpells', 'utilitySlots', 'notes', 'goldTransactionHistory', 'abilities', 'traits', 'spellsGranted'].includes(key) && !Array.isArray(finalDataToSave[key])) {
+            finalDataToSave[key] = [];
+        }
+        // Ensure object fields are saved as empty objects if they become null/undefined
+        if (['baseStats', 'baseSkills', 'equippedItems', 'abilityLevels', 'statBonus', 'skillBonus', 'scaling'].includes(key) && (finalDataToSave[key] === null || typeof finalDataToSave[key] !== 'object' || Array.isArray(finalDataToSave[key]))) {
+            finalDataToSave[key] = {};
+        }
+      });
+
+      if (needsCreation) {
+        // Create a type for the creation data that includes an index signature
+        type CreationDataType = {
+          userId: string;
+          lastUpdated: ReturnType<typeof serverTimestamp>;
+          [key: string]: any; // Allow any additional string keys
+        };
+
+        // Ensure all fields are present for creation
+        const creationData: CreationDataType = { 
+          ...dataToSave, 
+          userId: currentUser.uid, 
+          lastUpdated: serverTimestamp() 
+        };
+
+        // Re-sanitize just in case
+        Object.keys(creationData).forEach(key => {
+            if (creationData[key] === undefined) creationData[key] = null;
+            if (['inventory', 'learnedSpells', 'utilitySlots', 'notes', 'goldTransactionHistory', 'abilities', 'traits', 'spellsGranted'].includes(key) && !Array.isArray(creationData[key])) {
+                creationData[key] = [];
+            }
+            if (['baseStats', 'baseSkills', 'equippedItems', 'abilityLevels', 'statBonus', 'skillBonus', 'scaling'].includes(key) && (creationData[key] === null || typeof creationData[key] !== 'object' || Array.isArray(creationData[key]))) {
+                creationData[key] = {};
+            }
         });
+
+        const newDocRef = await addDoc(collection(db, 'characters'), creationData);
         setDocId(newDocRef.id);
-        router.replace(`/game?characterId=${newDocRef.id}`);
-        console.log('Created new character with ID:', newDocRef.id);
-      } else {
-        const currentDocId = docId || currentUser.uid;
-        if (!docId) setDocId(currentUser.uid);
-        await setDoc(doc(db, 'characters', currentDocId), updates, { merge: true });
-        console.log(`Saved character in document: ${currentDocId}`);
+        console.log(`Created new character with ID: ${newDocRef.id}`);
+        router.replace(`/game?characterId=${newDocRef.id}`, { scroll: false }); // Update URL without reload
+      } else if (currentDocId && Object.keys(finalDataToSave).length > 2) { // Only save if there's more than just userId/timestamp
+        const characterRef = doc(db, 'characters', currentDocId);
+        await setDoc(characterRef, finalDataToSave, { merge: true }); // Use merge:true for partial updates
+        console.log(`Saved character changes to document: ${currentDocId}. Fields:`, Object.keys(finalDataToSave));
+      } else if (currentDocId) {
+          console.log(`No changes detected for auto-save for character: ${currentDocId}`);
+          // Still reset dirty state even if nothing was saved to Firestore
       }
 
-      // Reset dirty flags after successful save
-      setDirtyFields({
-        inventory: false,
-        equippedItems: false,
-        baseStats: false,
-        race: false,
-        class: false,
-        abilities: false,
-        spells: false,
-        characterInfo: false,
-        skills: false,
-        utilitySlots: false,
-      });
       setIsDirty(false);
-      return true;
-    } catch (error) {
+      dirtyFieldsRef.current = {};
+      setLastSaveTime(Date.now()); // Record time of save attempt completion
+
+      if (isManualSave) {
+        toast({ title: "Character Saved", status: "success", duration: 2000, isClosable: true });
+      }
+      return true; // Indicate save attempt was processed
+
+    } catch (error: any) {
       console.error('Error saving character data:', error);
-      return false;
+      toast({ title: "Save Failed", description: error.message || "Could not save character data.", status: "error" });
+      return false; // Indicate save failed
     } finally {
       setIsSaving(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [characterState, currentUser, docId, loaded, isDirty, isSaving, toast, router, isNewCharacterMode]); // Dependencies
 
 
-  // -----------------------------------------------------------------------
-  // Debounced Save Function
-  // -----------------------------------------------------------------------
-  const SAVE_DELAY = 5000; // 5 seconds between saves
-  const debouncedSaveCharacter = useCallback(() => {
-    // Only save if there are changes
-    if (!isDirty) return;
-
-    const currentTime = Date.now();
-    if (pendingSave) return;
-
-    const timeSinceLastSave = currentTime - lastSaveTime;
-    if (timeSinceLastSave < SAVE_DELAY) {
-      setPendingSave(true);
-      setTimeout(() => {
-        saveCharacterData().then(() => {
-          setPendingSave(false);
-          setLastSaveTime(Date.now());
-        });
-      }, SAVE_DELAY - timeSinceLastSave);
-    } else {
-      // Save immediately if enough time has elapsed
-      saveCharacterData().then(() => {
-        setLastSaveTime(currentTime);
-      });
+  // --- Manual Save Function ---
+  const saveCharacterManually = useCallback(async () => {
+    if (!loaded || !currentUser) {
+      toast({ title: "Cannot Save", description: "Character not loaded or user not logged in.", status: "warning"});
+      return;
     }
-  }, [pendingSave, lastSaveTime, isDirty, currentUser, loaded, dirtyFields]);
-
-  const toast = useToast();
-  const saveCharacterManually = async () => {
-    if (!currentUser || !loaded) return;
-    try {
-      setIsSaving(true);
-      await saveCharacterData();
-      setLastSaveTime(Date.now());
-
-      // Show success message using Chakra UI toast
-      toast({
-        title: 'Character Saved',
-        description: 'Your character data has been saved successfully.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Error saving character:', error);
-      toast({
-        title: 'Save Failed',
-        description: 'Could not save your character. Please try again.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    // Set all fields as dirty for manual save to ensure everything is included
+    dirtyFieldsRef.current = Object.keys(characterState).reduce((acc, key) => { acc[key] = true; return acc; }, {} as Record<string, boolean>);
+    setIsDirty(true);
+    await saveCharacterData(true); // Call core save function with manual flag
+  }, [currentUser, loaded, saveCharacterData, toast, characterState]); // Added characterState
 
 
-  // -----------------------------------------------------------------------
-  // Load Character Data Effect: Loads character data based on URL parameters
-  // -----------------------------------------------------------------------
+  // --- Load Character Data (FIXED case sensitivity for bonuses) ---
   useEffect(() => {
     const loadCharacterData = async () => {
-      if (!currentUser) return;
-
+      if (!currentUser) {
+        setIsLoading(false);
+        return; // No user logged in
+      }
+      setLoaded(false);
+      setIsLoading(true);
+      setIsDirty(false); // Start clean
+      dirtyFieldsRef.current = {};
+    
+      // Declare tempEquipped here, initialized with defaults
+      let tempEquipped: EquippedItems = { ...defaultEquippedItems };
+    
       try {
-        // First check if we have a specified character ID or a flag for a new character
-        const characterId = searchParams?.get('characterId');
-        const isNewCharacter = searchParams?.get('new') === 'true';
-
-        // If it's a new character or we have no ID, use default state
-        if (isNewCharacter) {
+        let characterIdToLoad: string | null = initialCharacterId; // From URL param first
+        let characterDocRef;
+    
+        if (isNewCharacterMode) {
+          console.log("Initializing new character state.");
           resetCharacter();
-          setDocId(null);
+          setDocId(null); // Ensure docId is null for new characters
           setLoaded(true);
+          setIsLoading(false);
+          // Mark as dirty immediately for initial save
+          setIsDirty(true);
+          dirtyFieldsRef.current = Object.keys(characterState).reduce((acc, key) => { acc[key] = true; return acc; }, {} as Record<string, boolean>);
           return;
         }
-
-        // Try to load from Firestore if we have a specific ID
-        if (characterId) {
-          const characterDoc = await getDoc(doc(db, 'characters', characterId));
-
-          if (characterDoc.exists()) {
-            // Set the document ID for future saves
-            setDocId(characterId);
-
-            // Get the data from Firestore
-            const data = characterDoc.data();
-
-            // Make sure this character belongs to this user
-            if (data.userId !== currentUser.uid) {
-              console.error("Tried to load character belonging to another user");
-              resetCharacter();
-              router.push('/character-manager');
-              return;
-            }
-
-            // Update our state with the loaded data
-            setCharacterState({
-              baseStats: data.baseStats || defaultStats,
-              selectedRace: data.selectedRace || null,
-              selectedClass: data.selectedClass || null,
-              abilityLevels: data.abilityLevels || {},
-              inventory: data.inventory || [],
-              equippedItems: data.equippedItems || defaultEquippedItems,
-              learnedSpells: data.learnedSpells || [],
-              characterName: data.characterName || '',
-              currentHp: data.currentHp || 8,
-              currentMp: data.currentMp || 5,
-              currentAp: data.currentAp || 2,
-              characterLevel: data.characterLevel || 1,
-              baseSkills: data.baseSkills || {},
-              utilitySlots: data.utilitySlots || defaultUtilitySlots,
-              availableStatPoints: data.availableStatPoints || 1,
-              availableSkillPoints: data.availableSkillPoints || 10,
-              lastUpdated: data.lastUpdated || Date.now(),
-              notes: data.notes || defaultNotes,
-            });
-
-            // Initialize equipment managers
-            if (data.equippedItems) {
-              Object.entries(data.equippedItems).forEach(([slot, item]) => {
-                if (item) {
-                  featureManager.equipItem(slot, item as WeaponItem | ArmorItem);
-                  equipmentBonuses.equipItem(slot, item as WeaponItem | ArmorItem);
-                }
-              });
-            }
-
-            console.log(`Loaded character: ${data.characterName || 'Unnamed Character'}`);
+    
+        // If no characterId in URL, find the latest one for the user
+        if (!characterIdToLoad) {
+          console.log("No characterId in URL, attempting to find latest character for user:", currentUser.uid);
+          const q = query(collection(db, 'characters'), where('userId', '==', currentUser.uid), orderBy('lastUpdated', 'desc'), limit(1));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const firstDoc = querySnapshot.docs[0];
+            characterIdToLoad = firstDoc.id;
+            console.log(`Found latest character ID ${characterIdToLoad} for user.`);
+            // Update URL to reflect the loaded character ID
+            router.replace(`/game?characterId=${characterIdToLoad}`, { scroll: false });
           } else {
-            console.log('No character document found with ID:', characterId);
-            resetCharacter();
-          }
-        } else {
-          // If we don't have a specific ID, fall back to the user's default character
-          const characterDoc = await getDoc(doc(db, 'characters', currentUser.uid));
-
-          if (characterDoc.exists()) {
-            setDocId(currentUser.uid);
-            const data = characterDoc.data();
-
-            setCharacterState({
-              baseStats: data.baseStats || defaultStats,
-              selectedRace: data.selectedRace || null,
-              selectedClass: data.selectedClass || null,
-              abilityLevels: data.abilityLevels || {},
-              inventory: data.inventory || [],
-              equippedItems: data.equippedItems || defaultEquippedItems,
-              learnedSpells: data.learnedSpells || [],
-              characterName: data.characterName || '',
-              currentHp: data.currentHp || 8,
-              currentMp: data.currentMp || 5,
-              currentAp: data.currentAp || 2,
-              characterLevel: data.characterLevel || 1,
-              baseSkills: data.baseSkills || {},
-              utilitySlots: data.utilitySlots || defaultUtilitySlots,
-              availableStatPoints: data.availableStatPoints || 1,
-              availableSkillPoints: data.availableSkillPoints || 10,
-              lastUpdated: data.lastUpdated || Date.now(),
-              notes: data.notes || defaultNotes,
-            });
-
-            // Initialize equipment managers
-            if (data.equippedItems) {
-              Object.entries(data.equippedItems).forEach(([slot, item]) => {
-                if (item) {
-                  featureManager.equipItem(slot, item as WeaponItem | ArmorItem);
-                  equipmentBonuses.equipItem(slot, item as WeaponItem | ArmorItem);
-                }
-              });
-            }
-          } else {
-            // No character exists, use default state
-            resetCharacter();
+            // No characters found at all, redirect to create new character flow
+            console.log("No existing characters found for user. Redirecting to create new.");
+            router.replace('/game?new=true'); // Use replace to avoid back button issues
+            // No need to reset state here, the effect will re-run with new=true
+            return;
           }
         }
-      } catch (error) {
-        console.error('Error loading character data:', error);
-        resetCharacter();
-      } finally {
-        setLoaded(true);
-      }
-    };
-
-    loadCharacterData();
-  }, [currentUser, searchParams, router]);
-
-  // -----------------------------------------------------------------------
-  // Load Character Data using docId if available
-  // -----------------------------------------------------------------------
-  useEffect(() => {
-    const loadCharacterById = async () => {
-      if (!currentUser) return;
-      if (!docId) {
-        resetCharacter();
-        setLoaded(true);
-        return;
-      }
-      try {
-        const characterDoc = await getDoc(doc(db, 'characters', docId));
+    
+        if (!characterIdToLoad) { throw new Error("Failed to determine character ID to load."); }
+    
+        setDocId(characterIdToLoad);
+        characterDocRef = doc(db, 'characters', characterIdToLoad);
+        const characterDoc = await getDoc(characterDocRef);
+    
         if (characterDoc.exists()) {
           const data = characterDoc.data();
-          updateCharacterState({
-            inventory: data.inventory ?? [],
-            // Optionally update other properties if needed
+    
+          if (data.userId !== currentUser.uid) {
+            // Access denied logic
+            console.error(`Access Denied: User ${currentUser.uid} attempted to load character ${characterIdToLoad} owned by ${data.userId}`);
+            toast({ title: "Access Denied", description: "You do not own this character.", status: "error" });
+            resetCharacter();
+            setDocId(null);
+            router.push('/character-manager');
+            return;
+          }
+    
+          console.log("Loading character data from Firestore:", data);
+          const loadedTimestamp = data.lastUpdated instanceof Timestamp
+            ? data.lastUpdated.toMillis()
+            : (typeof data.lastUpdated === 'number' ? data.lastUpdated : Date.now());
+    
+          // Prepare temporary state for calculations
+          const tempBaseStats = data.baseStats || defaultStats;
+          const tempRace = data.selectedRace || null;
+          const tempClass = data.selectedClass || null;
+          const tempLevel = data.characterLevel || 1;
+          const loadedMaxHp = (tempBaseStats.stamina || 0) * 8 + tempLevel + (tempRace?.hpbonus || 0) + (tempClass?.hpbonus || 0);
+          const loadedMaxMp = (tempBaseStats.intelligence || 0) * 5 + tempLevel + (tempRace?.mpbonus || 0) + (tempClass?.mpbonus || 0);
+          const loadedMaxAp = tempLevel * 2;
+          const currentHp = (data.currentHp !== undefined && data.currentHp !== null && data.currentHp <= loadedMaxHp) ? data.currentHp : loadedMaxHp;
+          const currentMp = (data.currentMp !== undefined && data.currentMp !== null && data.currentMp <= loadedMaxMp) ? data.currentMp : loadedMaxMp;
+          const currentAp = (data.currentAp !== undefined && data.currentAp !== null && data.currentAp <= loadedMaxAp) ? data.currentAp : loadedMaxAp;
+    
+          // Re-initialize equipment managers and process loaded items
+          equipmentBonuses.reset();
+          featureManager.reset();
+          const loadedEquippedItems = data.equippedItems || defaultEquippedItems;
+    
+          // Helper function to parse JSON strings safely
+          const safeJSONParse = (jsonString: string | undefined | null, defaultValue: any = []): any => {
+            if (!jsonString) return defaultValue;
+            
+            try {
+              // Check if it's already an array or object
+              if (typeof jsonString !== 'string') return jsonString;
+              
+              // Parse the JSON string
+              return JSON.parse(jsonString);
+            } catch (e) {
+              console.error("Error parsing JSON string:", jsonString, e);
+              return defaultValue;
+            }
+          };
+    
+          // Process loaded equipped items - Change from forEach to for...of to support async/await
+          for (const [slot, itemUntyped] of Object.entries(loadedEquippedItems)) {
+            // Ensure itemUntyped is treated as 'any' for flexibility
+            const item = itemUntyped as any;
+            const slotKey = slot as keyof EquippedItems;
+    
+            if (item) { // Check if item data exists
+              // Process based on item type
+              if (item.itemType === 'Weapon' && (slotKey === 'primaryWeapon' || slotKey === 'secondaryWeapon')) {
+                // Log raw weapon data for debugging
+                console.log(`[WEAPON DEBUG] Raw weapon data for ${item.name}:`, JSON.stringify(item, null, 2));
+                
+                // Parse arrays and objects that might be stored as strings
+                const abilities = safeJSONParse(item.abilities, []);
+                const traits = safeJSONParse(item.traits, []);
+                const spellsGranted = safeJSONParse(item.spellsGranted, []);
+                const skillBonus = safeJSONParse(item.skillBonus, {});
+                
+                // Handle statBonus separately since it might be problematic
+                let statBonus = {};
+                try {
+                  if (item.statBonus && !isNaN(item.statBonus)) {
+                    statBonus = JSON.parse(item.statBonus);
+                  } else if (typeof item.statBonus === 'object') {
+                    statBonus = item.statBonus;
+                  }
+                } catch (e) {
+                  console.warn("Could not parse statBonus", item.statBonus);
+                }
+                
+                // Check if we have all the required weapon fields
+                const hasMissingFields = !item.weaponType || !item.damageType || !item.meleeRanged;
+                
+                // Fetch complete weapon data if critical fields are missing
+                if (hasMissingFields) {
+                  try {
+                    console.log(`[WEAPON LOAD] Missing critical fields for ${item.name}. Attempting to fetch from Firestore.`);
+                    
+                    // Fetch complete weapon data
+                    const weaponDoc = await getDoc(doc(db, 'weapons', item.id));
+                    
+                    if (weaponDoc.exists()) {
+                      const freshData = weaponDoc.data();
+                      console.log(`[WEAPON LOAD] Fresh data from Firestore:`, freshData);
+                      
+                      // Update the missing fields with data from Firestore
+                      item.weaponType = freshData.weaponType || item.weaponType || 'Unknown';
+                      item.damageType = freshData.damageType || item.damageType || 'Physical';
+                      item.meleeRanged = freshData.meleeRanged || item.meleeRanged || 'Melee';
+                      item.handsRequired = freshData.handsRequired || item.handsRequired || 'One-handed';
+                      item.magicNonMagical = freshData.magicNonMagical || item.magicNonMagical || 'Non-Magical';
+                      
+                      // Update arrays/objects if available in fresh data
+                      if (freshData.abilities) item.abilities = freshData.abilities;
+                      if (freshData.traits) item.traits = freshData.traits;
+                      if (freshData.spellsGranted) item.spellsGranted = freshData.spellsGranted;
+                      if (freshData.statBonus) item.statBonus = freshData.statBonus;
+                      if (freshData.skillBonus) item.skillBonus = freshData.skillBonus;
+                    } else {
+                      console.warn(`[WEAPON LOAD] Weapon ID ${item.id} not found in Firestore.`);
+                    }
+                  } catch (err) {
+                    console.error(`[WEAPON LOAD] Error fetching fresh data for ${item.name}:`, err);
+                  }
+                }
+                
+                console.log('[WEAPON LOAD DEBUG] Raw item data from Firestore:', JSON.stringify(item, null, 2));
+                const typedWeapon: WeaponItem = {
+                  id: item.id || `temp-${Math.random()}`,
+                  name: item.name || 'Unknown Weapon',
+                  description: item.description || '',
+                  itemType: 'Weapon',
+                  rarity: item.rarity || 'Common',
+                  
+                  // Use the exact values from Firebase for simple fields, with fallbacks
+                  meleeRanged: item.meleeRanged as 'Melee' | 'Ranged' || 'Melee', 
+                  weaponType: item.weaponType || 'Unknown',
+                  
+                  magicNonMagical: item.magicNonMagical || 'Non-Magical',
+                  handsRequired: item.handsRequired || 'One-handed',
+                  damageAmount: item.damageAmount || 'N/A',
+                  damageType: item.damageType || 'Physical',
+                  
+                  // Use the parsed values for complex properties
+                  statBonus: statBonus,
+                  skillBonus: skillBonus,
+                  abilities: Array.isArray(abilities) ? abilities : [],
+                  traits: Array.isArray(traits) ? traits : [],
+                  spellsGranted: Array.isArray(spellsGranted) ? spellsGranted : [],
+                  
+                  // Simple number properties
+                  hpBonus: Number(item.hpBonus || 0),
+                  mpBonus: Number(item.mpBonus || 0),
+                  sellValue: Number(item.sellValue || 0),
+                  buyValue: Number(item.buyValue || 0),
+                };
+                
+                console.log('[WEAPON LOAD DEBUG] Constructed typedWeapon:', JSON.stringify(typedWeapon, null, 2));
+                
+                // Detailed logging to verify the mapped object
+                console.log(`[WEAPON DEBUG] Mapped weapon properties for ${typedWeapon.name}:`);
+                console.log(`  - meleeRanged: "${typedWeapon.meleeRanged}" (from "${item.meleeRanged}")`);
+                console.log(`  - weaponType: "${typedWeapon.weaponType}" (from "${item.weaponType}")`);
+                console.log(`  - damageType: "${typedWeapon.damageType}" (from "${item.damageType}")`);
+                
+                equipmentBonuses.equipItem(slotKey, typedWeapon);
+                featureManager.addFeatures(typedWeapon);
+                tempEquipped[slotKey] = typedWeapon;
+              } else if (item.itemType === 'Armor') {
+                // Process armor items with similar parsing approach for complex properties
+                const abilities = safeJSONParse(item.abilities, []);
+                const traits = safeJSONParse(item.traits, []);
+                const spellsGranted = safeJSONParse(item.spellsGranted, []);
+                const statBonus = safeJSONParse(item.statBonus, {});
+                const skillBonus = safeJSONParse(item.skillBonus, {});
+                
+                const armorSlotKeys: Array<keyof EquippedItems> = [
+                    'head', 'face0', 'face1', 'neck', 'shoulders', 'torso', 'arm0', 'arm1',
+                    'wrist0', 'wrist1', 'finger0', 'finger1', 'finger2', 'finger3',
+                    'waist', 'legs', 'thighs', 'knees', 'shins', 'ankle0', 'ankle1',
+                    'feet', 'toes0', 'toes1', 'toes2', 'toes3'
+                ];
+                
+                if (armorSlotKeys.includes(slotKey)) {
+                  const typedArmor: ArmorItem = {
+                    id: item.id || `temp-${Math.random()}`,
+                    name: item.name || 'Unknown Armor',
+                    description: item.description || '',
+                    itemType: 'Armor',
+                    armorType: item.armorType || 'Unknown',
+                    rarity: item.rarity || 'Common',
+                    armorRating: Number(item.armorRating || 0),
+                    tankModifier: Number(item.tankModifier || 0),
+                    statBonus: statBonus,
+                    skillBonus: skillBonus,
+                    abilities: Array.isArray(abilities) ? abilities : [],
+                    traits: Array.isArray(traits) ? traits : [],
+                    spellsGranted: Array.isArray(spellsGranted) ? spellsGranted : [],
+                    hpBonus: Number(item.hpBonus || 0),
+                    mpBonus: Number(item.mpBonus || 0),
+                    sellValue: Number(item.sellValue || 0),
+                    buyValue: Number(item.buyValue || 0),
+                  };
+                  
+                  equipmentBonuses.equipItem(slotKey, typedArmor);
+                  featureManager.addFeatures(typedArmor);
+                  (tempEquipped[slotKey] as ArmorItem | null) = typedArmor;
+                } else {
+                  console.warn(`Attempted to assign Armor item to non-armor slot: ${slotKey}`);
+                }
+              } else {
+                console.warn(`Item in slot ${slotKey} has unrecognized itemType: ${item.itemType || '(missing)'}`);
+                tempEquipped[slotKey] = null;
+              }
+            } else {
+              tempEquipped[slotKey] = null;
+            }
+          }
+    
+          // Set the actual character state
+          setCharacterState({
+            baseStats: tempBaseStats,
+            selectedRace: tempRace,
+            selectedClass: tempClass,
+            abilityLevels: data.abilityLevels || {},
+            inventory: Array.isArray(data.inventory) ? data.inventory : [],
+            equippedItems: tempEquipped, // Use the processed items
+            learnedSpells: data.learnedSpells || [],
+            characterName: data.characterName || 'Unnamed Character',
+            characterLevel: tempLevel,
+            baseSkills: data.baseSkills || {},
+            utilitySlots: data.utilitySlots || defaultUtilitySlots,
+            availableStatPoints: data.availableStatPoints ?? 7,
+            availableSkillPoints: data.availableSkillPoints ?? 16,
+            lastUpdated: loadedTimestamp,
+            notes: data.notes || defaultNotes,
+            gold: data.gold ?? 0,
+            goldTransactionHistory: data.goldTransactionHistory || [],
+            currentHp: currentHp,
+            currentMp: currentMp,
+            currentAp: currentAp,
           });
-          console.log(`Successfully loaded character: ${data.characterName || 'Unnamed'}`);
+    
+          setPreviousLevel(tempLevel); // Set previous level *after* setting state
+    
+          console.log(`Character ${data.characterName || 'Unnamed'} loaded successfully.`);
+    
         } else {
-          console.log('No character document found, initializing new character');
-          resetCharacter();
+          // Character not found logic
+          console.log(`No character document found with ID: ${characterIdToLoad}`);
+          toast({ title: "Character Not Found", description: `Could not find character with ID ${characterIdToLoad}. Redirecting to create new.`, status: "warning" });
+          router.replace('/game?new=true'); // Redirect to create new if not found
+          // State reset will happen on next effect run
+          return;
         }
-      } catch (error) {
+      } catch (error: any) {
+        // Error handling logic
         console.error('Error loading character data:', error);
-        resetCharacter();
+        toast({ title: "Load Error", description: error.message || "Could not load character data.", status: "error" });
+        resetCharacter(); // Reset to default on load error
+        setDocId(null);
+        router.push('/character-manager'); // Go back to manager on error
       } finally {
-        setLoaded(true);
+        setLoaded(true); // Mark loading complete
+        setIsLoading(false);
       }
     };
-    loadCharacterById();
-  }, [currentUser, docId]);
+  
+    loadCharacterData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser, initialCharacterId, isNewCharacterMode, router, toast]);// Dependencies for load effect
 
-  // -----------------------------------------------------------------------
-  // Auto-save Effect: Trigger debounced save on any change to the characterState
-  // -----------------------------------------------------------------------
+
+  // --- Debounced Auto-Save Effect ---
   useEffect(() => {
-    if (!loaded || !currentUser) return;
+    if (!loaded || !currentUser || !isDirty || isSaving || isLoading) return;
 
-    // Always save to local storage immediately (cheap operation)
-    saveToLocalStorage({
-      userId: currentUser.uid,
-      ...characterState,
-    });
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
 
-    // But only save to Firebase occasionally with debounce
-    debouncedSaveCharacter();
-  }, [characterState, currentUser, loaded, debouncedSaveCharacter]);
+    saveTimeoutRef.current = setTimeout(() => {
+      console.log("Debounced save triggered...");
+      saveCharacterData(false);
+    }, 3000); // 3 second debounce
 
-  // -----------------------------------------------------------------------
-  // Visibility & Unload Save Effect: Force immediate save on page hide/close
-  // -----------------------------------------------------------------------
-  useEffect(() => {
-    if (!currentUser || !loaded) return;
+    return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
+  }, [characterState, loaded, currentUser, isDirty, isSaving, isLoading, saveCharacterData]); // characterState is the trigger
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden' && isDirty) {
-        // Force immediate save when page is hidden
-        saveCharacterData();
-        setLastSaveTime(Date.now());
-        setIsDirty(false);
-      }
-    };
 
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        saveCharacterData();
-        setIsDirty(false);
-        // Standard way to show a confirmation dialog when leaving
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [currentUser, loaded, isDirty]);
-
-  // -----------------------------------------------------------------------
-  // Periodic Save Effect: Auto-save every 5 minutes if conditions are met
-  // -----------------------------------------------------------------------
+  // --- Visibility & Unload Save Effect ---
   useEffect(() => {
     if (!currentUser || !loaded) return;
+    const handleVisibilityChange = () => { if (document.visibilityState === 'hidden' && isDirty && !isSaving) { console.log("Saving on visibility change..."); saveCharacterData(false); } };
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => { if (isDirty && !isSaving) { console.log("Attempting save on beforeunload..."); saveCharacterData(false); /* e.preventDefault(); e.returnValue = ''; return e.returnValue; */ } return undefined; }; // Note: Reliable save on unload is tricky.
+    document.addEventListener('visibilitychange', handleVisibilityChange); window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => { document.removeEventListener('visibilitychange', handleVisibilityChange); window.removeEventListener('beforeunload', handleBeforeUnload); if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser, loaded, isDirty, isSaving, saveCharacterData]); // Dependencies
 
+
+  // --- Periodic Save Effect ---
+  useEffect(() => {
+    if (!currentUser || !loaded) return;
     const AUTO_SAVE_INTERVAL = 5 * 60 * 1000; // 5 minutes
-
     const intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      const timeSinceLastSave = currentTime - lastSaveTime;
-
-      // Only save if there's been no save in the last minute and there are changes
-      if (timeSinceLastSave > 60000 && isDirty) {
-        saveCharacterData();
-        setLastSaveTime(currentTime);
-        setIsDirty(false);
-      }
+        // Only save periodically if there are changes and not currently saving
+        if (isDirty && !isSaving) {
+            console.log("Periodic save triggered...");
+            saveCharacterData(false);
+        }
     }, AUTO_SAVE_INTERVAL);
-
     return () => clearInterval(intervalId);
-  }, [currentUser, loaded, lastSaveTime, isDirty]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser, loaded, isDirty, isSaving, saveCharacterData]); // Dependencies
 
 
-  // -----------------------------------------------------------------------
-  // Update Attacks based on equipped items
-  // -----------------------------------------------------------------------
+  // --- Level Up Logic ---
   useEffect(() => {
-    const newAttacks = getAttacksFromEquipment();
-    setAttacks(newAttacks);
-  }, [characterState.equippedItems]);
+    if (loaded && previousLevel !== 0 && previousLevel !== characterState.characterLevel) {
+      if (characterState.characterLevel > previousLevel) {
+        let statPointsToAdd = 0, skillPointsToAdd = 0;
+        for (let lvl = previousLevel + 1; lvl <= characterState.characterLevel; lvl++) {
+          statPointsToAdd += (lvl <= 10) ? 1 : (lvl <= 20) ? 2 : (lvl <= 30) ? 3 : (lvl <= 40) ? 4 : (lvl <= 50) ? 5 : (lvl <= 60) ? 6 : (lvl <= 70) ? 7 : (lvl <= 80) ? 8 : (lvl <= 90) ? 9 : 10;
+          skillPointsToAdd += (lvl <= 10) ? 2 : (lvl <= 20) ? 4 : (lvl <= 30) ? 6 : (lvl <= 40) ? 8 : (lvl <= 50) ? 10 : (lvl <= 60) ? 12 : (lvl <= 70) ? 14 : (lvl <= 80) ? 16 : (lvl <= 90) ? 18 : 20;
+        }
+        updateCharacterState({ availableStatPoints: (characterState.availableStatPoints || 0) + statPointsToAdd, availableSkillPoints: (characterState.availableSkillPoints || 0) + skillPointsToAdd });
+        toast({ title: "Level Up!", description: `Gained ${statPointsToAdd} stat & ${skillPointsToAdd} skill points!`, status: "success" });
+      }
+      setPreviousLevel(characterState.characterLevel);
+    } else if (loaded && previousLevel === 0 && characterState.characterLevel > 0) { setPreviousLevel(characterState.characterLevel); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [characterState.characterLevel, loaded]); // Dependencies
 
-  // -----------------------------------------------------------------------
-  // Update available stat and skill points when character level changes
-  // -----------------------------------------------------------------------
-  useEffect(() => {
-    if (characterState.characterLevel > previousLevel) {
-      const statPointsToAdd = (characterState.characterLevel <= 10)
-        ? 1
-        : (characterState.characterLevel <= 20)
-          ? 2
-          : (characterState.characterLevel <= 30)
-            ? 3
-            : (characterState.characterLevel <= 40)
-              ? 4
-              : (characterState.characterLevel <= 50)
-                ? 5
-                : (characterState.characterLevel <= 60)
-                  ? 6
-                  : (characterState.characterLevel <= 70)
-                    ? 7
-                    : (characterState.characterLevel <= 80)
-                      ? 8
-                      : (characterState.characterLevel <= 90)
-                        ? 9
-                        : 10;
-      updateCharacterState({
-        availableStatPoints: characterState.availableStatPoints + statPointsToAdd,
-        availableSkillPoints: characterState.availableSkillPoints +
-          ((characterState.characterLevel <= 10)
-            ? 2
-            : (characterState.characterLevel <= 20)
-              ? 4
-              : (characterState.characterLevel <= 30)
-                ? 6
-                : (characterState.characterLevel <= 40)
-                  ? 8
-                  : (characterState.characterLevel <= 50)
-                    ? 10
-                    : (characterState.characterLevel <= 60)
-                      ? 12
-                      : (characterState.characterLevel <= 70)
-                        ? 14
-                        : (characterState.characterLevel <= 80)
-                          ? 16
-                          : (characterState.characterLevel <= 90)
-                            ? 18
-                            : 20),
-      });
-    } else if (characterState.characterLevel < previousLevel) {
-      const statPointsToRemove = (previousLevel <= 10)
-        ? 1
-        : (previousLevel <= 20)
-          ? 2
-          : (previousLevel <= 30)
-            ? 3
-            : (previousLevel <= 40)
-              ? 4
-              : (previousLevel <= 50)
-                ? 5
-                : (previousLevel <= 60)
-                  ? 6
-                  : (previousLevel <= 70)
-                    ? 7
-                    : (previousLevel <= 80)
-                      ? 8
-                      : (previousLevel <= 90)
-                        ? 9
-                        : 10;
-      updateCharacterState({
-        availableStatPoints: Math.max(0, characterState.availableStatPoints - statPointsToRemove),
-        availableSkillPoints: Math.max(
-          0,
-          characterState.availableSkillPoints -
-          ((previousLevel <= 10)
-            ? 2
-            : (previousLevel <= 20)
-              ? 4
-              : (previousLevel <= 30)
-                ? 6
-                : (previousLevel <= 40)
-                  ? 8
-                  : (previousLevel <= 50)
-                    ? 10
-                    : (previousLevel <= 60)
-                      ? 12
-                      : (previousLevel <= 70)
-                        ? 14
-                        : (previousLevel <= 80)
-                          ? 16
-                          : (previousLevel <= 90)
-                            ? 18
-                            : 20)
-        ),
-      });
-    }
-    setPreviousLevel(characterState.characterLevel);
-  }, [characterState.characterLevel]);
 
-  // -----------------------------------------------------------------------
-  // Reset and Delete Functions
-  // -----------------------------------------------------------------------
-  const resetCharacter = () => {
-    updateCharacterState({
-      baseStats: defaultStats,
-      selectedRace: null,
-      selectedClass: null,
-      abilityLevels: {},
-      inventory: [],
-      equippedItems: defaultEquippedItems,
-      learnedSpells: [],
-      characterName: '',
-      currentHp: 8,
-      currentMp: 5,
-      currentAp: 2,
-      characterLevel: 1,
-      baseSkills: {},
-      utilitySlots: defaultUtilitySlots,
-      availableStatPoints: 7,
-      availableSkillPoints: 16,
+  // --- Reset Character ---
+  const resetCharacter = useCallback(() => {
+    setCharacterState({
+      baseStats: defaultStats, selectedRace: null, selectedClass: null, abilityLevels: {},
+      inventory: [], equippedItems: defaultEquippedItems, learnedSpells: [], characterName: '',
+      currentHp: 8, currentMp: 5, currentAp: 2, characterLevel: 1, baseSkills: {},
+      utilitySlots: defaultUtilitySlots, availableStatPoints: 7, availableSkillPoints: 16,
+      lastUpdated: Date.now(), notes: defaultNotes, gold: 0, goldTransactionHistory: [],
     });
-    featureManager.reset();
-    equipmentBonuses.reset();
-  };
+    equipmentBonuses.reset(); featureManager.reset(); setPreviousLevel(1); setIsDirty(false); dirtyFieldsRef.current = {};
+    console.log("Character state reset to defaults.");
+  }, [equipmentBonuses, featureManager]); // Keep managers as dependencies
 
-  const deleteCharacter = async () => {
-    if (!currentUser || !docId) return;
+
+  // --- Delete Character ---
+  const deleteCharacter = useCallback(async () => {
+    const currentDocId = docId;
+    if (!currentUser || !currentDocId) { toast({ title: "Error", description: "Cannot delete character: No ID found or user not logged in.", status: "error" }); return; }
+    setIsSaving(true); // Prevent other saves during deletion
     try {
-      await deleteDoc(doc(db, 'characters', docId));
-      resetCharacter();
-      setDocId(null);
-      console.log(`Deleted character: ${docId}`);
-      router.push('/character-manager');
-    } catch (error) {
-      console.error('Error deleting character:', error);
-    }
-  };
+      const charDoc = await getDoc(doc(db, 'characters', currentDocId));
+      if (!charDoc.exists() || charDoc.data()?.userId !== currentUser.uid) { throw new Error("Character not found or permission denied."); }
+      await deleteDoc(doc(db, 'characters', currentDocId));
+      toast({ title: "Character Deleted", status: "success" });
+      resetCharacter(); // Reset local state
+      setDocId(null); // Clear docId
+      router.push('/character-manager'); // Navigate away
+    } catch (error: any) { console.error('Error deleting character:', error); toast({ title: "Deletion Failed", description: error.message || "Could not delete character.", status: "error" });
+    } finally { setIsSaving(false); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser, docId, resetCharacter, router, toast]);
 
-  // -----------------------------------------------------------------------
-  // Utility Slot Management Functions
-  // -----------------------------------------------------------------------
-  const addItemToUtilitySlot = (slotId: string, item: InventoryItem, quantity: number) => {
-    const newSlots = characterState.utilitySlots.map((slot) =>
-      slot.id === slotId ? { ...slot, stack: { item, quantity } } : slot
-    );
-    updateCharacterState({ utilitySlots: newSlots });
-  };
 
-  const removeItemFromUtilitySlot = (slotId: string) => {
-    const slot = characterState.utilitySlots.find((slot) => slot.id === slotId);
-    if (!slot || !slot.stack) return;
-    const { item, quantity } = slot.stack;
-    // Return the item to inventory
-    const existing = characterState.inventory.find((invItem) => invItem.item.id === item.id);
+  // --- Inventory Management ---
+  const addToInventory = useCallback((item: InventoryItem) => {
+    if (!item?.id) { console.warn("Attempted to add invalid item to inventory:", item); return; }
+    const existingIndex = characterState.inventory.findIndex(invItem => invItem.item.id === item.id);
     let newInventory;
-    if (existing) {
-      newInventory = characterState.inventory.map((invItem) =>
-        invItem.item.id === item.id
-          ? { ...invItem, quantity: invItem.quantity + quantity }
-          : invItem
-      );
-    } else {
-      newInventory = [...characterState.inventory, { item, quantity }];
-    }
+    if (existingIndex >= 0) { newInventory = characterState.inventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity + 1 } : invItem); }
+    else { newInventory = [...characterState.inventory, { item, quantity: 1 }]; }
     updateCharacterState({ inventory: newInventory });
-    const newSlots = characterState.utilitySlots.map((s) =>
-      s.id === slotId ? { ...s, stack: null } : s
-    );
-    updateCharacterState({ utilitySlots: newSlots });
-  };
+  }, [characterState.inventory, updateCharacterState]);
 
-  const updateUtilitySlotQuantity = (slotId: string, quantityChange: number) => {
-    const slot = characterState.utilitySlots.find((slot) => slot.id === slotId);
-    if (!slot || !slot.stack) return;
-    const { item, quantity } = slot.stack;
-    const newQuantity = quantity + quantityChange;
-    if (newQuantity <= 0) {
-      removeItemFromUtilitySlot(slotId);
-    } else {
-      const newSlots = characterState.utilitySlots.map((s) =>
-        s.id === slotId ? { ...s, stack: { item, quantity: newQuantity } } : s
-      );
-      updateCharacterState({ utilitySlots: newSlots });
-      if (quantityChange > 0) {
-        const newInventory = characterState.inventory.map((invItem) => {
-          if (invItem.item.id === item.id) {
-            return invItem.quantity === 1
-              ? null
-              : { ...invItem, quantity: invItem.quantity - 1 };
-          }
-          return invItem;
-        }).filter(Boolean) as InventoryItemWithQuantity[];
-        updateCharacterState({ inventory: newInventory });
+  const addItemsWithQuantity = useCallback((itemToAdd: InventoryItem, quantityToAdd: number) => {
+    if (!itemToAdd?.id || quantityToAdd <= 0) { console.warn("Attempted to add invalid item or quantity:", itemToAdd, quantityToAdd); return; }
+    const existingIndex = characterState.inventory.findIndex(invItem => invItem.item.id === itemToAdd.id);
+    let newInventory;
+    if (existingIndex >= 0) { newInventory = characterState.inventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity + quantityToAdd } : invItem); }
+    else { newInventory = [...characterState.inventory, { item: itemToAdd, quantity: quantityToAdd }]; }
+    updateCharacterState({ inventory: newInventory });
+  }, [characterState.inventory, updateCharacterState]);
+
+  const addMultipleItemsToInventory = useCallback((items: InventoryItem[]) => {
+    if (!items || items.length === 0) return;
+    let newInventory = [...characterState.inventory];
+    const updates = new Map<string, { item: InventoryItem, quantityChange: number }>();
+    items.forEach(item => { if (item?.id) { const currentUpdate = updates.get(item.id); updates.set(item.id, { item: item, quantityChange: (currentUpdate?.quantityChange || 0) + 1 }); } });
+    updates.forEach(({ item, quantityChange }) => { const existingIndex = newInventory.findIndex(invItem => invItem.item.id === item.id); if (existingIndex >= 0) { newInventory[existingIndex] = { ...newInventory[existingIndex], quantity: newInventory[existingIndex].quantity + quantityChange }; } else { newInventory.push({ item: item, quantity: quantityChange }); } });
+    updateCharacterState({ inventory: newInventory });
+  }, [characterState.inventory, updateCharacterState]);
+
+  const removeFromInventory = useCallback((itemId: string) => {
+    if (!itemId) return;
+    const existingIndex = characterState.inventory.findIndex(invItem => invItem.item.id === itemId);
+    if (existingIndex === -1) { console.warn(`Attempted to remove item ID ${itemId} not found.`); return; }
+    const currentItem = characterState.inventory[existingIndex]; let newInventory;
+    if (currentItem.quantity > 1) { newInventory = characterState.inventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity - 1 } : invItem); }
+    else { newInventory = characterState.inventory.filter((_, index) => index !== existingIndex); }
+    updateCharacterState({ inventory: newInventory });
+  }, [characterState.inventory, updateCharacterState]);
+
+  const updateInventoryItemQuantity = useCallback((itemId: string, newQuantity: number) => {
+    if (!itemId || newQuantity < 0) { console.warn(`Invalid input for updateInventoryItemQuantity: itemId=${itemId}, newQuantity=${newQuantity}`); return; }
+    let updatedInventory; const existingIndex = characterState.inventory.findIndex(invItem => invItem.item.id === itemId);
+    if (newQuantity === 0) { if (existingIndex !== -1) { updatedInventory = characterState.inventory.filter((_, index) => index !== existingIndex); } else { updatedInventory = [...characterState.inventory]; } }
+    else { if (existingIndex !== -1) { updatedInventory = characterState.inventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: newQuantity } : invItem); } else { console.warn(`updateInventoryItemQuantity called for item ID ${itemId} not found.`); updatedInventory = [...characterState.inventory]; } }
+    updateCharacterState({ inventory: updatedInventory });
+  }, [characterState.inventory, updateCharacterState]);
+
+  const getInventoryByType = useCallback((itemType: string): InventoryItemWithQuantity[] => {
+    const lowerItemType = itemType?.toLowerCase().trim(); if (!lowerItemType) return [];
+    return characterState.inventory.filter(invItem => invItem.item.itemType?.toLowerCase() === lowerItemType);
+  }, [characterState.inventory]);
+
+  const getItemQuantity = useCallback((itemId: string) => {
+    const item = characterState.inventory.find(invItem => invItem.item.id === itemId); return item ? item.quantity : 0;
+  }, [characterState.inventory]);
+
+  const hasItem = useCallback((itemId: string) => characterState.inventory.some(invItem => invItem.item.id === itemId), [characterState.inventory]);
+
+
+  // --- Equipment Management (FIXED type handling) ---
+  const equipItem = useCallback((slot: keyof EquippedItems, newItem: InventoryItem | null) => {
+    const currentItemInSlot = characterState.equippedItems[slot];
+    let tempInventory = [...characterState.inventory];
+
+    // --- Inventory Adjustments ---
+    if (!newItem && currentItemInSlot) { // Unequipping
+      const existingIndex = tempInventory.findIndex(inv => inv.item.id === currentItemInSlot.id);
+      if (existingIndex > -1) { tempInventory[existingIndex] = { ...tempInventory[existingIndex], quantity: tempInventory[existingIndex].quantity + 1 }; }
+      else { tempInventory.push({ item: currentItemInSlot, quantity: 1 }); }
+    }
+    if (newItem) { // Equipping
+      const itemToRemoveIndex = tempInventory.findIndex(inv => inv.item.id === newItem.id);
+      if (itemToRemoveIndex > -1) {
+        if (tempInventory[itemToRemoveIndex].quantity > 1) { tempInventory[itemToRemoveIndex] = { ...tempInventory[itemToRemoveIndex], quantity: tempInventory[itemToRemoveIndex].quantity - 1 }; }
+        else { tempInventory.splice(itemToRemoveIndex, 1); }
+      } else { console.warn(`Item ${newItem.name} (${newItem.id}) being equipped was not found in inventory!`); }
+      // Add back the item that was previously in the slot
+      if (currentItemInSlot) {
+        const existingIndex = tempInventory.findIndex(inv => inv.item.id === currentItemInSlot.id);
+        if (existingIndex > -1) { tempInventory[existingIndex] = { ...tempInventory[existingIndex], quantity: tempInventory[existingIndex].quantity + 1 }; }
+        else { tempInventory.push({ item: currentItemInSlot, quantity: 1 }); }
       }
     }
-  };
 
-  // -----------------------------------------------------------------------
-  // Stat Increment/Decrement and Skill Adjustment Functions
-  // -----------------------------------------------------------------------
-  const incrementStat = (stat: keyof CharacterStats) => {
-    if (characterState.availableStatPoints > 0) {
-      updateCharacterState({
-        baseStats: {
-          ...characterState.baseStats,
-          [stat]: characterState.baseStats[stat] + 1,
-        },
-        availableStatPoints: characterState.availableStatPoints - 1,
-      });
-    }
-  };
-
-  const decrementStat = (stat: keyof CharacterStats) => {
-    if (characterState.baseStats[stat] > 0) {
-      updateCharacterState({
-        baseStats: {
-          ...characterState.baseStats,
-          [stat]: characterState.baseStats[stat] - 1,
-        },
-        availableStatPoints: characterState.availableStatPoints + 1,
-      });
-    }
-  };
-
-  const increaseSkill = (skillName: string) => {
-    if (characterState.availableSkillPoints > 0) {
-      updateCharacterState({
-        baseSkills: {
-          ...characterState.baseSkills,
-          [skillName]: (characterState.baseSkills[skillName] || 0) + 1,
-        },
-        availableSkillPoints: characterState.availableSkillPoints - 1,
-      });
-    }
-  };
-
-  const decreaseSkill = (skillName: string) => {
-    if (characterState.baseSkills[skillName] > 0) {
-      updateCharacterState({
-        baseSkills: {
-          ...characterState.baseSkills,
-          [skillName]: characterState.baseSkills[skillName] - 1,
-        },
-        availableSkillPoints: characterState.availableSkillPoints + 1,
-      });
-    }
-  };
-
-  const setCharacterNameHandler = (name: string) => {
-    updateCharacterState({ characterName: name });
-  };
-
-  // -----------------------------------------------------------------------
-  // Equipment Attack Generation
-  // -----------------------------------------------------------------------
-  const createAttackFromWeapon = (weapon: WeaponItem, slot: string): Attack => {
-    // Calculate range based on weapon type
-    const range = weapon.meleeRanged === 'Ranged'
-      ? (weapon.weaponType.toLowerCase().includes('bow') ? '60 ft' :
-        weapon.weaponType.toLowerCase().includes('gun') ? '90 ft' : '30 ft')
-      : 'Melee';
-
-    // Create a type-safe attack object
-    return {
-      id: `${weapon.id}-attack`,
-      name: `${weapon.name} Attack`,
-      description: `Attack with your ${weapon.name}`,
-      damageAmount: weapon.damageAmount,
-      damageType: weapon.damageType,
-      range: range,
-      weaponType: weapon.weaponType,
-      weaponId: weapon.id,
-      apCost: 1, // Default AP cost
-      sourceItem: `${slot} Weapon: ${weapon.name}`,
-      // Add the traits and abilities with null checks
-      traits: Array.isArray(weapon.traits) ? [...weapon.traits] : [],
-      abilities: Array.isArray(weapon.abilities) ? [...weapon.abilities] : []
-    };
-  };
-
-  // Get attacks from equipment with better type safety
-  const getAttacksFromEquipment = (): Attack[] => {
-    const weaponAttacks: Attack[] = [];
-
-    if (characterState.equippedItems.primaryWeapon) {
-      weaponAttacks.push(createAttackFromWeapon(characterState.equippedItems.primaryWeapon, 'Primary'));
-    }
-
-    if (characterState.equippedItems.secondaryWeapon) {
-      weaponAttacks.push(createAttackFromWeapon(characterState.equippedItems.secondaryWeapon, 'Secondary'));
-    }
-
-    return weaponAttacks;
-  };
-
-  const executeAttack = (attackId: string) => {
-    const attack = attacks.find((a) => a.id === attackId);
-    if (!attack) return;
-    console.log(`Executing attack: ${attack.name}`);
-  };
-
-  // -----------------------------------------------------------------------
-  // Context Value Object
-  // -----------------------------------------------------------------------
-  const value: CharacterContextType = {
-    baseStats: characterState.baseStats,
-    currentStats: currentStats,
-    setBaseStats: (stats: CharacterStats) => updateCharacterState({ baseStats: stats }),
-    selectedRace: characterState.selectedRace,
-    setSelectedRace: (race: Race | null) => updateCharacterState({ selectedRace: race }),
-    selectedClass: characterState.selectedClass,
-    setSelectedClass: (cls: Class | null) => updateCharacterState({ selectedClass: cls }),
-    abilityLevels: characterState.abilityLevels,
-    setAbilityLevel: (abilityName: string, level: number) =>
-      updateCharacterState({
-        abilityLevels: { ...characterState.abilityLevels, [abilityName]: level },
-      }),
-    inventory: characterState.inventory,
-    addToInventory: (item: InventoryItem) => {
-      const existing = characterState.inventory.find(
-        (invItem) => invItem.item.id === item.id
-      );
-      let newInventory;
-      if (existing) {
-        newInventory = characterState.inventory.map((invItem) =>
-          invItem.item.id === item.id
-            ? { ...invItem, quantity: invItem.quantity + 1 }
-            : invItem
-        );
-      } else {
-        newInventory = [...characterState.inventory, { item, quantity: 1 }];
-      }
-      updateCharacterState({ inventory: newInventory });
-    },
-    removeFromInventory: (itemId: string) => {
-      const existing = characterState.inventory.find(
-        (invItem) => invItem.item.id === itemId
-      );
-      let newInventory;
-      if (existing) {
-        if (existing.quantity === 1) {
-          newInventory = characterState.inventory.filter(
-            (invItem) => invItem.item.id !== itemId
-          );
+    // --- Determine final item and type ---
+    let finalEquippedItem: WeaponItem | ArmorItem | null = null;
+    if (newItem) {
+        if ((slot === 'primaryWeapon' || slot === 'secondaryWeapon') && newItem.itemType === 'Weapon') {
+            finalEquippedItem = newItem as WeaponItem;
+        } else if (newItem.itemType === 'Armor') { // Simplified armor check
+            finalEquippedItem = newItem as ArmorItem;
         } else {
-          newInventory = characterState.inventory.map((invItem) =>
-            invItem.item.id === itemId
-              ? { ...invItem, quantity: invItem.quantity - 1 }
-              : invItem
-          );
+            console.warn(`Cannot equip item type ${newItem.itemType} to slot ${String(slot)}.`);
+            // If equip fails due to type mismatch, add the item back to inventory
+            if (!tempInventory.find(inv => inv.item.id === newItem.id)) {
+                tempInventory.push({ item: newItem, quantity: 1 }); // Add it back if it was fully removed
+            } else {
+                 // If it was only decremented, increment it back
+                 const idx = tempInventory.findIndex(inv => inv.item.id === newItem.id);
+                 if (idx > -1) tempInventory[idx] = { ...tempInventory[idx], quantity: tempInventory[idx].quantity + 1 };
+            }
+            finalEquippedItem = null; // Ensure slot remains empty or keeps previous item (handled below)
         }
-        updateCharacterState({ inventory: newInventory });
-      }
-    },
-    updateInventoryItemQuantity: (itemId: string, quantity: number) => {
-      let newInventory;
-      if (quantity <= 0) {
-        newInventory = characterState.inventory.filter(
-          (invItem) => invItem.item.id !== itemId
-        );
-      } else {
-        newInventory = characterState.inventory.map((invItem) =>
-          invItem.item.id === itemId ? { ...invItem, quantity } : invItem
-        );
-      }
-      updateCharacterState({ inventory: newInventory });
-    },
-    getInventoryByType: (itemType: string) =>
-      characterState.inventory.filter((invItem) => invItem.item.itemType === itemType),
-    getItemQuantity: (itemId: string) => {
-      const item = characterState.inventory.find((invItem) => invItem.item.id === itemId);
-      return item ? item.quantity : 0;
-    },
-    hasItem: (itemId: string) =>
-      characterState.inventory.some((invItem) => invItem.item.id === itemId),
-    equippedItems: characterState.equippedItems,
-    equipItem: (slot: keyof EquippedItems, item: InventoryItem | null) => {
-      // Handle null case (unequipping)
-      if (item === null) {
-        const newEquipped = { ...characterState.equippedItems };
+    }
 
-        // Remove the previously equipped item from the slot
-        newEquipped[slot] = null;
+    // --- Update Managers & State ---
+    // Only update managers if the item *actually* changed or type is valid
+    if (finalEquippedItem !== currentItemInSlot) {
+        equipmentBonuses.equipItem(String(slot), finalEquippedItem);
+        if (currentItemInSlot) featureManager.removeFeatures(currentItemInSlot);
+        if (finalEquippedItem) featureManager.addFeatures(finalEquippedItem);
 
-        // Update equipment managers
-        featureManager.equipItem(String(slot), null);
-        equipmentBonuses.equipItem(String(slot), null);
-
-        // Update state
-        updateCharacterState({ equippedItems: newEquipped });
-        return;
-      }
-
-      // For equipping items, validate the item type against the slot
-      let validEquip = false;
-      let typedItem: any = null;
-
-      // Check weapon slots
-      if ((slot === 'primaryWeapon' || slot === 'secondaryWeapon') && item && typeof item === 'object' && 'itemType' in item && item.itemType === 'Weapon') {
-        validEquip = true;
-        typedItem = item as unknown as WeaponItem;
-      }
-      // Check armor slots
-      else if (
-        // List all armor slots here
-        slot === 'head' || slot === 'shoulders' || slot === 'torso' ||
-        slot === 'arm0' || slot === 'arm1' || slot === 'wrist0' ||
-        slot === 'wrist1' || slot === 'finger0' || slot === 'finger1' ||
-        slot === 'finger2' || slot === 'finger3' || slot === 'waist' ||
-        slot === 'legs' || slot === 'thighs' || slot === 'knees' ||
-        slot === 'shins' || slot === 'ankle0' || slot === 'ankle1' ||
-        slot === 'feet' || slot === 'face0' || slot === 'face1' ||
-        slot === 'neck' || slot === 'toes0' || slot === 'toes1' ||
-        slot === 'toes2' || slot === 'toes3'
-      ) {
-        if (item.itemType === 'Armor') {
-          validEquip = true;
-          typedItem = item as ArmorItem;
-        }
-      }
-
-      if (!validEquip) {
-        console.warn(`Cannot equip ${item.itemType} to slot ${String(slot)}`);
-        return;
-      }
-
-      // If we got here, the item can be equipped to the slot
-      const newEquipped = { ...characterState.equippedItems };
-      newEquipped[slot] = typedItem;
-
-      // Update equipment managers
-      featureManager.equipItem(String(slot), typedItem);
-      equipmentBonuses.equipItem(String(slot), typedItem);
-
-      // Update state
-      updateCharacterState({ equippedItems: newEquipped });
-    },
-
-    getEquippedItem: (slot: keyof EquippedItems) => characterState.equippedItems[slot],
-
-    equipMultipleItems: (equipmentUpdates: Partial<Record<keyof EquippedItems, InventoryItem | null>>) => {
-      // Create a new equipped items object
-      const newEquippedItems = { ...characterState.equippedItems };
-
-      // Process each update
-      Object.entries(equipmentUpdates).forEach(([slotKey, item]) => {
-        const slot = slotKey as keyof EquippedItems;
-
-        // If the item is null, handle unequipping
-        if (item === null) {
-          newEquippedItems[slot] = null;
-          featureManager.equipItem(slotKey, null);
-          equipmentBonuses.equipItem(slotKey, null);
-          return; // Continue to next item
-        }
-
-        // For equipping items, validate the item type against the slot
-        let validEquip = false;
-        let typedItem: any = null;
-
-        // Check weapon slots
-        if ((slot === 'primaryWeapon' || slot === 'secondaryWeapon') && 'itemType' in item && item.itemType === 'Weapon') {
-          validEquip = true;
-          typedItem = item as WeaponItem;
-        }
-        // Check armor slots
-        else if (
-          // List all armor slots here (same as in equipItem)
-          slot === 'head' || slot === 'shoulders' || slot === 'torso' ||
-          slot === 'arm0' || slot === 'arm1' || slot === 'wrist0' ||
-          slot === 'wrist1' || slot === 'finger0' || slot === 'finger1' ||
-          slot === 'finger2' || slot === 'finger3' || slot === 'waist' ||
-          slot === 'legs' || slot === 'thighs' || slot === 'knees' ||
-          slot === 'shins' || slot === 'ankle0' || slot === 'ankle1' ||
-          slot === 'feet' || slot === 'face0' || slot === 'face1' ||
-          slot === 'neck' || slot === 'toes0' || slot === 'toes1' ||
-          slot === 'toes2' || slot === 'toes3'
-        ) {
-          if (item.itemType === 'Armor') {
-            validEquip = true;
-            typedItem = item as ArmorItem;
-          }
-        }
-
-        if (!validEquip) {
-          console.warn(`Cannot equip ${item.itemType} to slot ${slotKey}`);
-          return; // Skip this item and continue with the next
-        }
-
-        // Apply the equipped item
-        newEquippedItems[slot] = typedItem;
-
-        // Update equipment managers
-        featureManager.equipItem(slotKey, typedItem);
-        equipmentBonuses.equipItem(slotKey, typedItem);
-      });
-
-      // Update state with all equipped items at once
-      updateCharacterState({ equippedItems: newEquippedItems });
-    },
-    getStatBonus: (stat: string) => equipmentBonuses.getStatBonus(stat),
-    getSkillBonus: (skill: string) => equipmentBonuses.getSkillBonus(skill),
-    getEquipmentAbilities: () => featureManager.getAbilities(),
-    getEquipmentTraits: () => featureManager.getTraits(),
-    hasAbility: (ability: string) => featureManager.hasAbility(ability),
-    hasTrait: (trait: string) => featureManager.hasTrait(trait),
-    resetCharacter,
-    deleteCharacter,
-    currentSkills: currentSkills,
-    baseSkills: characterState.baseSkills,
-    spellList: characterState.learnedSpells,
-    learnedSpells: characterState.learnedSpells,
-    addToLearnedSpells: (spell: Spell) => {
-      if (characterState.learnedSpells.some((s) => s.name === spell.name)) return;
-      updateCharacterState({
-        learnedSpells: [...characterState.learnedSpells, spell],
-      });
-    },
-    characterLevel: characterState.characterLevel,
-    setCharacterLevel: (level: number) => updateCharacterState({ characterLevel: level }),
-    getMaxHp,
-    getMaxMp,
-    getMaxAp,
-    availableStatPoints: characterState.availableStatPoints,
-    incrementStat,
-    decrementStat,
-    availableSkillPoints: characterState.availableSkillPoints,
-    increaseSkill,
-    decreaseSkill,
-    attacks,
-    getAttacksFromEquipment,
-    executeAttack,
-    characterName: characterState.characterName,
-    setCharacterName: setCharacterNameHandler,
-    currentHp: characterState.currentHp,
-    setCurrentHp: (hp: number) => updateCharacterState({ currentHp: hp }),
-    currentMp: characterState.currentMp,
-    setCurrentMp: (mp: number) => updateCharacterState({ currentMp: mp }),
-    currentAp: characterState.currentAp,
-    setCurrentAp: (ap: number) => updateCharacterState({ currentAp: ap }),
-    utilitySlots: characterState.utilitySlots,
-    setUtilitySlots: (slots: UtilitySlot[]) => updateCharacterState({ utilitySlots: slots }),
-    addItemToUtilitySlot: (slotId: string, item: InventoryItem, quantity: number) => {
-      const newSlots = characterState.utilitySlots.map((slot) =>
-        slot.id === slotId
-          ? { ...slot, stack: { item, quantity } }
-          : slot
-      );
-
-      updateCharacterState({ utilitySlots: newSlots });
-    },
-
-    removeItemFromUtilitySlot: (slotId: string) => {
-      // Find the slot we're removing from
-      const slot = characterState.utilitySlots.find((slot) => slot.id === slotId);
-      if (!slot || !slot.stack) return;
-
-      // Get the item and quantity from the slot
-      const { item, quantity } = slot.stack;
-
-      // Add the items back to the inventory
-      const existing = characterState.inventory.find((invItem) => invItem.item.id === item.id);
-      let newInventory;
-
-      if (existing) {
-        // If we already have this item in inventory, increase the quantity
-        newInventory = characterState.inventory.map((invItem) =>
-          invItem.item.id === item.id
-            ? { ...invItem, quantity: invItem.quantity + quantity }
-            : invItem
-        );
-      } else {
-        // Otherwise add a new inventory entry
-        newInventory = [...characterState.inventory, { item, quantity }];
-      }
-
-      // Clear the slot
-      const newSlots = characterState.utilitySlots.map((s) =>
-        s.id === slotId ? { ...s, stack: null } : s
-      );
-
-      // Update both inventory and slots in one state update
-      updateCharacterState({
-        inventory: newInventory,
-        utilitySlots: newSlots
-      });
-    },
-
-    updateUtilitySlotQuantity: (slotId: string, quantityChange: number) => {
-      // Find the slot we're updating
-      const slot = characterState.utilitySlots.find((slot) => slot.id === slotId);
-      if (!slot || !slot.stack) return;
-
-      const { item, quantity } = slot.stack;
-      const newQuantity = quantity + quantityChange;
-
-      // If the new quantity would be zero or less, remove the item completely
-      if (newQuantity <= 0) {
-        removeItemFromUtilitySlot(slotId);
-        return;
-      }
-
-      // Otherwise, update the quantity
-      const newSlots = characterState.utilitySlots.map((s) =>
-        s.id === slotId ? { ...s, stack: { item, quantity: newQuantity } } : s
-      );
-
-      // If we're increasing the quantity, we need to decrease it from inventory
-      if (quantityChange > 0) {
-        const newInventory = characterState.inventory.map((invItem) => {
-          if (invItem.item.id === item.id) {
-            return invItem.quantity === 1
-              ? null  // Remove if this was the last one
-              : { ...invItem, quantity: invItem.quantity - 1 };
-          }
-          return invItem;
-        }).filter(Boolean) as InventoryItemWithQuantity[];
-
-        // Update both inventory and slots
         updateCharacterState({
-          inventory: newInventory,
-          utilitySlots: newSlots
+          equippedItems: { ...characterState.equippedItems, [slot]: finalEquippedItem },
+          inventory: tempInventory
         });
-      } else {
-        // If we're just decreasing quantity in the slot, no inventory update needed
-        updateCharacterState({ utilitySlots: newSlots });
-      }
-    },
-    isDirty,
-    isSaving,
-    saveCharacterManually,
-    lastSaveTime,
-    notes: characterState.notes,
-    updateNotes: (notes: NotesState) => updateCharacterState({ notes }),
+    } else {
+         // If the item didn't change (e.g., type mismatch prevented equip), only update inventory if it changed
+         if (JSON.stringify(tempInventory) !== JSON.stringify(characterState.inventory)) {
+             updateCharacterState({ inventory: tempInventory });
+         }
+    }
+
+  }, [characterState.equippedItems, characterState.inventory, updateCharacterState, equipmentBonuses, featureManager]);
+
+
+  // --- (Keep equipMultipleItems, getEquippedItem, getStatBonus, getSkillBonus, etc. as they were) ---
+  // --- (Most likely don't need changes for the reported damage issue) ---
+  const equipMultipleItems = useCallback((equipmentUpdates: Partial<Record<keyof EquippedItems, InventoryItem | null>>) => {
+    let tempEquipped = { ...characterState.equippedItems };
+    let tempInventory = [...characterState.inventory];
+    const itemsToAddBack = new Map<string, { item: InventoryItem, count: number }>();
+    const itemsToRemove = new Map<string, number>();
+
+    Object.entries(equipmentUpdates).forEach(([slotKey, newItem]) => {
+        const slot = slotKey as keyof EquippedItems;
+        const currentItem = tempEquipped[slot];
+        let finalEquippedItem: WeaponItem | ArmorItem | null = null;
+
+        // Determine final item type for this slot
+        if (newItem) {
+            if ((slot === 'primaryWeapon' || slot === 'secondaryWeapon') && newItem.itemType === 'Weapon') {
+                finalEquippedItem = newItem as WeaponItem;
+            } else if (newItem.itemType === 'Armor') { // Add specific slot checks if needed
+                finalEquippedItem = newItem as ArmorItem;
+            } else {
+                console.warn(`Cannot equip item type ${newItem.itemType} to slot ${String(slot)} in equipMultiple.`);
+                finalEquippedItem = null;
+            }
+        } else {
+            finalEquippedItem = null; // Explicitly null if newItem is null
+        }
+
+        // Track inventory changes based on *actual* item being equipped (or null)
+        if (finalEquippedItem) { // If we are equipping something valid
+            itemsToRemove.set(finalEquippedItem.id, (itemsToRemove.get(finalEquippedItem.id) || 0) + 1);
+            if (currentItem) { // If replacing, track old item
+                const existingAdd = itemsToAddBack.get(currentItem.id);
+                itemsToAddBack.set(currentItem.id, { item: currentItem, count: (existingAdd?.count || 0) + 1 });
+            }
+        } else if (currentItem) { // If unequipping (finalEquippedItem is null, but there *was* an item)
+            const existingAdd = itemsToAddBack.get(currentItem.id);
+            itemsToAddBack.set(currentItem.id, { item: currentItem, count: (existingAdd?.count || 0) + 1 });
+        }
+         // If finalEquippedItem is null AND currentItem is null, no inventory change for this slot.
+
+        // Update managers
+        equipmentBonuses.equipItem(slot, finalEquippedItem);
+        if (currentItem) featureManager.removeFeatures(currentItem);
+        if (finalEquippedItem) featureManager.addFeatures(finalEquippedItem);
+
+        // Update the temporary equipped state with proper type handling
+        if (slot === 'primaryWeapon' || slot === 'secondaryWeapon') {
+            tempEquipped[slot] = finalEquippedItem as WeaponItem | null;
+        } else {
+            tempEquipped[slot] = finalEquippedItem as ArmorItem | null;
+        }
+    });
+
+    // Batch process inventory updates
+    itemsToRemove.forEach((count, itemId) => {
+        const index = tempInventory.findIndex(inv => inv.item.id === itemId);
+        if (index > -1) { const newQuantity = tempInventory[index].quantity - count; if (newQuantity > 0) { tempInventory[index] = { ...tempInventory[index], quantity: newQuantity }; } else { tempInventory.splice(index, 1); } }
+        else { console.warn(`Tried to remove ${count}x item ID ${itemId} from inventory during equipMultiple, but item not found.`); }
+    });
+    itemsToAddBack.forEach(({ item, count }) => {
+        const index = tempInventory.findIndex(inv => inv.item.id === item.id);
+        if (index > -1) { tempInventory[index] = { ...tempInventory[index], quantity: tempInventory[index].quantity + count }; }
+        else { tempInventory.push({ item, quantity: count }); }
+    });
+
+    updateCharacterState({ equippedItems: tempEquipped, inventory: tempInventory });
+
+  }, [characterState.equippedItems, characterState.inventory, updateCharacterState, equipmentBonuses, featureManager]);
+
+  const getEquippedItem = useCallback((slot: keyof EquippedItems) => characterState.equippedItems[slot], [characterState.equippedItems]);
+  const getStatBonus = useCallback((stat: string) => equipmentBonuses.getStatBonus(stat), [equipmentBonuses]);
+  const getSkillBonus = useCallback((skill: string) => equipmentBonuses.getSkillBonus(skill), [equipmentBonuses]);
+  const getEquipmentAbilities = useCallback(() => featureManager.getAbilities(), [featureManager]);
+  const getEquipmentTraits = useCallback(() => featureManager.getTraits(), [featureManager]);
+  const hasAbility = useCallback((ability: string) => featureManager.hasAbility(ability), [featureManager]);
+  const hasTrait = useCallback((trait: string) => featureManager.hasTrait(trait), [featureManager]);
+
+
+  // --- Stat & Skill Point Management ---
+  const incrementStat = useCallback((stat: keyof CharacterStats) => { if (characterState.availableStatPoints > 0) { updateCharacterState({ baseStats: { ...characterState.baseStats, [stat]: (characterState.baseStats[stat] || 0) + 1 }, availableStatPoints: characterState.availableStatPoints - 1, }); } }, [characterState.availableStatPoints, characterState.baseStats, updateCharacterState]);
+  const decrementStat = useCallback((stat: keyof CharacterStats) => { const currentStatValue = characterState.baseStats[stat] || 0; const minimumStatValue = 0; if (currentStatValue > minimumStatValue) { updateCharacterState({ baseStats: { ...characterState.baseStats, [stat]: currentStatValue - 1 }, availableStatPoints: characterState.availableStatPoints + 1, }); } }, [characterState.baseStats, characterState.availableStatPoints, updateCharacterState]);
+  const increaseSkill = useCallback((skillName: string) => { if (characterState.availableSkillPoints > 0) { updateCharacterState({ baseSkills: { ...characterState.baseSkills, [skillName]: (characterState.baseSkills[skillName] || 0) + 1 }, availableSkillPoints: characterState.availableSkillPoints - 1, }); } }, [characterState.availableSkillPoints, characterState.baseSkills, updateCharacterState]);
+  const decreaseSkill = useCallback((skillName: string) => { const currentSkillValue = characterState.baseSkills[skillName] || 0; const minimumSkillValue = 0; if (currentSkillValue > minimumSkillValue) { updateCharacterState({ baseSkills: { ...characterState.baseSkills, [skillName]: currentSkillValue - 1 }, availableSkillPoints: characterState.availableSkillPoints + 1, }); } }, [characterState.baseSkills, characterState.availableSkillPoints, updateCharacterState]);
+
+
+  // --- Combat & Spells ---
+  const createAttackFromWeapon = useCallback((weapon: WeaponItem, slot: string): Attack => { 
+    // Ensure we have the complete weapon data
+    console.log(`Creating attack from weapon:`, weapon);
     
-    addNoteCategory: (category: NoteCategory) => {
-      updateCharacterState({
-        notes: [...characterState.notes, category]
-      });
-    },
+    // Set reasonable defaults for any missing properties
+    const damageAmount = weapon.damageAmount || '1d6';
+    const damageType = weapon.damageType || 'Physical';
+    const meleeRanged = weapon.meleeRanged || 'Melee';
+    const weaponType = weapon.weaponType || 'Unknown';
+    const handsRequired = weapon.handsRequired || 'One-handed';
+    const magicNonMagical = weapon.magicNonMagical || 'Non-Magical';
     
-    updateNoteCategory: (categoryId: string, updates: Partial<NoteCategory>) => {
-      updateCharacterState({
-        notes: characterState.notes.map(cat => 
-          cat.id === categoryId ? { ...cat, ...updates } : cat
-        )
-      });
-    },
+    // For ranged weapons, set a default range based on weapon type
+    const range = meleeRanged === 'Ranged' 
+      ? (weaponType.toLowerCase().includes('bow') ? '60 ft' : 
+         weaponType.toLowerCase().includes('gun') ? '90 ft' : '30 ft') 
+      : 'Melee';
     
-    deleteNoteCategory: (categoryId: string) => {
-      updateCharacterState({
-        notes: characterState.notes.filter(cat => cat.id !== categoryId)
-      });
-    },
+    const slotForAttack = slot === 'Primary' ? 'primaryWeapon' : 'secondaryWeapon';
     
-    addNote: (categoryId: string, note: Note) => {
-      updateCharacterState({
-        notes: characterState.notes.map(cat => {
-          if (cat.id === categoryId) {
-            return {
-              ...cat,
-              notes: [...cat.notes, note]
-            };
-          }
-          return cat;
-        })
-      });
-    },
+    return {
+      id: `${weapon.id}-${slotForAttack}-attack`,
+      weaponId: weapon.id,
+      name: `${weapon.name} (${slot})`,
+      description: weapon.description || `Attack with your ${weapon.name}`,
+      damageAmount: damageAmount,
+      damageType: damageType,
+      meleeRanged: meleeRanged as 'Melee' | 'Ranged',
+      weaponType: weaponType,
+      handsRequired: handsRequired,
+      slot: slotForAttack as 'primaryWeapon' | 'secondaryWeapon',
+      range: range,
+      magicNonMagical: magicNonMagical as 'Magical' | 'Non-Magical',
+      abilities: weapon.abilities || [],
+      traits: weapon.traits || [],
+      statBonus: weapon.statBonus || {},
+      skillBonus: weapon.skillBonus || {},
+      isCustom: false
+    };
+  }, []);
+  const getAttacksFromEquipment = useCallback((): Attack[] => { 
+    const weaponAttacks: Attack[] = []; 
     
-    updateNote: (categoryId: string, noteId: string, updates: Partial<Note>) => {
-      updateCharacterState({
-        notes: characterState.notes.map(cat => {
-          if (cat.id === categoryId) {
-            return {
-              ...cat,
-              notes: cat.notes.map(note => 
-                note.id === noteId ? { ...note, ...updates } : note
-              )
-            };
-          }
-          return cat;
-        })
-      });
-    },
+    // Get complete weapon data for primary weapon
+    if (characterState.equippedItems.primaryWeapon) {
+      const primaryWeapon = characterState.equippedItems.primaryWeapon;
+      
+      // Log the weapon data to debug
+      console.log('Primary weapon data for attack creation:', primaryWeapon);
+      
+      weaponAttacks.push(createAttackFromWeapon(primaryWeapon, 'Primary'));
+    }
     
-    deleteNote: (categoryId: string, noteId: string) => {
-      updateCharacterState({
-        notes: characterState.notes.map(cat => {
-          if (cat.id === categoryId) {
-            return {
-              ...cat,
-              notes: cat.notes.filter(note => note.id !== noteId)
-            };
-          }
-          return cat;
-        })
-      });
-    },
+    // Get complete weapon data for secondary weapon
+    if (characterState.equippedItems.secondaryWeapon) {
+      const secondaryWeapon = characterState.equippedItems.secondaryWeapon;
+      
+      // Log the weapon data to debug
+      console.log('Secondary weapon data for attack creation:', secondaryWeapon);
+      
+      weaponAttacks.push(createAttackFromWeapon(secondaryWeapon, 'Secondary'));
+    }
+    
+    return weaponAttacks;
+  }, [characterState.equippedItems, createAttackFromWeapon]);  useEffect(() => { setAttacks(getAttacksFromEquipment()); }, [getAttacksFromEquipment]); // Update attacks when equipment changes
+  const executeAttack = useCallback((attackId: string) => { const attack = attacks.find(a => a.id === attackId); if (!attack) return; console.log(`Executing attack: ${attack.name}`); toast({ title: `Attacked with ${attack.name}`, description: `Damage: ${attack.damageAmount} ${attack.damageType}, Range: ${attack.meleeRanged}`, status: "info", duration: 3000 }); }, [attacks, toast]);
+  const addToLearnedSpells = useCallback((spell: Spell) => { if (!characterState.learnedSpells.some(s => s.name === spell.name)) { updateCharacterState({ learnedSpells: [...characterState.learnedSpells, spell] }); } }, [characterState.learnedSpells, updateCharacterState]);
+
+
+  // --- Vitals Management ---
+  const setCharacterName = useCallback((name: string) => updateCharacterState({ characterName: name }), [updateCharacterState]);
+  const setCharacterLevel = useCallback((level: number) => { if (typeof level === 'number' && level >= 1) { updateCharacterState({ characterLevel: level }); } else { console.warn(`Invalid level provided: ${level}`); } }, [updateCharacterState]);
+  const setCurrentHp = useCallback((hp: number) => updateCharacterState({ currentHp: Math.max(0, Math.min(hp, getMaxHp())) }), [updateCharacterState, getMaxHp]);
+  const setCurrentMp = useCallback((mp: number) => updateCharacterState({ currentMp: Math.max(0, Math.min(mp, getMaxMp())) }), [updateCharacterState, getMaxMp]);
+  const setCurrentAp = useCallback((ap: number) => updateCharacterState({ currentAp: Math.max(0, Math.min(ap, getMaxAp())) }), [updateCharacterState, getMaxAp]);
+
+
+  // --- Utility Slots ---
+  const setUtilitySlots = useCallback((slots: UtilitySlot[]) => updateCharacterState({ utilitySlots: slots }), [updateCharacterState]);
+  const addItemToUtilitySlot = useCallback((slotId: string, item: InventoryItem, quantity: number) => { if (!item?.id || quantity <= 0) return; const inventoryItemIndex = characterState.inventory.findIndex(inv => inv.item.id === item.id); if (inventoryItemIndex === -1 || characterState.inventory[inventoryItemIndex].quantity < quantity) { toast({ title: "Insufficient Inventory", description: `Need ${quantity}, have ${getItemQuantity(item.id)}.`, status: "warning" }); return; } let tempInventory = [...characterState.inventory]; let tempSlots = [...characterState.utilitySlots]; const targetSlotIndex = tempSlots.findIndex(slot => slot.id === slotId); if (targetSlotIndex === -1) return; const currentSlotStack = tempSlots[targetSlotIndex].stack; if (currentSlotStack) { const oldItem = currentSlotStack.item; const oldQty = currentSlotStack.quantity; const existingInvIndex = tempInventory.findIndex(inv => inv.item.id === oldItem.id); if (existingInvIndex > -1) { tempInventory[existingInvIndex] = { ...tempInventory[existingInvIndex], quantity: tempInventory[existingInvIndex].quantity + oldQty }; } else { tempInventory.push({ item: oldItem, quantity: oldQty }); } } const currentInvQuantity = tempInventory[inventoryItemIndex].quantity; if (currentInvQuantity === quantity) { tempInventory.splice(inventoryItemIndex, 1); } else { tempInventory[inventoryItemIndex] = { ...tempInventory[inventoryItemIndex], quantity: currentInvQuantity - quantity }; } tempSlots[targetSlotIndex] = { ...tempSlots[targetSlotIndex], stack: { item, quantity } }; updateCharacterState({ inventory: tempInventory, utilitySlots: tempSlots }); }, [characterState.inventory, characterState.utilitySlots, updateCharacterState, toast, getItemQuantity]);
+  const removeItemFromUtilitySlot = useCallback((slotId: string) => { const slotIndex = characterState.utilitySlots.findIndex(s => s.id === slotId); if (slotIndex === -1 || !characterState.utilitySlots[slotIndex].stack) { return; } const { item, quantity } = characterState.utilitySlots[slotIndex].stack!; addItemsWithQuantity(item, quantity); const newSlots = characterState.utilitySlots.map((s, index) => index === slotIndex ? { ...s, stack: null } : s); updateCharacterState({ utilitySlots: newSlots }); }, [characterState.utilitySlots, addItemsWithQuantity, updateCharacterState]);
+  const updateUtilitySlotQuantity = useCallback((slotId: string, quantityChange: number) => { const slotIndex = characterState.utilitySlots.findIndex(s => s.id === slotId); if (slotIndex === -1 || !characterState.utilitySlots[slotIndex].stack) return; const currentSlot = characterState.utilitySlots[slotIndex]; const { item, quantity: currentQuantity } = currentSlot.stack!; const newQuantity = currentQuantity + quantityChange; if (newQuantity <= 0) { removeItemFromUtilitySlot(slotId); } else { let tempInventory = [...characterState.inventory]; let operationPossible = true; if (quantityChange > 0) { const invItemIndex = tempInventory.findIndex(inv => inv.item.id === item.id); if (invItemIndex === -1 || tempInventory[invItemIndex].quantity < quantityChange) { toast({ title: "Insufficient Inventory", description: `Need ${quantityChange} ${item.name}, have ${getItemQuantity(item.id)}.`, status: "warning" }); operationPossible = false; } else { const currentInvQty = tempInventory[invItemIndex].quantity; if (currentInvQty === quantityChange) { tempInventory.splice(invItemIndex, 1); } else { tempInventory[invItemIndex] = { ...tempInventory[invItemIndex], quantity: currentInvQty - quantityChange }; } } } else if (quantityChange < 0) { const quantityToAddBack = Math.abs(quantityChange); const invItemIndex = tempInventory.findIndex(inv => inv.item.id === item.id); if (invItemIndex > -1) { tempInventory[invItemIndex] = { ...tempInventory[invItemIndex], quantity: tempInventory[invItemIndex].quantity + quantityToAddBack }; } else { tempInventory.push({ item, quantity: quantityToAddBack }); } } if (operationPossible) { const newSlots = [...characterState.utilitySlots]; newSlots[slotIndex] = { ...currentSlot, stack: { ...currentSlot.stack!, quantity: newQuantity } }; updateCharacterState({ utilitySlots: newSlots, inventory: tempInventory }); } } }, [characterState.utilitySlots, characterState.inventory, updateCharacterState, getItemQuantity, toast, removeItemFromUtilitySlot]);
+
+
+  // --- Gold Management ---
+  const addGold = useCallback((amount: number, reason: string) => { if (amount <= 0) { toast({ title: 'Invalid Amount', description: 'Gold amount must be positive.', status: 'warning' }); return; } const newTransaction: GoldTransaction = { amount, reason, timestamp: Date.now(), by: currentUser?.uid }; updateCharacterState({ gold: (characterState.gold || 0) + amount, goldTransactionHistory: [...characterState.goldTransactionHistory, newTransaction].slice(-100) }); toast({title: `+${amount} Gold`, description: reason, status: "success", duration: 1500}); }, [characterState.gold, characterState.goldTransactionHistory, updateCharacterState, currentUser, toast]);
+  const subtractGold = useCallback((amount: number, reason: string) => { if (amount <= 0) { toast({ title: 'Invalid Amount', description: 'Amount must be positive.', status: 'warning' }); return; } const currentGold = characterState.gold || 0; if (amount > currentGold) { toast({ title: "Insufficient Gold", description: `Need ${amount}, have ${currentGold}.`, status: "warning" }); return; } const newTransaction: GoldTransaction = { amount: -amount, reason, timestamp: Date.now(), by: currentUser?.uid }; updateCharacterState({ gold: currentGold - amount, goldTransactionHistory: [...characterState.goldTransactionHistory, newTransaction].slice(-100) }); toast({title: `-${amount} Gold`, description: reason, status: "warning", duration: 1500}); }, [characterState.gold, characterState.goldTransactionHistory, updateCharacterState, currentUser, toast]);
+  const setGold = useCallback((amount: number, reason: string) => { const isShopTransaction = reason && reason.toLowerCase().includes('shop transaction'); if (isDM || isShopTransaction || amount < (characterState.gold || 0)) { const change = amount - (characterState.gold || 0); const finalReason = isShopTransaction ? reason : `Set to ${amount} (${reason || 'DM adjustment'})`; const newTransaction: GoldTransaction = { amount: change, reason: finalReason, timestamp: Date.now(), by: currentUser?.uid }; updateCharacterState({ gold: amount, goldTransactionHistory: [...characterState.goldTransactionHistory, newTransaction].slice(-100) }); if (!isShopTransaction) { toast({ title: `Gold ${change >= 0 ? 'Increased' : 'Decreased'} to ${amount}`, description: reason, status: change >= 0 ? "info" : "warning", duration: 1500 }); } } else { toast({ title: 'Unauthorized', description: 'Only DMs can set gold directly.', status: 'error' }); } }, [characterState.gold, characterState.goldTransactionHistory, updateCharacterState, isDM, currentUser, toast]);
+  const processTransaction = useCallback(async (details: { itemId: string; item?: InventoryItem; quantity: number; goldChange: number; transactionType: 'buy' | 'sell'; reason: string }) => { const { itemId, item, quantity, goldChange, transactionType, reason } = details; if (quantity <= 0) { console.warn("processTransaction called with invalid quantity:", quantity); toast({ title: "Transaction Error", description: "Invalid item quantity.", status: "error"}); return; } const currentGold = characterState.gold || 0; const newGoldAmount = currentGold + goldChange; if (newGoldAmount < 0) { console.warn("processTransaction would result in negative gold."); toast({ title: "Transaction Error", description: "Transaction would result in negative gold.", status: "error"}); return; } let newInventory = [...characterState.inventory]; if (transactionType === 'buy') { if (!item) { console.error("processTransaction 'buy' called without item details."); toast({ title: "Transaction Error", description: "Missing item data for purchase.", status: "error"}); return; } const existingIndex = newInventory.findIndex(invItem => invItem.item.id === item.id); if (existingIndex >= 0) { newInventory = newInventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity + quantity } : invItem); } else { newInventory.push({ item: item, quantity: quantity }); } } else { const existingIndex = newInventory.findIndex(invItem => invItem.item.id === itemId); if (existingIndex === -1) { console.error(`processTransaction 'sell': Item ID ${itemId} not found in inventory.`); toast({ title: "Transaction Error", description: "Item to sell not found in your inventory.", status: "error"}); return; } const currentItem = newInventory[existingIndex]; if (currentItem.quantity < quantity) { console.error(`processTransaction 'sell': Insufficient quantity for item ID ${itemId}. Have ${currentItem.quantity}, need ${quantity}.`); toast({ title: "Transaction Error", description: "Not enough items to sell.", status: "error"}); return; } if (currentItem.quantity === quantity) { newInventory = newInventory.filter((_, index) => index !== existingIndex); } else { newInventory = newInventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity - quantity } : invItem); } } const newTransactionRecord: GoldTransaction = { amount: goldChange, reason: reason, timestamp: Date.now(), by: currentUser?.uid || 'player' }; const newHistory = [...characterState.goldTransactionHistory, newTransactionRecord].slice(-100); updateCharacterState({ gold: newGoldAmount, inventory: newInventory, goldTransactionHistory: newHistory }); try { await saveCharacterManually(); console.log("Transaction processed and character saved."); } catch (error) { console.error("Error saving character after transaction:", error); toast({ title: "Save Warning", description: "Transaction applied locally, but failed to save to server.", status: "warning", duration: 5000 }); } }, [characterState.gold, characterState.inventory, characterState.goldTransactionHistory, updateCharacterState, saveCharacterManually, currentUser, toast]);
+
+
+  // --- Notes Management ---
+  const updateNotes = useCallback((newNotes: NotesState) => updateCharacterState({ notes: newNotes }), [updateCharacterState]);
+  const addNoteCategory = useCallback((category: NoteCategory) => updateNotes([...characterState.notes, category]), [characterState.notes, updateNotes]);
+  const updateNoteCategory = useCallback((categoryId: string, updates: Partial<NoteCategory>) => { updateNotes(characterState.notes.map(cat => cat.id === categoryId ? { ...cat, ...updates } : cat)); }, [characterState.notes, updateNotes]);
+  const deleteNoteCategory = useCallback((categoryId: string) => { updateNotes(characterState.notes.filter(cat => cat.id !== categoryId)); }, [characterState.notes, updateNotes]);
+  const addNote = useCallback((categoryId: string, note: Note) => { updateNotes(characterState.notes.map(cat => cat.id === categoryId ? { ...cat, notes: [...cat.notes, { ...note, lastEdited: Date.now() }] } : cat)); }, [characterState.notes, updateNotes]);
+  const updateNote = useCallback((categoryId: string, noteId: string, updates: Partial<Note>) => { updateNotes(characterState.notes.map(cat => cat.id === categoryId ? { ...cat, notes: cat.notes.map(n => n.id === noteId ? { ...n, ...updates, lastEdited: Date.now() } : n) } : cat)); }, [characterState.notes, updateNotes]);
+  const deleteNote = useCallback((categoryId: string, noteId: string) => { updateNotes(characterState.notes.map(cat => cat.id === categoryId ? { ...cat, notes: cat.notes.filter(n => n.id !== noteId) } : cat)); }, [characterState.notes, updateNotes]);
+
+
+  // --- Context Value Object ---
+  const value: CharacterContextType = {
+    characterName: characterState.characterName, setCharacterName, characterLevel: characterState.characterLevel, setCharacterLevel,
+    baseStats: characterState.baseStats, setBaseStats: (stats) => updateCharacterState({ baseStats: stats }), currentStats,
+    selectedRace: characterState.selectedRace, setSelectedRace: (race) => updateCharacterState({ selectedRace: race }),
+    selectedClass: characterState.selectedClass, setSelectedClass: (cls) => updateCharacterState({ selectedClass: cls }),
+    currentHp: characterState.currentHp, setCurrentHp, getMaxHp, currentMp: characterState.currentMp, setCurrentMp, getMaxMp, currentAp: characterState.currentAp, setCurrentAp, getMaxAp,
+    baseSkills: characterState.baseSkills, currentSkills, abilityLevels: characterState.abilityLevels, setAbilityLevel: (name, level) => updateCharacterState({ abilityLevels: { ...characterState.abilityLevels, [name]: level } }),
+    getEquipmentAbilities, getEquipmentTraits, hasAbility, hasTrait,
+    inventory: characterState.inventory, addToInventory, addItemsWithQuantity, addMultipleItemsToInventory, removeFromInventory, updateInventoryItemQuantity, getInventoryByType, getItemQuantity, hasItem,
+    equippedItems: characterState.equippedItems, equipItem, getEquippedItem, equipMultipleItems, getStatBonus, getSkillBonus,
+    utilitySlots: characterState.utilitySlots, setUtilitySlots, addItemToUtilitySlot, removeItemFromUtilitySlot, updateUtilitySlotQuantity,
+    availableStatPoints: characterState.availableStatPoints, incrementStat, decrementStat, availableSkillPoints: characterState.availableSkillPoints, increaseSkill, decreaseSkill,
+    attacks, getAttacksFromEquipment, executeAttack, learnedSpells: characterState.learnedSpells, addToLearnedSpells, spellList: characterState.learnedSpells,
+    notes: characterState.notes, updateNotes, addNoteCategory, updateNoteCategory, deleteNoteCategory, addNote, updateNote, deleteNote,
+    gold: characterState.gold, setGold, goldTransactionHistory: characterState.goldTransactionHistory, addGold, subtractGold, processTransaction,
+    isDirty, isSaving, lastSaveTime, saveCharacterManually, resetCharacter, deleteCharacter,
+    docId: docId,
   };
 
   return (
     <CharacterContext.Provider value={value}>
-      {children}
+      {isLoading ? ( <Center h="100vh"><Spinner size="xl" color="brand.500" /></Center> ) : ( children )}
     </CharacterContext.Provider>
   );
 }
 
 // -------------------------------------------------------------------------
-// Additional exported functions for character management
+// Custom Hook & Helper Functions
 // -------------------------------------------------------------------------
-export async function getAllCharactersForUser(userId: string) {
+export function useCharacter() {
+  const context = useContext(CharacterContext);
+  if (context === undefined) throw new Error('useCharacter must be used within CharacterProvider');
+  return context;
+}
+
+// Define a more specific type for character summaries if needed
+interface CharacterSummary {
+    id: string;
+    characterName: string;
+    characterLevel: number;
+    raceName?: string;
+    className?: string;
+    lastUpdated?: number;
+}
+
+export async function getAllCharactersForUser(userId: string): Promise<CharacterSummary[]> {
+  if (!userId) return [];
   try {
     const charactersRef = collection(db, 'characters');
-    const q = query(charactersRef, where('userId', '==', userId));
+    const q = query(charactersRef, where('userId', '==', userId), orderBy('lastUpdated', 'desc')); // Order by last update
     const querySnapshot = await getDocs(q);
-    const characters = querySnapshot.docs.map((doc) => {
+    const characters: CharacterSummary[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
         characterName: data.characterName || 'Unnamed Character',
         characterLevel: data.characterLevel || 1,
-        selectedRace: data.selectedRace || null,
-        selectedClass: data.selectedClass || null,
-        ...data,
+        raceName: data.selectedRace?.name, // Optional chaining
+        className: data.selectedClass?.name, // Optional chaining
+        lastUpdated: data.lastUpdated instanceof Timestamp ? data.lastUpdated.toMillis() : data.lastUpdated,
       };
     });
     return characters;
-  } catch (error) {
-    console.error('Error fetching characters:', error);
-    return [];
-  }
+  } catch (error) { console.error('Error fetching characters:', error); return []; }
 }
 
-export async function saveCharacter(userId: string, characterData: any) {
-  try {
-    if (characterData.id) {
-      const characterRef = doc(db, 'users', userId, 'characters', characterData.id);
-      await setDoc(characterRef, characterData, { merge: true });
-      return characterData.id;
-    }
-    const charactersRef = collection(db, 'users', userId, 'characters');
-    const newCharacterRef = await addDoc(charactersRef, characterData);
-    return newCharacterRef.id;
-  } catch (error) {
-    console.error('Error saving character:', error);
-    throw error;
-  }
-}
-
-export async function deleteCharacterById(userId: string, characterId: string) {
+export async function deleteCharacterById(userId: string, characterId: string): Promise<boolean> {
+  if (!userId || !characterId) return false;
   try {
     const characterRef = doc(db, 'characters', characterId);
+    const charDoc = await getDoc(characterRef);
+    if (!charDoc.exists() || charDoc.data()?.userId !== userId) { console.error(`Permission denied or character not found for deletion: User ${userId}, Character ${characterId}`); return false; }
     await deleteDoc(characterRef);
     return true;
-  } catch (error) {
-    console.error('Error deleting character:', error);
-    return false;
-  }
+  } catch (error) { console.error('Error deleting character via helper:', error); return false; }
 }
-
-export function useCharacter() {
-  const context = useContext(CharacterContext);
-  if (context === undefined) {
-    throw new Error('useCharacter must be used within a CharacterProvider');
-  }
-  return context;
-}
+// --- END OF FILE CharacterContext.tsx ---

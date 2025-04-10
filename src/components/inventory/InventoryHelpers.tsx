@@ -3,90 +3,108 @@ import React from 'react';
 import { Text, Badge } from '@chakra-ui/react';
 import { InventoryItem } from '@/types/inventory';
 
-// Helper function to safely convert any value to a React-friendly display format
+// Re-import or redefine DEFAULT_COLUMNS and ITEM_TYPE_COLUMNS if needed from inventory.ts
+export const DEFAULT_COLUMNS = ['name', 'itemType', 'rarity'];
+
+export const ITEM_TYPE_COLUMNS: Record<string, string[]> = {
+  'Weapon': ['name', 'weaponType', 'damageAmount', 'damageType', 'meleeRanged', 'rarity'],
+  'Armor': ['name', 'armorType', 'armorRating', 'tankModifier', 'rarity'],
+  'Ammunition': ['name', 'damageAmount', 'damageType', 'range', 'radius', 'rarity'], // Added radius
+  'Potion': ['name', 'effect', 'duration', 'healfor', 'manaback', 'rarity'], // Updated for potions
+  'Pharmaceutical': ['name', 'effect', 'duration', 'healfor', 'manaback', 'rarity'], // Same as Potion for now
+  'Scroll': ['name', 'effect', 'castingTime', 'cooldown', 'rarity'], // Assuming scroll type is correct
+  'Crafting Component': ['name', 'effect', 'rarity'], // Simplified based on CSV
+  'Trap': ['name', 'effect', 'damage', 'damageType', 'duration', 'triggerMechanism', 'rarity'], // Updated for traps
+  'Explosive': ['name', 'damage', 'damageType', 'blastradius', 'triggerMechanism', 'duration', 'rarity'], // Updated for explosives
+  'Throwable': ['name', 'damage', 'damageType', 'blastradius', 'triggerMechanism', 'duration', 'rarity'], // Same as Explosive for now
+  'Miscellaneous': ['name', 'description', 'rarity'], // Basic columns for misc
+};
+
+
+// Convert various data types to a displayable React node
 const convertToReactNode = (value: any): React.ReactNode => {
   if (value === undefined || value === null || value === '') {
-    return <Text color="gray.400">-</Text>;
+    return <Text color="gray.400" as="span">-</Text>; // Use span for inline context
   }
   if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean') {
-    return value.toString();
+    return String(value); // Return as string
   }
   if (Array.isArray(value)) {
-    return value.join(', ');
-  }
-  if (typeof value === 'object') {
-    try {
-      return JSON.stringify(value);
-    } catch (e) {
-      return '[Complex Object]';
+    // Handle empty arrays specifically
+    if (value.length === 0 || (value.length === 1 && value[0] === '')) {
+        return <Text color="gray.400" as="span">-</Text>;
     }
+    // Display first few elements for brevity in tables
+    const preview = value.slice(0, 3).join(', ');
+    return value.length > 3 ? `${preview}...` : preview;
   }
-  return String(value);
+   // Handle simple objects (like statBonus) - display keys with values
+   if (typeof value === 'object' && !React.isValidElement(value)) {
+       const entries = Object.entries(value).filter(([_, val]) => val !== 0 && val !== null && val !== undefined); // Filter out zero/null/undefined
+       if (entries.length === 0) return <Text color="gray.400" as="span">-</Text>;
+       return entries.map(([k, v]) => `${k}: ${v}`).slice(0, 2).join(', ') + (entries.length > 2 ? '...' : '');
+   }
+  // Fallback for other types or complex objects
+  return typeof value === 'object' ? '[Object]' : String(value);
 };
 
-export const getColumnValue = (item: InventoryItem, column: string): React.ReactNode => {
+// Get the display value for a specific column in an item
+export const getColumnValue = (item: InventoryItem | null, column: string): React.ReactNode => {
   if (!item) return "-";
-  let value: any;
+
+  // Direct property access (case-sensitive)
   if (column in item && item[column as keyof InventoryItem] !== undefined) {
-    value = item[column as keyof InventoryItem];
-    return convertToReactNode(value);
+    return convertToReactNode(item[column as keyof InventoryItem]);
   }
+
+  // Case-insensitive property access
   const lowerCaseColumn = column.toLowerCase();
   for (const key in item) {
-    if (key.toLowerCase() === lowerCaseColumn) {
-      value = item[key as keyof InventoryItem];
-      return convertToReactNode(value);
+    if (key.toLowerCase() === lowerCaseColumn && item[key as keyof InventoryItem] !== undefined) {
+      return convertToReactNode(item[key as keyof InventoryItem]);
     }
   }
-  switch (column) {
-    case 'name':
-      return convertToReactNode(item.name || '');
-    case 'description':
-      return convertToReactNode(item.description || '');
-    case 'rarity':
-      return convertToReactNode(item.rarity || '');
-    case 'itemType':
-      return convertToReactNode(item.itemType || '');
-    case 'damage':
+
+  // Specific known column mappings and fallbacks
+  switch (lowerCaseColumn) {
+    case 'damage': // Handle potential damage vs damageAmount difference
       return convertToReactNode(item.damage || item.damageAmount || '');
-    case 'damageType':
-      return convertToReactNode(item.damageType || '');
-    case 'blastRadius':
-      return convertToReactNode(item.blastRadius || item.radius || '');
+    case 'trigger':
+       return convertToReactNode(item.triggerMechanism || '');
+     case 'blast radius':
+        return convertToReactNode(item.blastradius || '');
+    // Add more specific mappings if needed
     default:
-      return "-";
+      return "-"; // Not found
   }
 };
 
+// Get columns based on item type (remains the same logic)
 export const getColumnsForItemType = (itemType: string): string[] => {
-  switch (itemType) {
-    case 'Weapon':
-      return ['name', 'weaponType', 'damageAmount', 'damageType', 'meleeRanged', 'rarity'];
-    case 'Armor':
-      return ['name', 'armorType', 'armorRating', 'tankModifier', 'rarity'];
-    case 'Ammunition':
-      return ['name', 'damageAmount', 'damageType', 'range', 'rarity'];
-    case 'Potion':
-      return ['name', 'effect', 'duration', 'rarity'];
-    case 'Scroll':
-      return ['name', 'effect', 'castingTime', 'cooldown', 'rarity'];
-    case 'Crafting Component':
-      return ['name', 'effect', 'rarity'];
-    case 'Trap':
-      return ['name', 'effect', 'duration', 'rarity'];
-    case 'Explosive':
-      return ['name', 'damage', 'damageType', 'blastRadius', 'rarity'];
-    default:
-      return ['name', 'itemType', 'rarity'];
-  }
+    const normalizedItemType = itemType ? itemType.trim() : '';
+    const lowerCaseType = normalizedItemType.toLowerCase();
+
+    // Handle combined types explicitly if needed for column display
+    if (lowerCaseType === 'pharmaceutical') return ITEM_TYPE_COLUMNS['Potion'] || DEFAULT_COLUMNS;
+    if (lowerCaseType === 'throwable') return ITEM_TYPE_COLUMNS['Explosive'] || DEFAULT_COLUMNS;
+
+    // Use direct lookup first
+    let columns = ITEM_TYPE_COLUMNS[normalizedItemType];
+    if (columns) return columns;
+
+    // Fallback to lowercase lookup
+    columns = ITEM_TYPE_COLUMNS[Object.keys(ITEM_TYPE_COLUMNS).find(key => key.toLowerCase() === lowerCaseType) || ''];
+    return columns || DEFAULT_COLUMNS;
 };
 
+
+// Format value for display (remains the same logic)
 export const formatValue = (value: React.ReactNode): React.ReactNode => {
   if (value === undefined || value === null || value === '') {
-    return <Text color="gray.400">-</Text>;
+    return <Text color="gray.400" as="span">-</Text>; // Use span
   }
   if (React.isValidElement(value)) {
     return value;
   }
-  return value;
+  return String(value); // Ensure it's a string for rendering
 };

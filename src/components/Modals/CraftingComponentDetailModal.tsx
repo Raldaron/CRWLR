@@ -11,8 +11,11 @@ import {
   Badge,
   Divider,
   Box,
+  HStack
 } from '@chakra-ui/react';
 import type { CraftingComponentItem } from '@/types/craftingcomponent';
+// Import the new component
+import TruncatedTextWithModal from '../ui/TruncatedTextWithModal'; // Adjust path if needed
 
 interface CraftingComponentDetailModalProps {
   component: CraftingComponentItem | null;
@@ -20,21 +23,18 @@ interface CraftingComponentDetailModalProps {
   onClose: () => void;
 }
 
-const CraftingComponentDetailModal = ({ 
-  component, 
-  isOpen, 
-  onClose 
+const CraftingComponentDetailModal = ({
+  component,
+  isOpen,
+  onClose
 }: CraftingComponentDetailModalProps) => {
   if (!component) return null;
 
   const getRarityColor = (rarity: string) => {
-    switch(rarity.toLowerCase()) {
-      case 'common': return 'gray';
-      case 'uncommon': return 'green';
-      case 'rare': return 'blue';
-      case 'epic': return 'purple';
-      case 'legendary': return 'orange';
-      case 'very rare': return 'red';
+    switch(rarity?.toLowerCase()) {
+      case 'common': return 'gray'; case 'uncommon': return 'green';
+      case 'rare': return 'blue'; case 'epic': return 'purple';
+      case 'legendary': return 'orange'; case 'very rare': return 'red';
       default: return 'gray';
     }
   };
@@ -46,38 +46,41 @@ const CraftingComponentDetailModal = ({
         <ModalHeader>
           <VStack align="start" spacing={2}>
             <Text fontSize="2xl">{component.name}</Text>
-            <Badge colorScheme={getRarityColor(component.rarity)}>
-              {component.rarity}
-            </Badge>
+            <HStack spacing={2}>
+                <Badge colorScheme={getRarityColor(component.rarity)}>
+                {component.rarity}
+                </Badge>
+                 <Badge variant="outline">{component.itemType}</Badge>
+            </HStack>
           </VStack>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <VStack align="start" spacing={4} width="100%">
-            <Text color="gray.600">{component.description}</Text>
-            
-            <Divider />
-            
-            <Box width="100%">
-              <Text fontWeight="semibold" mb={2}>Effect</Text>
-              <Text>{component.effect}</Text>
-            </Box>
+            {/* Use TruncatedTextWithModal for description */}
+            <TruncatedTextWithModal
+              text={component.description}
+              modalTitle={`${component.name} - Description`}
+              charLimit={200}
+            />
 
             <Divider />
 
-            <Box width="100%">
-              <Text fontWeight="semibold" mb={2}>Properties</Text>
-              <VStack align="start" spacing={2}>
-                <Text>
-                  <strong>Duration:</strong> {component.duration}
-                </Text>
-                {component.range !== 'N/A' && (
-                  <Text>
-                    <strong>Range:</strong> {component.range}
-                  </Text>
-                )}
-              </VStack>
-            </Box>
+            {/* Use TruncatedTextWithModal for effect */}
+             <Box width="100%">
+                 <TruncatedTextWithModal
+                    label="Effect"
+                    text={component.effect}
+                    modalTitle={`${component.name} - Effect`}
+                    charLimit={180}
+                 />
+             </Box>
+
+            {(component.sellValue !== undefined || component.buyValue !== undefined) && (
+                 <>
+                 <Divider />
+                </>
+            )}
           </VStack>
         </ModalBody>
       </ModalContent>

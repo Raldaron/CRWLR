@@ -5,13 +5,14 @@ import {
   VStack,
   Text,
   Button,
-  IconButton,
+  IconButton, // Can remove IconButton if not used elsewhere
   HStack,
   Badge,
+  Tooltip, // Added Tooltip for clarity
 } from '@chakra-ui/react';
-import { Package, Plus, Minus } from 'lucide-react';
-import DarkThemedCard from '../ui/DarkThemedCard';
-import type { InventoryItem } from '@/types/inventory';
+import { Package, Plus, Minus, Info, X } from 'lucide-react'; // Use Minus icon for the Use button
+import DarkThemedCard from '../ui/DarkThemedCard'; // Ensure path is correct
+import type { InventoryItem } from '@/types/inventory'; // Ensure path is correct
 
 // Specify the type for a utility slot
 interface UtilitySlot {
@@ -28,7 +29,7 @@ interface UtilitySlotCardProps {
   onAddItem: () => void;
   onViewDetails: (item: InventoryItem) => void;
   onIncrement: () => void;
-  onDecrement: () => void;
+  onDecrement: () => void; // This will be our "Use" action
   onUnequip: () => void;
 }
 
@@ -37,89 +38,104 @@ const UtilitySlotCard: React.FC<UtilitySlotCardProps> = ({
   onAddItem,
   onViewDetails,
   onIncrement,
-  onDecrement,
+  onDecrement, // Renamed button will call this
   onUnequip
 }) => {
   const hasItem = slot.stack !== null;
-  
+
   return (
     <DarkThemedCard
+      // Clicking the card itself opens details
       onClick={hasItem ? () => onViewDetails(slot.stack!.item) : onAddItem}
       isSelected={hasItem}
-      borderColor={hasItem ? "green.600" : "gray.700"}
+      borderColor={hasItem ? "green.600" : "gray.700"} // Green border when item is present
       isHoverable={true}
+      height="150px" // Slightly increased height for controls
     >
       <VStack spacing={1} align="center" justify="center" h="full" position="relative">
+        {/* Unequip Button - Placed first for layer order if needed */}
+        {hasItem && (
+             <Tooltip label="Remove from Slot" placement="top">
+                <Button
+                    size="xs"
+                    variant="ghost" // Use ghost for less visual noise
+                    colorScheme="red" // Use red for remove action
+                    position="absolute"
+                    top={1}
+                    right={1}
+                    height="20px"
+                    minWidth="20px"
+                    p={0}
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click
+                        onUnequip();
+                    }}
+                    aria-label="Unequip item from slot"
+                    >
+                    <X size={14} />
+                </Button>
+            </Tooltip>
+        )}
+
+        {/* Item Information */}
         {slot.stack ? (
-          // Show item info if equipped, with quantity badge
           <>
             <Package size={20} className="text-green-500" />
             <Text fontWeight="bold" fontSize="sm" textAlign="center" noOfLines={1} color="gray.200">
               {slot.stack.item.name}
             </Text>
-            <Badge colorScheme="green">
-              {slot.stack.item.itemType}
-            </Badge>
+            <Badge colorScheme="green" fontSize="xs">{slot.stack.item.itemType}</Badge>
 
-            {/* Quantity controls */}
-            {slot.stack && (
-              <HStack mt={1}>
-                <Button
-                  size="xs"
-                  colorScheme="accent"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDecrement();
-                  }}
-                  aria-label="Use/Decrease quantity"
-                >
-                  <Minus size={12} />
-                </Button>
-                <Badge colorScheme="blue" fontSize="md" px={2}>
+            {/* Quantity Display and Controls */}
+            <HStack mt={2}>
+               {/* "Use" Button (calls onDecrement) */}
+               <Tooltip label="Use 1 Item" placement="bottom">
+                  <Button
+                     size="xs"
+                     colorScheme="blue" // Use a distinct color for "Use"
+                     variant="solid" // Make it more prominent
+                     onClick={(e) => {
+                       e.stopPropagation(); // Prevent card click
+                       onDecrement();
+                     }}
+                     aria-label="Use one item"
+                     leftIcon={<Minus size={12} />} // Icon indicates reduction
+                   >
+                     Use
+                   </Button>
+               </Tooltip>
+
+                <Badge colorScheme="blue" variant="solid" fontSize="md" px={2} minW="30px" textAlign="center">
                   {slot.stack.quantity}
                 </Badge>
-                <Button
-                  size="xs"
-                  colorScheme="green"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onIncrement();
-                  }}
-                  aria-label="Add quantity"
-                >
-                  <Plus size={12} />
-                </Button>
-              </HStack>
-            )}
 
-            {/* Unequip button */}
-            <Button
-              size="xs"
-              colorScheme="accent"
-              position="absolute"
-              top={1}
-              right={1}
-              height="20px"
-              minWidth="20px"
-              p={0}
-              children="×"
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnequip();
-              }}
-            />
+                {/* "Add" Button (calls onIncrement) */}
+                 <Tooltip label="Add 1 Item (from Inventory)" placement="bottom">
+                  <Button
+                    size="xs"
+                    colorScheme="green" // Green for adding
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click
+                      onIncrement();
+                    }}
+                    aria-label="Add quantity from inventory"
+                  >
+                    <Plus size={12} />
+                  </Button>
+                 </Tooltip>
+              </HStack>
           </>
         ) : (
-          // Show empty slot message
+          // Empty Slot Display
           <>
-            <Package size={20} className="text-gray-500" />
+            <Package size={32} className="text-gray-500" /> {/* Larger icon for empty */}
             <Text color="gray.500" fontSize="sm" textAlign="center">
               {slot.name}
             </Text>
             <Text fontSize="xs" color="gray.600" textAlign="center">
-              (Empty)
+              (Empty Slot)
             </Text>
-            <Button size="xs" colorScheme="green" mt={1}>
+            <Button size="xs" colorScheme="green" mt={2} onClick={onAddItem}>
               Equip Item
             </Button>
           </>

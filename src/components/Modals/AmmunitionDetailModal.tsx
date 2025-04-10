@@ -14,7 +14,9 @@ import {
   SimpleGrid,
   Box,
 } from '@chakra-ui/react';
-import type { AmmunitionItem } from '@/types/ammunition';
+import type { AmmunitionItem, AdditionalEffect } from '@/types/ammunition';
+// Import the new component
+import TruncatedTextWithModal from '../ui/TruncatedTextWithModal'; // Adjust path if needed
 
 interface AmmunitionDetailModalProps {
   ammunition: AmmunitionItem | null;
@@ -25,27 +27,39 @@ interface AmmunitionDetailModalProps {
 const AmmunitionDetailModal = ({ ammunition, isOpen, onClose }: AmmunitionDetailModalProps) => {
   if (!ammunition) return null;
 
-  const getRarityColor = (rarity: string) => {
-    switch(rarity.toLowerCase()) {
-      case 'common': return 'gray';
-      case 'uncommon': return 'green';
-      case 'rare': return 'blue';
-      case 'epic': return 'purple';
-      case 'legendary': return 'orange';
-      default: return 'gray';
+  // Function to safely parse additionaleffects JSON string
+  const parseAdditionalEffects = (effectsString?: string): AdditionalEffect[] => {
+    if (!effectsString) return [];
+    try {
+      const parsed = JSON.parse(effectsString);
+      if (Array.isArray(parsed) && parsed.every(eff => typeof eff === 'object' && eff !== null && 'name' in eff && 'description' in eff)) {
+        return parsed as AdditionalEffect[];
+      }
+      console.warn("Parsed additionaleffects is not in the expected format:", parsed);
+      return [];
+    } catch (error) {
+      console.error("Failed to parse additionaleffects JSON:", error, "String was:", effectsString);
+      return [];
     }
   };
 
-  const getDamageTypeColor = (type: string) => {
-    switch(type.toLowerCase()) {
-      case 'fire': return 'red';
-      case 'cold': return 'blue';
-      case 'lightning': return 'yellow';
-      case 'acid': return 'green';
-      case 'force': return 'purple';
-      case 'piercing': return 'orange';
-      case 'bludgeoning': return 'gray';
-      default: return 'gray';
+  const additionalEffects = parseAdditionalEffects(ammunition.additionaleffects);
+
+  const getRarityColor = (rarity: string) => {
+    switch(rarity?.toLowerCase()) {
+      case 'ordinary': return 'gray'; case 'common': return 'gray';
+      case 'uncommon': return 'green'; case 'rare': return 'blue';
+      case 'epic': return 'purple'; case 'legendary': return 'orange';
+      case 'very rare': return 'red'; default: return 'gray';
+    }
+  };
+
+  const getDamageTypeColor = (type?: string) => {
+    switch(type?.toLowerCase()) {
+      case 'fire': return 'red'; case 'cold': return 'blue';
+      case 'lightning': return 'yellow'; case 'acid': return 'green';
+      case 'force': return 'purple'; case 'piercing': return 'orange';
+      case 'bludgeoning': return 'gray'; default: return 'gray';
     }
   };
 
@@ -66,46 +80,61 @@ const AmmunitionDetailModal = ({ ammunition, isOpen, onClose }: AmmunitionDetail
         <ModalCloseButton />
         <ModalBody pb={6}>
           <VStack align="start" spacing={4} width="100%">
-            <Text color="gray.600">{ammunition.description}</Text>
-            
+            {/* Use TruncatedTextWithModal for description */}
+            <TruncatedTextWithModal
+                text={ammunition.description}
+                modalTitle={`${ammunition.name} - Description`}
+                charLimit={200} // Adjust limit as needed
+            />
+
             <Divider />
-            
+
             <SimpleGrid columns={2} spacing={4} width="100%">
-              <Box>
-                <Text fontWeight="semibold">Range</Text>
-                <Text>{ammunition.range} ft</Text>
-              </Box>
-              {ammunition.radius && (
-                <Box>
-                  <Text fontWeight="semibold">Blast Radius</Text>
-                  <Text>{ammunition.radius} ft</Text>
-                </Box>
-              )}
+              {ammunition.range && ( <Box> <Text fontWeight="semibold">Range</Text> <Text>{ammunition.range}</Text> </Box> )}
+              {ammunition.blastRadius && ( <Box> <Text fontWeight="semibold">Blast Radius</Text> <Text>{ammunition.blastRadius}</Text> </Box> )}
+              {ammunition.duration && ( <Box> <Text fontWeight="semibold">Duration</Text> <Text>{ammunition.duration}</Text> </Box> )}
             </SimpleGrid>
+
+             {(ammunition.range || ammunition.blastRadius || ammunition.duration) && <Divider />}
 
             <Box width="100%">
               <Text fontWeight="semibold" mb={2}>Damage</Text>
               <HStack>
                 <Text fontSize="lg" fontWeight="bold">{ammunition.damageAmount}</Text>
-                <Badge colorScheme={getDamageTypeColor(ammunition.damageType)}>
-                  {ammunition.damageType}
-                </Badge>
+                {ammunition.damageType && ( <Badge colorScheme={getDamageTypeColor(ammunition.damageType)}> {ammunition.damageType} </Badge> )}
               </HStack>
             </Box>
 
-            <Box width="100%">
-              <Text fontWeight="semibold" mb={2}>Effect</Text>
-              <Text>{ammunition.effect}</Text>
-            </Box>
+            {/* Use TruncatedTextWithModal for effect */}
+            {ammunition.effect && (
+                <>
+                 <Divider />
+                 <Box width="100%">
+                    <TruncatedTextWithModal
+                        label="Effect"
+                        text={ammunition.effect}
+                        modalTitle={`${ammunition.name} - Effect`}
+                        charLimit={180} // Adjust limit as needed
+                    />
+                </Box>
+                </>
+            )}
 
-            {ammunition.additionaleffects && ammunition.additionaleffects.length > 0 && (
+
+            {additionalEffects.length > 0 && (
               <Box width="100%">
-                <Text fontWeight="semibold" mb={2}>Additional Effects</Text>
+                 <Divider />
+                <Text fontWeight="semibold" mb={2} mt={4}>Additional Effects</Text>
                 <VStack align="start" spacing={2}>
-                  {ammunition.additionaleffects.map((effect, index) => (
-                    <Box key={index} p={3} bg="gray.50" borderRadius="md">
+                  {additionalEffects.map((effect, index) => (
+                    <Box key={index} p={3} bg="gray.50" borderRadius="md" w="full">
                       <Text fontWeight="semibold">{effect.name}</Text>
-                      <Text fontSize="sm">{effect.description}</Text>
+                      {/* Use TruncatedTextWithModal for effect description */}
+                       <TruncatedTextWithModal
+                            text={effect.description}
+                            modalTitle={`${effect.name} - Description`}
+                            charLimit={100} // Shorter limit for nested descriptions
+                       />
                     </Box>
                   ))}
                 </VStack>
@@ -113,24 +142,34 @@ const AmmunitionDetailModal = ({ ammunition, isOpen, onClose }: AmmunitionDetail
             )}
 
             {ammunition.triggerMechanism && (
-              <Box width="100%">
-                <Text fontWeight="semibold" mb={2}>Trigger Mechanism</Text>
-                <Text>{ammunition.triggerMechanism}</Text>
-              </Box>
+                 <>
+                 <Divider />
+                 <Box width="100%" mt={4}>
+                    <Text fontWeight="semibold" mb={2}>Trigger Mechanism</Text>
+                    <Text>{ammunition.triggerMechanism}</Text>
+                 </Box>
+                </>
             )}
 
-            {ammunition.abilities.length > 0 && (
+            {Array.isArray(ammunition.abilities) && ammunition.abilities.length > 0 && (
               <>
                 <Divider />
-                <Box width="100%">
+                <Box width="100%" mt={4}>
                   <Text fontWeight="semibold" mb={2}>Abilities</Text>
                   <VStack align="start">
                     {ammunition.abilities.map((ability, index) => (
-                      <Text key={index}>{ability}</Text>
+                      ability && <Text key={index}>{ability}</Text>
                     ))}
                   </VStack>
                 </Box>
               </>
+            )}
+
+
+            {(ammunition.sellValue !== undefined || ammunition.buyValue !== undefined) && (
+                <>
+                 <Divider />              
+                </>
             )}
           </VStack>
         </ModalBody>

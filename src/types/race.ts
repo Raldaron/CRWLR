@@ -11,4 +11,6 @@ export interface Race {
     traits: string[];
     lore: string;
     armorrating: number;
+    hpbonus: number;
+    mpbonus: number;
   }

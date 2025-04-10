@@ -5380,6 +5380,74 @@
       },
       "abilityPointCost": 3,
       "cooldown": "Once per short rest"
+    },
+    "vulture_barrage": {
+      "name": "Vulture Barrage",
+      "description": "Unleash a swift volley of crossbow bolts that manifest as spectral vultures mid-flight, ripping at foes in a wide arc. Ideal for large groups or situations requiring rapid suppression.",
+      "effect": "Make multiple ranged attacks in a 30-foot cone, each bolt transforming into vulture-like spirits that tear at enemies.",
+      "range": "30-foot cone",
+      "damage": "Weapon damage + 2d8",
+      "damagetype": "Piercing + Necrotic",
+      "scaling": {
+        "Level 1": "Fire 3 bolts in a wide cone. Each creature in the 30-foot cone must make a Dexterity save or take weapon damage + 2d8 necrotic. On a success, half damage.",
+        "Level 2": "",
+        "Level 3": "Number of bolts increases to 4, necrotic damage increases to 3d8.",
+        "Level 4": "",
+        "Level 5": "Cone size becomes 45 feet. Creatures that fail the save by 5 or more are frightened for 1 round.",
+        "Level 6": "",
+        "Level 7": "Number of bolts increases to 5, necrotic damage increases to 4d8.",
+        "Level 8": "",
+        "Level 9": "If at least half the targets in the cone are hit, you regain 1 ability point (once per use).",
+        "Level 10": "Necrotic damage ignores resistance. Frightened duration increases to 2 rounds on a fail by 5+."
+      },
+      "abilitypointcost": 5,
+      "cooldown": "Once per short rest"
+    },
+
+    "nekhebits_malediction": {
+      "name": "Nekhebit's Malediction",
+      "description": "Channel the curse of the vulture goddess into a single, haunting bolt. On impact, the goddess’s wrath seeps into the target, stifling healing and cursing its bloodline—if only for a moment.",
+      "effect": "Fire a specially cursed bolt that reduces healing and imposes a short-lived lineage curse on the target.",
+      "range": "Weapon range",
+      "damage": "Weapon damage + 3d6",
+      "damagetype": "Piercing + Curse",
+      "scaling": {
+        "Level 1": "On hit, deal weapon damage + 3d6. Target must make a Wit save or be cursed for 2 rounds, halving any healing it receives. Critical hits extend the curse to 3 rounds.",
+        "Level 2": "",
+        "Level 3": "Damage increases to 4d6, curse now also gives the target disadvantage on saving throws against bleed or poison effects.",
+        "Level 4": "",
+        "Level 5": "Cursed targets that fail their save by 5+ are also frightened for 1 round. You gain +1 to Archery checks while wielding this crossbow.",
+        "Level 6": "",
+        "Level 7": "Damage increases to 5d6, and the curse reduces healing to one-quarter instead of half.",
+        "Level 8": "",
+        "Level 9": "Once per day, you can make the curse persist for 1 minute if the target fails its save. Allies attacking the cursed foe deal +1d6 bonus damage.",
+        "Level 10": "Healing negation extends to complete nullification (no healing) for 2 rounds. Boss-level targets might get advantage on the save (DM’s discretion)."
+      },
+      "abilitypointcost": 5,
+      "cooldown": "Once per short rest"
+    },
+
+    "faithful_storm_of_talons": {
+      "name": "Faithful Storm of Talons",
+      "description": "Invoke Nekhebit’s lingering devotion to her last warrior. The crossbow auto-loads multiple bolts in a flash, each trailing a swirling gale of vulture talons that ravage distant foes in a piercing storm.",
+      "effect": "A rapid-fire sequence of shots that envelop an area in spiritual talons and wind gusts, knocking targets off-balance.",
+      "range": "Up to 60 feet (15-foot radius at impact)",
+      "damage": "Weapon damage + 2d8",
+      "damagetype": "Piercing + Wind",
+      "scaling": {
+        "Level 1": "Select a point within 60 feet. All creatures in a 15-foot radius must Dex save or take weapon damage + 2d8. On fail, they’re also pushed 10 feet away.",
+        "Level 2": "",
+        "Level 3": "Damage increases to 3d8, push distance to 15 feet.",
+        "Level 4": "",
+        "Level 5": "On a failed save by 5+, foes are also knocked prone. Gain +1 to Grit checks due to unwavering faith in Nekhebit.",
+        "Level 6": "",
+        "Level 7": "Damage increases to 4d8. Allies in the radius can choose to remain unaffected by the wind gust.",
+        "Level 8": "",
+        "Level 9": "Once per day, triple the radius to 45 feet. The swirling talons block line of sight for 1 round, granting you half cover inside it.",
+        "Level 10": "Damage increases to 5d8, ignoring normal wind or projectile resistances. Push distance becomes 20 feet, and prone is automatic on fail."
+      },
+      "abilitypointcost": 5,
+      "cooldown": "Once per short rest"
     }
   }
 }

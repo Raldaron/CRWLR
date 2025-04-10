@@ -28,9 +28,9 @@ const GameInitializer = () => {
 
       // Get the query parameters:
       // If no characterId is provided, default to the user's UID (primary record)
-      const providedCharacterId = searchParams.get('characterId');
+      const providedCharacterId = searchParams?.get('characterId') ?? null;
       const characterId = providedCharacterId || currentUser.uid;
-      const isNewCharacter = searchParams.get('new') === 'true';
+      const isNewCharacter = searchParams?.get('new') === 'true';
 
       try {
         const characterDoc = await getDoc(doc(db, 'characters', characterId));
@@ -89,8 +89,8 @@ const GameInitializer = () => {
   }
 
   // Use the characterId from the query (or default to user's UID)
-  const characterId = searchParams.get('characterId') || currentUser!.uid;
-  const isNewCharacter = searchParams.get('new') === 'true';
+  const characterId = searchParams?.get('characterId') || currentUser!.uid;
+  const isNewCharacter = searchParams?.get('new') === 'true';
 
   return <GameApp 
     isNewCharacter={isNewCharacter} 

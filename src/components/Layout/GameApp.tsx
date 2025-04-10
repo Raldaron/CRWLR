@@ -1,41 +1,44 @@
+// components/Layout/GameApp.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Button, 
-  Input, 
-  Text, 
-  VStack, 
-  Heading, 
-  HStack, 
+import {
+  Box,
+  Button,
+  Input,
+  Text,
+  VStack,
+  Heading,
+  HStack,
   useToast,
   useColorModeValue
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import TabLayout from './TabLayout';
-import { Tab } from '../../types/tabs';
-import { useCharacter } from '@/context/CharacterContext';
-import { useAuth } from '@/context/AuthContext';
+import { Tab } from '../../types/tabs'; // Ensure correct path
+import { useCharacter } from '@/context/CharacterContext'; // Ensure correct path
+import { useAuth } from '@/context/AuthContext'; // Ensure correct path
+import { useDM } from '@/context/DMContext'; // Ensure correct path
 import CharacterHeader from './CharacterHeader';
 
-// Import all components
+// Import all components (ensure paths are correct)
 import Stats from '../stats/Stats';
 import Skills from '../stats/Skills';
 import Traits from '../stats/Traits';
 import Attacks from '../actions/Attacks';
 import Abilities from '../actions/Abilities';
 import Spells from '../actions/Spells';
-import HotList from '../actions/HotList';  
+import HotList from '../actions/HotList';
 import Weapons from '../equipment/Weapons';
 import Armor from '../equipment/Armor';
 import Utility from '../equipment/Utility';
 import Character from '../character/Character';
-import Inventory from '../inventory/Inventory';
+import Inventory from '../inventory/Inventory'; // This component now handles the Shops tab internally
 import Arcana from '../arcana/Arcana';
 import Loot from '../loot/Loot';
 import Quests from '../quests/Quests';
 import Notes from '../notes/Notes';
+import { Shield } from 'lucide-react';
 
 // Extend the GameApp props to include characterId
 export interface GameAppProps {
@@ -43,13 +46,13 @@ export interface GameAppProps {
   characterId?: string;
 }
 
-const GameApp: React.FC<GameAppProps> = ({ 
-  isNewCharacter = false, 
-  characterId 
+const GameApp: React.FC<GameAppProps> = ({
+  isNewCharacter = false,
+  characterId
 }) => {
   // State for main tabs and sub-tabs
   const [activeMainTab, setActiveMainTab] = useState<number>(0);
-  const [activeSubTab, setActiveSubTab] = useState<number>(0);
+  const [activeSubTab, setActiveSubTab] = useState<number>(0); // This state manages sub-tabs within components like Stats, Actions, Equipment
   const toast = useToast();
 
   // Get auth functions and currentUser from AuthContext
@@ -57,6 +60,9 @@ const GameApp: React.FC<GameAppProps> = ({
 
   // Get the deleteCharacter function from CharacterContext
   const { deleteCharacter } = useCharacter();
+
+  // Get DM status from DMContext
+  const { isDM } = useDM();
 
   // Show toast for new character creation
   useEffect(() => {
@@ -71,7 +77,7 @@ const GameApp: React.FC<GameAppProps> = ({
       });
     }
   }, [isNewCharacter, toast]);
-  
+
   // Local state for authentication form
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -96,7 +102,7 @@ const GameApp: React.FC<GameAppProps> = ({
             { id: 'traits', label: 'Traits', content: <Traits /> }
           ]}
           activeTab={activeSubTab}
-          onTabChange={setActiveSubTab}
+          onTabChange={setActiveSubTab} // Pass state setter for sub-tabs
         />
       )
     },
@@ -112,7 +118,7 @@ const GameApp: React.FC<GameAppProps> = ({
             { id: 'hotlist', label: 'Hot List', content: <HotList /> }
           ]}
           activeTab={activeSubTab}
-          onTabChange={setActiveSubTab}
+          onTabChange={setActiveSubTab} // Pass state setter for sub-tabs
         />
       )
     },
@@ -127,14 +133,14 @@ const GameApp: React.FC<GameAppProps> = ({
             { id: 'utility', label: 'Utility', content: <Utility /> }
           ]}
           activeTab={activeSubTab}
-          onTabChange={setActiveSubTab}
+          onTabChange={setActiveSubTab} // Pass state setter for sub-tabs
         />
       )
     },
     {
       id: 'inventory',
       label: 'Inventory',
-      content: <Inventory />
+      content: <Inventory /> // Inventory component now handles its own sub-tabs including Shops
     },
     {
       id: 'arcana',
@@ -248,7 +254,7 @@ const GameApp: React.FC<GameAppProps> = ({
   return (
     <Box minH="100vh" p={{ base: 2, md: 4 }} bg="bg">
       <Box
-        maxW="6xl"
+        maxW="6xl" // You might want to increase this for a wider layout: e.g., "7xl", "8xl", or "container.xl"
         mx="auto"
         bg="bgAlt"
         borderRadius="lg"
@@ -303,6 +309,31 @@ const GameApp: React.FC<GameAppProps> = ({
                 Manage Characters
               </Button>
             </Link>
+
+            {/* Add DM Settings button if user is a DM */}
+            {isDM && (
+              <Button
+                colorScheme="brand"
+                size="sm"
+                as={Link}
+                href="/dm-settings"
+                leftIcon={<Shield size={16} />}
+              >
+                DM Settings
+              </Button>
+            )}
+             {/* Add DM Dashboard Link if user is a DM */}
+             {isDM && (
+                <Button
+                    colorScheme="purple" // Changed color for distinction
+                    size="sm"
+                    as={Link}
+                    href="/dm" // Link to the DM dashboard page
+                    leftIcon={<Shield size={16} />}
+                >
+                    DM Dashboard
+                </Button>
+            )}
           </HStack>
         </Box>
 
@@ -313,6 +344,7 @@ const GameApp: React.FC<GameAppProps> = ({
             activeTab={activeMainTab}
             onTabChange={(index) => {
               setActiveMainTab(index);
+              // Reset sub-tab index when main tab changes to avoid index out of bounds
               setActiveSubTab(0);
             }}
           />
