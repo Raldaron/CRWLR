@@ -9,15 +9,16 @@ export const DEFAULT_COLUMNS = ['name', 'itemType', 'rarity'];
 export const ITEM_TYPE_COLUMNS: Record<string, string[]> = {
   'Weapon': ['name', 'weaponType', 'damageAmount', 'damageType', 'meleeRanged', 'rarity'],
   'Armor': ['name', 'armorType', 'armorRating', 'tankModifier', 'rarity'],
-  'Ammunition': ['name', 'damageAmount', 'damageType', 'range', 'radius', 'rarity'], // Added radius
-  'Potion': ['name', 'effect', 'duration', 'healfor', 'manaback', 'rarity'], // Updated for potions
-  'Pharmaceutical': ['name', 'effect', 'duration', 'healfor', 'manaback', 'rarity'], // Same as Potion for now
-  'Scroll': ['name', 'effect', 'castingTime', 'cooldown', 'rarity'], // Assuming scroll type is correct
-  'Crafting Component': ['name', 'effect', 'rarity'], // Simplified based on CSV
-  'Trap': ['name', 'effect', 'damage', 'damageType', 'duration', 'triggerMechanism', 'rarity'], // Updated for traps
-  'Explosive': ['name', 'damage', 'damageType', 'blastradius', 'triggerMechanism', 'duration', 'rarity'], // Updated for explosives
-  'Throwable': ['name', 'damage', 'damageType', 'blastradius', 'triggerMechanism', 'duration', 'rarity'], // Same as Explosive for now
-  'Miscellaneous': ['name', 'description', 'rarity'], // Basic columns for misc
+  'Ammunition': ['name', 'damageAmount', 'damageType', 'range', 'rarity'], // Removed radius if not used
+  'Potion': ['name', 'effect', 'duration', 'rarity'], // Simplified Potion view
+  'Pharmaceutical': ['name', 'effect', 'duration', 'rarity'], // Simplified view
+  'Scroll': ['name', 'effect', 'castingTime', 'rarity'], // Simplified Scroll view
+  'Crafting Component': ['name', 'rarity'], // Basic view for components
+  'Trap': ['name', 'damage', 'triggerMechanism', 'rarity'], // Simplified Trap view
+  'Explosive': ['name', 'damage', 'blastradius', 'rarity'], // Simplified Explosive view
+  'Throwable': ['name', 'damage', 'blastradius', 'rarity'], // Simplified Throwable view
+  'Recipe': ['name', 'rarity', 'description'], // Define columns for Recipe items
+  'Miscellaneous': ['name', 'description', 'rarity'],
 };
 
 

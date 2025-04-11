@@ -20,6 +20,8 @@ import { useCharacter } from '@/context/CharacterContext'; // Ensure correct pat
 import { useAuth } from '@/context/AuthContext'; // Ensure correct path
 import { useDM } from '@/context/DMContext'; // Ensure correct path
 import CharacterHeader from './CharacterHeader';
+import Crafting from '../crafting/Crafting'; // Import the new component
+import { Wrench } from 'lucide-react'; // Import an icon
 
 // Import all components (ensure paths are correct)
 import Stats from '../stats/Stats';
@@ -146,6 +148,11 @@ const GameApp: React.FC<GameAppProps> = ({
       id: 'arcana',
       label: 'Arcana',
       content: <Arcana />
+    },
+    {
+      id: 'crafting',
+      label: 'Crafting',
+      content: <Crafting />, // Add the Crafting component
     },
     {
       id: 'loot',

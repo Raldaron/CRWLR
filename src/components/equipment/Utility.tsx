@@ -44,6 +44,17 @@ import CraftingComponentCard from '@/components/ItemCards/CraftingComponentCard'
 import PotionCard from '@/components/ItemCards/PotionCard';
 import ScrollCard from '@/components/ItemCards/ScrollCard';
 import type { InventoryItem } from '@/types/inventory';
+// Define item catalog data structure
+interface ItemCatalogData {
+  ammunition: AmmunitionItem[];
+  craftingComponents: CraftingComponentItem[];
+  explosives: ExplosiveItem[];
+  scrolls: ScrollItem[];
+  traps: TrapItem[];
+  potions: PotionItem[];
+  pharmaceuticals: PotionItem[];
+}
+
 // Modal Imports (ensure paths are correct)
 import AmmunitionDetailModal from '@/components/Modals/AmmunitionDetailModal';
 import ScrollDetailModal from '@/components/Modals/ScrollDetailModal';
@@ -81,20 +92,21 @@ const ALLOWED_TYPES = [
   'Explosive', // Covers Explosive and Throwable for filtering
   'Scroll',
   'Trap',
-  'Potion' // Covers Potion and Pharmaceutical for filtering
+  'Potion', // Covers Potion for filtering
+  'Pharmaceutical' // Add Pharmaceutical as a separate type
 ];
 
-// Interface for the fetched item catalog structure
-interface ItemCatalogData {
-    ammunition: AmmunitionItem[];
-    craftingComponents: CraftingComponentItem[];
-    explosives: ExplosiveItem[];
-    scrolls: ScrollItem[];
-    traps: TrapItem[];
-    potions: PotionItem[];
-}
+// Tab labels for display
+const tabLabels: { [key: string]: string } = {
+  'Ammunition': 'Ammo',
+  'Crafting Component': 'Crafting',
+  'Explosive': 'Explosives',
+  'Scroll': 'Scrolls',
+  'Trap': 'Traps',
+  'Potion': 'Potions',
+  'Pharmaceutical': 'Pharmaceuticals'
+};
 
-// *** Function definition restored ***
 // Safely render item cards based on item type
 const getItemCard = (item: InventoryItem, onClick: () => void) => {
   // Add null/undefined check for item itself
@@ -102,6 +114,7 @@ const getItemCard = (item: InventoryItem, onClick: () => void) => {
       console.warn("getItemCard received null or undefined item");
       return <Box p={3} borderWidth="1px" borderRadius="md" bg="gray.700"><Text color="red.400">Invalid Item Data</Text></Box>;
   }
+  
   // Add null/undefined check for itemType
   if (!item.itemType) {
        console.warn("getItemCard received item with no itemType:", item);
@@ -113,35 +126,42 @@ const getItemCard = (item: InventoryItem, onClick: () => void) => {
        );
   }
 
-  switch (item.itemType) {
-    case 'Ammunition':
-      return <AmmunitionCard item={item as AmmunitionItem} onClick={onClick} />;
-    case 'Crafting Component':
-      return <CraftingComponentCard item={item as CraftingComponentItem} onClick={onClick} />;
-    case 'Explosive':
-    case 'Throwable':
-      return <ExplosivesCard item={item as ExplosiveItem} onClick={onClick} />;
-    case 'Scroll':
-       const safeScrollItem = {
-           ...item,
-           duration: typeof item.duration === 'string' ? parseInt(item.duration, 10) || 0 : typeof item.duration === 'number' ? item.duration : 0,
-        };
-       return <ScrollCard item={safeScrollItem as unknown as ScrollItem} onClick={onClick} />;
-    case 'Trap':
-      return <TrapCard item={item as TrapItem} onClick={onClick} />;
-    case 'Potion':
-    case 'Pharmaceutical':
-      return <PotionCard item={item as PotionItem} onClick={onClick} />;
-    default:
-       console.warn(`Utility: No card defined for itemType "${item.itemType}"`);
-       return ( // Fallback card
-           <Box p={3} borderWidth="1px" borderRadius="md" onClick={onClick} cursor="pointer" bg="gray.700">
-               <Text fontWeight="bold">{item.name}</Text>
-               <Badge>{item.itemType}</Badge>
-           </Box>
-       );
+  // Normalize the item type for case-insensitive comparison
+  const normalizedType = item.itemType.toLowerCase();
+
+  // Match based on normalized type
+  if (normalizedType === 'ammunition') {
+    return <AmmunitionCard item={item as AmmunitionItem} onClick={onClick} />;
+  } 
+  else if (normalizedType === 'crafting component' || normalizedType === 'craftingcomponent') {
+    return <CraftingComponentCard item={item as CraftingComponentItem} onClick={onClick} />;
+  } 
+  else if (normalizedType === 'explosive' || normalizedType === 'throwable') {
+    return <ExplosivesCard item={item as ExplosiveItem} onClick={onClick} />;
+  } 
+  else if (normalizedType === 'scroll') {
+    const safeScrollItem = {
+        ...item,
+        duration: typeof item.duration === 'string' ? parseInt(item.duration, 10) || 0 : typeof item.duration === 'number' ? item.duration : 0,
+    };
+    return <ScrollCard item={safeScrollItem as unknown as ScrollItem} onClick={onClick} />;
+  } 
+  else if (normalizedType === 'trap') {
+    return <TrapCard item={item as TrapItem} onClick={onClick} />;
+  } 
+  else if (normalizedType === 'potion' || normalizedType === 'pharmaceutical') {
+    return <PotionCard item={item as PotionItem} onClick={onClick} />;
   }
-};
+  
+  // Fallback for unrecognized types
+  console.warn(`Utility: No card defined for normalized itemType "${normalizedType}" (original: "${item.itemType}")`);
+  return (
+    <Box p={3} borderWidth="1px" borderRadius="md" onClick={onClick} cursor="pointer" bg="gray.700">
+        <Text fontWeight="bold">{item.name}</Text>
+        <Badge>{item.itemType}</Badge>
+    </Box>
+  );
+}
 
 
 const Utility: React.FC = () => {
@@ -164,7 +184,7 @@ const Utility: React.FC = () => {
   const [error, setError] = useState<string | null>(null); // Error state for catalog fetch
   const [quantityToAdd, setQuantityToAdd] = useState(1); // State for quantity modal
   const [itemCatalog, setItemCatalog] = useState<ItemCatalogData>({
-    ammunition: [], craftingComponents: [], explosives: [], scrolls: [], traps: [], potions: []
+    ammunition: [], craftingComponents: [], explosives: [], scrolls: [], traps: [], potions: [], pharmaceuticals: []
   });
 
   // Modal controls (Restored)
@@ -174,115 +194,172 @@ const Utility: React.FC = () => {
 
   // *** Function definition restored with blastradius fix ***
   // Load items from Firestore
-  const fetchItems = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    console.log("Fetching items from Firestore...");
+  // Update the fetchItems function to include pharmaceuticals collection
+const fetchItems = useCallback(async () => {
+  setIsLoading(true);
+  setError(null);
+  console.log("Fetching items from Firestore...");
 
-    try {
-      const newItemCatalog: ItemCatalogData = {
-        ammunition: [], craftingComponents: [], explosives: [], scrolls: [], traps: [], potions: []
-      };
+  try {
+    const newItemCatalog: ItemCatalogData = {
+      ammunition: [], 
+      craftingComponents: [], 
+      explosives: [], 
+      scrolls: [], 
+      traps: [], 
+      potions: [],
+      pharmaceuticals: [] // Add pharmaceuticals array to catalog
+    };
 
-      const collectionsToFetch: { name: string; key: keyof ItemCatalogData; type: string }[] = [
-        { name: 'ammunition', key: 'ammunition', type: 'Ammunition' },
-        { name: 'crafting_components', key: 'craftingComponents', type: 'Crafting Component' },
-        { name: 'explosives', key: 'explosives', type: 'Explosive' },
-        { name: 'scrolls', key: 'scrolls', type: 'Scroll' },
-        { name: 'traps', key: 'traps', type: 'Trap' },
-        { name: 'potions', key: 'potions', type: 'Potion' },
-        { name: 'pharmaceuticals', key: 'potions', type: 'Pharmaceutical' },
-      ];
+    const collectionsToFetch: { name: string; key: keyof ItemCatalogData; type: string }[] = [
+      { name: 'ammunition', key: 'ammunition', type: 'Ammunition' },
+      { name: 'crafting_components', key: 'craftingComponents', type: 'Crafting Component' },
+      { name: 'explosives', key: 'explosives', type: 'Explosive' },
+      { name: 'scrolls', key: 'scrolls', type: 'Scroll' },
+      { name: 'traps', key: 'traps', type: 'Trap' },
+      { name: 'potions', key: 'potions', type: 'Potion' },
+      { name: 'pharmaceuticals', key: 'pharmaceuticals', type: 'Pharmaceutical' }, // Add pharmaceuticals collection
+    ];
 
-      for (const { name, key, type } of collectionsToFetch) {
-        try {
-          const collectionRef = collection(db, name);
-          const snapshot = await getDocs(collectionRef);
+    for (const { name, key, type } of collectionsToFetch) {
+      try {
+        const collectionRef = collection(db, name);
+        const snapshot = await getDocs(collectionRef);
 
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data && data.name) {
-              let finalItemType = data.itemType || type;
-              if (name === 'explosives' && data.itemType !== 'Explosive' && data.itemType !== 'Throwable') {
-                finalItemType = 'Explosive';
-              }
-              if ((name === 'potions' || name === 'pharmaceuticals') && data.itemType !== 'Potion' && data.itemType !== 'Pharmaceutical') {
-                finalItemType = type;
-              }
-
-              // Process blastradius - Keep original string if not just a number
-              let processedBlastRadius: string | number | undefined = data.blastradius;
-              if (typeof data.blastradius === 'string') {
-                const trimmed = data.blastradius.trim();
-                const parsed = parseFloat(trimmed);
-                if (!isNaN(parsed) && String(parsed) === trimmed) {
-                  processedBlastRadius = parsed;
-                }
-              } else if (typeof data.blastradius !== 'number') {
-                processedBlastRadius = undefined;
-              }
-
-              let specificData: any = {};
-              if (finalItemType === 'Explosive' || finalItemType === 'Throwable') {
-                 specificData.blastradius = processedBlastRadius;
-              }
-              if (finalItemType === 'Potion' || finalItemType === 'Pharmaceutical') {
-                 specificData.statBonus = {}; specificData.skillBonus = {};
-                 if (data.statBonus && typeof data.statBonus === 'object') Object.entries(data.statBonus).forEach(([k, v]) => specificData.statBonus[k] = typeof v === 'string' ? parseFloat(v) || 0 : (v || 0));
-                 if (data.skillBonus && typeof data.skillBonus === 'object') Object.entries(data.skillBonus).forEach(([k, v]) => specificData.skillBonus[k] = typeof v === 'string' ? parseFloat(v) || 0 : (v || 0));
-              }
-
-              const itemToAdd = { ...data, id: doc.id, itemType: finalItemType, ...specificData };
-              (newItemCatalog[key] as any[]).push(itemToAdd);
-
-            } else {
-              console.warn(`Document ${doc.id} in ${name} missing name or data.`);
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data && data.name) {
+            // Ensure itemType is properly set
+            let finalItemType = data.itemType || type;
+            
+            // Normalize item types
+            if (name === 'explosives' && 
+                finalItemType.toLowerCase() !== 'explosive' && 
+                finalItemType.toLowerCase() !== 'throwable') {
+              finalItemType = 'Explosive';
             }
-          });
-        } catch (collectionError) {
-          console.error(`Error fetching ${name}:`, collectionError);
-          setError(`Failed to load ${name}.`);
-        }
-      }
+            if ((name === 'potions' || name === 'pharmaceuticals') && 
+                finalItemType.toLowerCase() !== 'potion' && 
+                finalItemType.toLowerCase() !== 'pharmaceutical') {
+              finalItemType = type;
+            }
 
-      setItemCatalog(newItemCatalog);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching items:", err);
-      setError("Failed to load item catalog. Please try again later.");
-    } finally {
-      setIsLoading(false);
+            // Process blastradius - Keep original string if not just a number
+            let processedBlastRadius: string | number | undefined = data.blastradius;
+            if (typeof data.blastradius === 'string') {
+              const trimmed = data.blastradius.trim();
+              const parsed = parseFloat(trimmed);
+              if (!isNaN(parsed) && String(parsed) === trimmed) {
+                processedBlastRadius = parsed;
+              }
+            } else if (typeof data.blastradius !== 'number') {
+              processedBlastRadius = undefined;
+            }
+
+            // Build specific data for the item based on its type
+            let specificData: any = {};
+            if (finalItemType.toLowerCase() === 'explosive' || 
+                finalItemType.toLowerCase() === 'throwable') {
+              specificData.blastradius = processedBlastRadius;
+            }
+            if (finalItemType.toLowerCase() === 'potion' || 
+                finalItemType.toLowerCase() === 'pharmaceutical') {
+              specificData.statBonus = {}; 
+              specificData.skillBonus = {};
+              
+              // Process stat bonuses
+              if (data.statBonus && typeof data.statBonus === 'object') {
+                Object.entries(data.statBonus).forEach(([k, v]) => {
+                  specificData.statBonus[k] = typeof v === 'string' 
+                    ? parseFloat(v) || 0 
+                    : (v || 0);
+                });
+              }
+              
+              // Process skill bonuses
+              if (data.skillBonus && typeof data.skillBonus === 'object') {
+                Object.entries(data.skillBonus).forEach(([k, v]) => {
+                  specificData.skillBonus[k] = typeof v === 'string' 
+                    ? parseFloat(v) || 0 
+                    : (v || 0);
+                });
+              }
+            }
+
+            // Create the item with all necessary data
+            const itemToAdd = { 
+              ...data, 
+              id: doc.id, 
+              itemType: finalItemType, 
+              ...specificData 
+            };
+            
+            // Add to the appropriate array in the catalog
+            (newItemCatalog[key] as any[]).push(itemToAdd);
+
+          } else {
+            console.warn(`Document ${doc.id} in ${name} missing name or data.`);
+          }
+        });
+      } catch (collectionError) {
+        console.error(`Error fetching ${name}:`, collectionError);
+        setError(`Failed to load ${name}.`);
+      }
     }
-  }, []); // Dependencies: empty array means fetch once on mount
+
+    setItemCatalog(newItemCatalog);
+    setError(null);
+  } catch (err) {
+    console.error("Error fetching items:", err);
+    setError("Failed to load item catalog. Please try again later.");
+  } finally {
+    setIsLoading(false);
+  }
+}, []);  // Dependencies: empty array means fetch once on mount
 
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
 
   // *** Function definition restored ***
-  // Get items based on the selected tab/type
-   const getItemsByType = (type: string): InventoryItem[] => {
-       switch (type) {
-         case 'Ammunition': return itemCatalog.ammunition as InventoryItem[];
-         case 'Crafting Component': return itemCatalog.craftingComponents as InventoryItem[];
-         case 'Explosive': return itemCatalog.explosives as InventoryItem[];
-         case 'Scroll': return itemCatalog.scrolls as InventoryItem[];
-         case 'Trap': return itemCatalog.traps as InventoryItem[];
-         case 'Potion': return itemCatalog.potions as InventoryItem[];
-         default: return [];
-       }
-   };
+ // Get items based on the selected tab/type
+const getItemsByType = (type: string): InventoryItem[] => {
+  // Normalize type for consistent comparison
+  const normalizedType = type.toLowerCase();
+  
+  switch (normalizedType) {
+    case 'ammunition': 
+      return itemCatalog.ammunition as InventoryItem[];
+    case 'crafting component': 
+      return itemCatalog.craftingComponents as InventoryItem[];
+    case 'explosive': 
+      return [...itemCatalog.explosives as InventoryItem[]]; // Return a copy of the array
+    case 'scroll': 
+      return itemCatalog.scrolls as InventoryItem[];
+    case 'trap': 
+      return itemCatalog.traps as InventoryItem[];
+    case 'potion': 
+      // For potions tab, include both potions and pharmaceuticals
+      return [...itemCatalog.potions, ...itemCatalog.pharmaceuticals] as InventoryItem[];
+    case 'pharmaceutical': 
+      return itemCatalog.pharmaceuticals as InventoryItem[];
+    default: 
+      return [];
+  }
+};
 
   // Items to display in tabs
   const itemTypesForTabs = ALLOWED_TYPES;
-  const tabLabels: { [key: string]: string } = {
-      'Ammunition': 'Ammo',
-      'Crafting Component': 'Crafting',
-      'Explosive': 'Explosives/Throwables',
-      'Scroll': 'Scrolls',
-      'Trap': 'Traps',
-      'Potion': 'Potions/Pharma'
-  };
+  // Tab labels for display
+const tabLabels: { [key: string]: string } = {
+  'Ammunition': 'Ammo',
+  'Crafting Component': 'Crafting',
+  'Explosive': 'Explosives',
+  'Scroll': 'Scrolls',
+  'Trap': 'Traps',
+  'Potion': 'Potions',
+  'Pharmaceutical': 'Pharmaceuticals'
+};
 
   // --- Event Handlers (Restored/Verified) ---
   const handleViewDetails = (item: InventoryItem) => { setSelectedItem(item); openItemDetail(); };

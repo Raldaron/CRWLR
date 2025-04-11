@@ -28,6 +28,7 @@ import {
   setDoc,
   addDoc,
   deleteDoc,
+  updateDoc,
   query,
   where,
   serverTimestamp, // Use server timestamp for saves
@@ -235,7 +236,7 @@ export interface CharacterContextType {
   equipMultipleItems: (equipmentUpdates: Partial<Record<keyof EquippedItems, InventoryItem | null>>) => void;
   getStatBonus: (stat: string) => number; // Derived from manager
   getSkillBonus: (skill: string) => number; // Derived from manager
-  // Utility Slots
+  removeItems: (items: { itemId: string; quantity: number }[]) => Promise<void>;
   utilitySlots: UtilitySlot[]; setUtilitySlots: (slots: UtilitySlot[]) => void;
   addItemToUtilitySlot: (slotId: string, item: InventoryItem, quantity: number) => void;
   removeItemFromUtilitySlot: (slotId: string) => void;
@@ -267,6 +268,8 @@ export interface CharacterContextType {
     transactionType: 'buy' | 'sell';
     reason: string
   }) => Promise<void>;
+  // Crafting
+  craftItem: (componentsToRemove: { itemId: string; quantity: number }[], itemToAdd: InventoryItem) => Promise<boolean>;
   // Save & Reset
   isDirty: boolean; isSaving: boolean; lastSaveTime: number; // lastSaveTime tracks local JS time of last *successful* save
   saveCharacterManually: () => Promise<void>;
@@ -441,6 +444,21 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
+      // Clean data to replace any remaining undefined with null
+      const removeUndefined = (obj: any): any => {
+        if (obj === undefined) return null;
+        if (obj === null) return null;
+        if (typeof obj !== 'object') return obj;
+        if (Array.isArray(obj)) return obj.map(item => removeUndefined(item));
+        const cleanedObj: any = {};
+        Object.entries(obj).forEach(([key, value]) => {
+          cleanedObj[key] = removeUndefined(value);
+        });
+        return cleanedObj;
+      };
+
+      const cleanedDataToSave = removeUndefined(finalDataToSave);
+
       if (needsCreation) {
         // Create a type for the creation data that includes an index signature
         type CreationDataType = {
@@ -471,10 +489,10 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
         setDocId(newDocRef.id);
         console.log(`Created new character with ID: ${newDocRef.id}`);
         router.replace(`/game?characterId=${newDocRef.id}`, { scroll: false }); // Update URL without reload
-      } else if (currentDocId && Object.keys(finalDataToSave).length > 2) { // Only save if there's more than just userId/timestamp
+      } else if (currentDocId && Object.keys(cleanedDataToSave).length > 2) { // Only save if there's more than just userId/timestamp
         const characterRef = doc(db, 'characters', currentDocId);
-        await setDoc(characterRef, finalDataToSave, { merge: true }); // Use merge:true for partial updates
-        console.log(`Saved character changes to document: ${currentDocId}. Fields:`, Object.keys(finalDataToSave));
+        await setDoc(characterRef, cleanedDataToSave, { merge: true }); // Now using cleanedDataToSave here
+        console.log(`Saved character changes to document: ${currentDocId}. Fields:`, Object.keys(cleanedDataToSave));
       } else if (currentDocId) {
           console.log(`No changes detected for auto-save for character: ${currentDocId}`);
           // Still reset dirty state even if nothing was saved to Firestore
@@ -499,6 +517,7 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterState, currentUser, docId, loaded, isDirty, isSaving, toast, router, isNewCharacterMode]); // Dependencies
 
+  
 
   // --- Manual Save Function ---
   const saveCharacterManually = useCallback(async () => {
@@ -604,7 +623,32 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
           equipmentBonuses.reset();
           featureManager.reset();
           const loadedEquippedItems = data.equippedItems || defaultEquippedItems;
-    
+          
+          const removeUndefined = (obj: any): any => {
+            if (obj === null || obj === undefined) {
+              return null; // Replace undefined with null
+            }
+            
+            if (Array.isArray(obj)) {
+              return obj.map(item => removeUndefined(item));
+            }
+            
+            if (typeof obj === 'object') {
+              const result: any = {};
+              for (const key in obj) {
+                const value = removeUndefined(obj[key]);
+                if (value !== undefined) {
+                  result[key] = value;
+                } else {
+                  result[key] = null; // Replace undefined with null
+                }
+              }
+              return result;
+            }
+            
+            return obj;
+          };
+
           // Helper function to parse JSON strings safely
           const safeJSONParse = (jsonString: string | undefined | null, defaultValue: any = []): any => {
             if (!jsonString) return defaultValue;
@@ -1229,6 +1273,130 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
   const processTransaction = useCallback(async (details: { itemId: string; item?: InventoryItem; quantity: number; goldChange: number; transactionType: 'buy' | 'sell'; reason: string }) => { const { itemId, item, quantity, goldChange, transactionType, reason } = details; if (quantity <= 0) { console.warn("processTransaction called with invalid quantity:", quantity); toast({ title: "Transaction Error", description: "Invalid item quantity.", status: "error"}); return; } const currentGold = characterState.gold || 0; const newGoldAmount = currentGold + goldChange; if (newGoldAmount < 0) { console.warn("processTransaction would result in negative gold."); toast({ title: "Transaction Error", description: "Transaction would result in negative gold.", status: "error"}); return; } let newInventory = [...characterState.inventory]; if (transactionType === 'buy') { if (!item) { console.error("processTransaction 'buy' called without item details."); toast({ title: "Transaction Error", description: "Missing item data for purchase.", status: "error"}); return; } const existingIndex = newInventory.findIndex(invItem => invItem.item.id === item.id); if (existingIndex >= 0) { newInventory = newInventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity + quantity } : invItem); } else { newInventory.push({ item: item, quantity: quantity }); } } else { const existingIndex = newInventory.findIndex(invItem => invItem.item.id === itemId); if (existingIndex === -1) { console.error(`processTransaction 'sell': Item ID ${itemId} not found in inventory.`); toast({ title: "Transaction Error", description: "Item to sell not found in your inventory.", status: "error"}); return; } const currentItem = newInventory[existingIndex]; if (currentItem.quantity < quantity) { console.error(`processTransaction 'sell': Insufficient quantity for item ID ${itemId}. Have ${currentItem.quantity}, need ${quantity}.`); toast({ title: "Transaction Error", description: "Not enough items to sell.", status: "error"}); return; } if (currentItem.quantity === quantity) { newInventory = newInventory.filter((_, index) => index !== existingIndex); } else { newInventory = newInventory.map((invItem, index) => index === existingIndex ? { ...invItem, quantity: invItem.quantity - quantity } : invItem); } } const newTransactionRecord: GoldTransaction = { amount: goldChange, reason: reason, timestamp: Date.now(), by: currentUser?.uid || 'player' }; const newHistory = [...characterState.goldTransactionHistory, newTransactionRecord].slice(-100); updateCharacterState({ gold: newGoldAmount, inventory: newInventory, goldTransactionHistory: newHistory }); try { await saveCharacterManually(); console.log("Transaction processed and character saved."); } catch (error) { console.error("Error saving character after transaction:", error); toast({ title: "Save Warning", description: "Transaction applied locally, but failed to save to server.", status: "warning", duration: 5000 }); } }, [characterState.gold, characterState.inventory, characterState.goldTransactionHistory, updateCharacterState, saveCharacterManually, currentUser, toast]);
 
 
+  // --- Crafting ---
+  const craftItem = useCallback(async (componentsToRemove: { itemId: string; quantity: number }[], itemToAdd: InventoryItem): Promise<boolean> => {
+    if (!docId) {
+      console.error("Cannot craft: No document ID available.");
+      toast({ title: "Crafting Error", description: "Character ID missing.", status: "error" });
+      return false;
+    }
+
+    const characterRef = doc(db, 'characters', docId);
+    const characterSnapshot = await getDoc(characterRef);
+
+    if (!characterSnapshot.exists()) {
+      throw new Error("Character document not found");
+    }
+
+    const data = characterSnapshot.data();
+    let currentInventory = Array.isArray(data.inventory) ? data.inventory : [];
+
+    // Process component removal
+    componentsToRemove.forEach(({ itemId, quantity }) => {
+      const index = currentInventory.findIndex(invItem => invItem.item.id === itemId);
+      if (index === -1) {
+        throw new Error(`Item ${itemId} not found in inventory`);
+      }
+
+      const currentQty = currentInventory[index].quantity;
+      if (currentQty < quantity) {
+        throw new Error(`Not enough of item ${itemId} (need ${quantity}, have ${currentQty})`);
+      }
+
+      if (currentQty === quantity) {
+        currentInventory.splice(index, 1);
+      } else {
+        currentInventory[index].quantity = currentQty - quantity;
+      }
+    });
+
+    // Process adding the crafted item
+    const existingIndex = currentInventory.findIndex(invItem => invItem.item.id === itemToAdd.id);
+    if (existingIndex >= 0) {
+      currentInventory[existingIndex].quantity += 1;
+    } else {
+      currentInventory.push({ item: itemToAdd, quantity: 1 });
+    }
+
+    // Update Firestore in a single operation
+    await updateDoc(characterRef, {
+      inventory: currentInventory,
+      lastUpdated: serverTimestamp()
+    });
+
+    // Update local state to match
+    setCharacterState(prevState => ({
+      ...prevState,
+      inventory: currentInventory,
+      lastUpdated: Date.now()
+    }));
+
+    console.log("Craft operation completed successfully");
+
+    // Reset dirty state
+    dirtyFieldsRef.current = {};
+    setIsDirty(false);
+    setLastSaveTime(Date.now());
+
+    return true;
+  }, [docId, toast]);
+
+  const removeItems = useCallback(async (items: { itemId: string; quantity: number }[]): Promise<void> => {
+    if (items.length === 0) return;
+    
+    // Verify all items exist in inventory with sufficient quantities
+    let canRemoveAll = true;
+    const notFoundItems: string[] = [];
+    const insufficientItems: { id: string; needed: number; available: number }[] = [];
+    
+    items.forEach(({ itemId, quantity }) => {
+      const existingItem = characterState.inventory.find(invItem => invItem.item.id === itemId);
+      if (!existingItem) {
+        canRemoveAll = false;
+        notFoundItems.push(itemId);
+      } else if (existingItem.quantity < quantity) {
+        canRemoveAll = false;
+        insufficientItems.push({ id: itemId, needed: quantity, available: existingItem.quantity });
+      }
+    });
+    
+    if (!canRemoveAll) {
+      if (notFoundItems.length > 0) {
+        console.error(`Some items not found in inventory: ${notFoundItems.join(', ')}`);
+        toast({ title: "Removal Error", description: "Some items not found in inventory", status: "error" });
+      }
+      if (insufficientItems.length > 0) {
+        console.error(`Insufficient quantities:`, insufficientItems);
+        toast({ title: "Removal Error", description: "Insufficient quantities for some items", status: "error" });
+      }
+      throw new Error("Failed to remove items due to insufficient inventory");
+    }
+    
+    // Update inventory
+    let updatedInventory = [...characterState.inventory];
+    
+    items.forEach(({ itemId, quantity }) => {
+      const index = updatedInventory.findIndex(invItem => invItem.item.id === itemId);
+      if (updatedInventory[index].quantity === quantity) {
+        // Remove item completely if quantities match
+        updatedInventory.splice(index, 1);
+      } else {
+        // Reduce quantity otherwise
+        updatedInventory[index] = {
+          ...updatedInventory[index],
+          quantity: updatedInventory[index].quantity - quantity
+        };
+      }
+    });
+    
+    // Update character state
+    updateCharacterState({ inventory: updatedInventory });
+    
+    // Indicate success in console - useful for debugging
+    console.log(`Successfully removed items:`, items);
+  }, [characterState.inventory, updateCharacterState, toast]);
+
+
   // --- Notes Management ---
   const updateNotes = useCallback((newNotes: NotesState) => updateCharacterState({ notes: newNotes }), [updateCharacterState]);
   const addNoteCategory = useCallback((category: NoteCategory) => updateNotes([...characterState.notes, category]), [characterState.notes, updateNotes]);
@@ -1255,8 +1423,12 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
     attacks, getAttacksFromEquipment, executeAttack, learnedSpells: characterState.learnedSpells, addToLearnedSpells, spellList: characterState.learnedSpells,
     notes: characterState.notes, updateNotes, addNoteCategory, updateNoteCategory, deleteNoteCategory, addNote, updateNote, deleteNote,
     gold: characterState.gold, setGold, goldTransactionHistory: characterState.goldTransactionHistory, addGold, subtractGold, processTransaction,
+    craftItem,
     isDirty, isSaving, lastSaveTime, saveCharacterManually, resetCharacter, deleteCharacter,
     docId: docId,
+    removeItems: function (items: { itemId: string; quantity: number; }[]): Promise<void> {
+      throw new Error('Function not implemented.');
+    }
   };
 
   return (
@@ -1284,6 +1456,15 @@ interface CharacterSummary {
     className?: string;
     lastUpdated?: number;
 }
+
+export const useCharacterContext = () => {
+  const context = useContext(CharacterContext);
+  if (!context) {
+    throw new Error('useCharacterContext must be used within a CharacterProvider');
+  }
+  return context;
+};
+
 
 export async function getAllCharactersForUser(userId: string): Promise<CharacterSummary[]> {
   if (!userId) return [];

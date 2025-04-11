@@ -10,7 +10,8 @@ import {
   Text,
   Badge,
   Divider,
-  Icon, // For Chevrons
+  Icon,
+  useTheme, // Import useTheme to access theme values if needed (optional)
 } from '@chakra-ui/react';
 import {
   Users,
@@ -23,7 +24,8 @@ import {
   ChevronRight,
   // Menu as MenuIcon, // Potential import if using a toggle header
 } from 'lucide-react';
-import { useDM } from '@/context/DMContext'; // Assuming this context provides DM status and data
+import { useDM } from '@/context/DMContext';
+// Import child components (ensure paths are correct)
 import DMPlayerManager from './DMPlayerManager';
 import DMLootManager from './DMLootManager';
 import DMQuestManager from './DMQuestManager';
@@ -36,23 +38,28 @@ import DMSettingsPanel from './DMSettingsPanel';
 interface NavItem {
   name: string;
   icon: React.ReactNode;
-  component: React.ReactNode;
+  component: React.ReactNode; // This component needs to be responsive internally too
 }
 
 const DMDashboard: React.FC = () => {
-  const { isDM, dmData } = useDM(); // Use your DM context hook
+  const { isDM, dmData } = useDM();
   const [activeTab, setActiveTab] = useState<string>('players');
+  const theme = useTheme(); // Access theme values if needed
 
-  // Color mode values (hardcoded dark theme)
-  const bgColor = "gray.900";
-  const sidebarBg = "gray.800";
-  const borderColor = "gray.700";
-  const highlightColor = "brand.500"; // Use your theme's brand color
-  const textColor = "gray.100";
-  const inactiveTextColor = "gray.400";
-  const hoverBgColor = "gray.700";
+  // Theme values (using semantic tokens or direct values from your theme.ts is recommended)
+  // These fall back to direct values if theme structure is different
+  const bgColor = theme.semanticTokens?.colors?.bg?.default || "gray.900";
+  const sidebarBg = theme.semanticTokens?.colors?.bgAlt?.default || "gray.800";
+  const borderColor = theme.semanticTokens?.colors?.border?.default || "gray.700";
+  const highlightColor = theme.colors?.teal?.[500] || "teal.500"; // Using teal as example highlight
+  const textColor = theme.semanticTokens?.colors?.text?.default || "gray.100";
+  const inactiveTextColor = theme.colors?.gray?.[400] || "gray.400";
+  const hoverBgColor = theme.colors?.gray?.[700] || "gray.700";
+  const primaryHeadingColor = theme.colors?.brand?.[400] || "purple.400"; // Example using brand color
 
   // Define navigation items with their respective components
+  // NOTE: Each of these components (DMPlayerManager, etc.) MUST be designed
+  // to be responsive themselves using Chakra's responsive styles.
   const navItems: { [key: string]: NavItem } = {
     players: {
       name: 'Players',
@@ -91,15 +98,15 @@ const DMDashboard: React.FC = () => {
     },
   };
 
-  // If the user is not a DM, show an error message
-  if (!isDM) {
+  // Loading state or access denied check
+  if (!isDM) { // Assuming useDM handles loading state internally
     return (
       <Box p={8} maxW="xl" mx="auto" textAlign="center">
         <Heading mb={4} color="red.500">Access Denied</Heading>
-        <Text fontSize="lg" color="gray.300">
+        <Text fontSize="lg" color={textColor}>
           You need Dungeon Master privileges to access this area.
         </Text>
-        <Text mt={4} color="gray.400">
+        <Text mt={4} color={inactiveTextColor}>
           Please contact your administrator or login with a DM account.
         </Text>
       </Box>
@@ -108,116 +115,155 @@ const DMDashboard: React.FC = () => {
 
   return (
     <Box bg={bgColor} minH="100vh">
-      <Flex h="100vh" overflow="hidden"> {/* Main container */}
-        {/* Sidebar Navigation */}
+      {/* Flex container for sidebar + content layout */}
+      <Flex h="100vh" overflow="hidden">
+
+        {/* --- Responsive Sidebar Navigation --- */}
         <Box
-          as="nav" // Semantic HTML5 tag
-          w={{ base: "70px", md: "250px" }} // Responsive width: 70px on small screens, 250px on medium and up
+          as="nav"
+          // Responsive Width: Narrow icon-only on mobile, wider with text on desktop
+          w={{ base: "60px", md: "240px" }}
           bg={sidebarBg}
           borderRight="1px"
           borderColor={borderColor}
           py={6}
-          position="fixed" // Fix the sidebar position
-          h="full" // Make sidebar full height
-          zIndex="sticky" // Keep sidebar above scrolling content
-          transition="width 0.2s ease-in-out" // Smooth width transition
+          position="fixed"
+          h="full"
+          zIndex="sticky" // Keep it above scrolling content
+          transition="width 0.2s ease-in-out" // Smooth width change
         >
           <VStack spacing={4} align="stretch" h="full">
-            {/* DM Header - Visible only on medium screens and up */}
+
+            {/* DM Header - Hidden on mobile, shown on desktop */}
             <Box px={4} mb={6} display={{ base: "none", md: "block" }}>
-              <Heading size="md" color="brand.400" mb={1}>Dungeon Master</Heading>
+              <Heading size="md" color={primaryHeadingColor} mb={1} noOfLines={1}>
+                Dungeon Master
+              </Heading>
               <Text color={inactiveTextColor} fontSize="sm" noOfLines={1}>
-                {dmData?.name || 'DM Panel'} {/* Use DM data from context if available */}
+                {dmData?.name || 'DM Panel'}
               </Text>
             </Box>
-            {/* DM Icon - Visible only on small screens */}
+
+            {/* DM Icon - Shown centered on mobile, hidden on desktop */}
             <Box px={4} mb={6} display={{ base: "flex", md: "none" }} justifyContent="center">
-              <Badge colorScheme="brand" p={2} borderRadius="md" fontSize="lg">
+              <Badge colorScheme="brand" p={1.5} borderRadius="md" fontSize="md">
                 DM
               </Badge>
             </Box>
 
-            {/* Navigation Items */}
-            <VStack spacing={1} align="stretch" flex={1} overflowY="auto"> {/* Allow nav items to scroll if needed */}
+            {/* Navigation Items Container */}
+            <VStack spacing={1} align="stretch" flex={1} overflowY="auto" overflowX="hidden">
               {Object.entries(navItems).map(([key, item]) => (
                 <Flex
                   key={key}
                   onClick={() => setActiveTab(key)}
                   py={3}
-                  px={4} // Consistent padding
+                  // Responsive Padding: More horizontal padding on desktop
+                  px={{ base: 2, md: 4 }}
                   cursor="pointer"
                   alignItems="center"
-                  justifyContent={{ base: 'center', md: 'flex-start' }} // Center icon on mobile, start on desktop
+                  // Responsive Justification: Center icon on mobile, start-aligned on desktop
+                  justifyContent={{ base: 'center', md: 'flex-start' }}
                   transition="all 0.2s ease-in-out"
-                  bg={activeTab === key ? hoverBgColor : "transparent"} // Highlight background if active
-                  color={activeTab === key ? textColor : inactiveTextColor} // Highlight text color if active
-                  _hover={{ // Hover styles
+                  bg={activeTab === key ? hoverBgColor : "transparent"}
+                  color={activeTab === key ? textColor : inactiveTextColor}
+                  _hover={{
                     bg: hoverBgColor,
                     color: textColor,
                   }}
-                  borderLeft={{ md: "4px solid" }} // Show border indicator only on medium and up
-                  borderColor={activeTab === key ? highlightColor : "transparent"} // Highlight border if active
-                  role="group" // For potential future styling needs
-                  title={item.name} // Add tooltip for icon-only view
+                  // Responsive Border Indicator: Only shown on desktop
+                  borderLeft={{ md: "4px solid" }}
+                  borderColor={activeTab === key ? highlightColor : "transparent"}
+                  role="group"
+                  title={item.name} // Tooltip helpful for icon-only view
+                  overflow="hidden" // Prevent text overflow issues during transition
+                  whiteSpace="nowrap" // Keep text on one line
                 >
                   {/* Icon */}
                   <Box
-                    mr={{ base: 0, md: 3 }} // Margin only on larger screens
+                    // Responsive Margin: Only add right margin on desktop when text is visible
+                    mr={{ base: 0, md: 3 }}
                     display="flex"
                     alignItems="center"
+                    // Ensure icon color changes correctly
+                    color={activeTab === key ? textColor : inactiveTextColor}
+                    _groupHover={{ // Ensure icon color changes on hover too
+                      color: textColor
+                    }}
                   >
                     {item.icon}
                   </Box>
-                  {/* Text Label */}
+
+                  {/* Text Label - Hidden on mobile, shown on desktop */}
                   <Text
                     fontWeight="medium"
-                    display={{ base: "none", md: "block" }} // Show text only on larger screens
+                    display={{ base: "none", md: "block" }}
                   >
                     {item.name}
                   </Text>
-                  {/* Active Indicator Arrow (Optional) */}
+
+                  {/* Active Indicator Arrow (Optional) - Hidden on mobile */}
                   <Icon
                      as={ChevronRight}
-                     ml="auto" // Push to the right
-                     display={activeTab === key ? { base: 'none', md: 'block' } : 'none'} // Show only when active and on desktop
-                     boxSize={4} // Icon size
+                     ml="auto"
+                     display={activeTab === key ? { base: 'none', md: 'block' } : 'none'}
+                     boxSize={4}
                   />
                 </Flex>
               ))}
             </VStack>
-            {/* Optional: Add a footer or collapse/expand button here if needed */}
+
+            {/* Optional Footer Area (Example) */}
+            {/*
+            <Box mt="auto" p={4} borderTop="1px" borderColor={borderColor} display={{ base: "none", md: "block" }}>
+              <Text fontSize="xs" color={inactiveTextColor}>© 2023 Your App</Text>
+            </Box>
+            */}
+
           </VStack>
         </Box>
 
-        {/* Main Content Area */}
+        {/* --- Responsive Main Content Area --- */}
         <Box
-          flex="1" // Take remaining space
-          ml={{ base: "70px", md: "250px" }} // Adjust margin based on sidebar width
-          p={{ base: 3, md: 6 }} // Responsive padding: smaller on mobile
-          overflowY="auto" // Allow main content to scroll independently
-          h="full" // Ensure it takes full height for scrolling
-          transition="margin-left 0.2s ease-in-out" // Smooth margin transition
+          flex="1"
+          // Responsive Margin: Adjust left margin based on sidebar width
+          ml={{ base: "60px", md: "240px" }}
+          // Responsive Padding: Smaller on mobile, larger on desktop
+          p={{ base: 3, md: 6 }}
+          overflowY="auto" // Allow content to scroll vertically
+          h="full"
+          transition="margin-left 0.2s ease-in-out" // Smooth margin change
         >
-          {/* Max width container for content */}
-          <Box maxW="1400px" mx="auto">
+          {/* Max width container for content readability */}
+          <Box maxW="1600px" mx="auto"> {/* Increased maxW slightly */}
+
             {/* Page Title */}
             <Heading
-                mb={{ base: 3, md: 6 }} // Responsive margin bottom
-                size={{ base: 'md', md: 'lg' }} // Responsive heading size
+                // Responsive Margin Bottom
+                mb={{ base: 4, md: 6 }}
+                // Responsive Heading Size
+                size={{ base: 'lg', md: 'xl' }} // Adjusted sizes slightly
                 color={textColor}
             >
-              {navItems[activeTab]?.name} {/* Display name of the active tab */}
+              {navItems[activeTab]?.name}
             </Heading>
-            <Divider mb={{ base: 3, md: 6 }} borderColor={borderColor} />
+
+            {/* Divider */}
+            <Divider mb={{ base: 4, md: 6 }} borderColor={borderColor} />
 
             {/* Render the active component */}
-            <Box> {/* Wrapper for the specific manager component */}
+            {/* IMPORTANT: The component rendered here (e.g., DMPlayerManager) */}
+            {/* needs its own internal responsive design using Chakra UI tools */}
+            {/* like SimpleGrid, responsive Flex direction, etc. */}
+            <Box>
               {navItems[activeTab]?.component}
             </Box>
-          </Box>
-        </Box>
-      </Flex>
-    </Box>
+
+          </Box> {/* End Max Width Container */}
+        </Box> {/* End Main Content Area */}
+
+      </Flex> {/* End Main Flex Container */}
+    </Box> /* End Root Box */
   );
 };
 

@@ -35,6 +35,7 @@ export type ItemType =
   | 'Explosive'
   | 'Throwable'
   | 'Miscellaneous'
+  | 'Recipe'
   | string; // Fallback for any unexpected values
 
 // Shared nested interfaces

@@ -13,7 +13,7 @@ import type { PotionItem } from '../../types/potion';
 
 interface PotionCardProps {
   item: PotionItem;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
 }
 
 export const PotionCard: React.FC<PotionCardProps> = ({ item, onClick }) => {

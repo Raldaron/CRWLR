@@ -20,6 +20,7 @@ interface DarkThemedCardProps {
     borderColor?: string;
     transform?: string;
     boxShadow?: string;
+    opacity?: string;
   };
 }
 

@@ -159,7 +159,7 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
                 {ability.damage !== "N/A" && (
                   <Box>
                     <Text fontWeight="semibold" color="gray.300">Damage</Text>
-                    <Text color="gray.400">{ability.damage} {ability.damagetype}</Text>
+                    <Text color="gray.400">{ability.damage} {ability.damageType}</Text>
                   </Box>
                 )}
               </SimpleGrid>
@@ -365,7 +365,7 @@ const Abilities: React.FC = () => {
         effect: "Unknown",
         range: "Unknown",
         damage: "N/A",
-        damagetype: "N/A",
+        damageType: "N/A",
         scaling: {},
         abilitypointcost: 0,
         cooldown: "Unknown",

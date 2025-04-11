@@ -3,15 +3,16 @@ export interface AbilityData {
   name: string;
   description: string;
   effect: string;
-  range: string;         // Keep this required for consistency
+  range: string;
   damage: string;
-  damagetype: string;
+  damageType: string; // <--- Ensure this is camelCase
   scaling: { [key: string]: string };
   abilitypointcost: number;
   cooldown: string;
   specialrules?: Record<string, string>;
 }
 
+// Keep Ability interface consistent if used elsewhere
 export interface Ability {
   id?: string;
   name: string;
@@ -19,7 +20,7 @@ export interface Ability {
   effect: string;
   range: string;
   damage: string;
-  damagetype: string;
+  damageType: string; // <--- Ensure this is camelCase
   scaling: { [key: string]: string };
   abilitypointcost: number;
   cooldown: string;

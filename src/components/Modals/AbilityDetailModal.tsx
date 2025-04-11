@@ -1,4 +1,4 @@
-import React from 'react'; // Remove useState, useEffect
+import React from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -6,17 +6,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  Text,
-  VStack,
-  Badge,
-  Box,
-  // Remove Spinner,
-  Divider,
-  SimpleGrid,
-  HStack,
-  // Remove Button,
-} from '@chakra-ui/react';
-import { Star, Clock, Zap } from 'lucide-react';
+  VStack,        // Keep VStack
+  HStack,        // Keep HStack
+  Text as ChakraText, // <-- Import Text with an alias
+  Badge,         // Keep Badge
+  Divider,       // Keep Divider
+  SimpleGrid,    // Keep SimpleGrid
+  Box,           // Keep Box
+  Icon,          // Keep Icon
+} from '@chakra-ui/react'; // <-- Make sure Text is imported from here
+import { Star, Clock, Zap, Target } from 'lucide-react'; // Icons remain the same
 
 // Use the detailed AbilityData interface
 interface AbilityData {
@@ -26,44 +25,31 @@ interface AbilityData {
     effect: string;
     range: string;
     damage: string;
-    damageType: string;
+    damageType: string; // Ensure this is camelCase
     scaling: { [key: string]: string };
     abilitypointcost: number;
     cooldown: string;
     specialrules?: Record<string, string>;
 }
 
-// --- FIX: Change prop name and type ---
 interface AbilityDetailModalProps {
-  ability: AbilityData | null; // Expect the full object or null
+  ability: AbilityData | null;
   isOpen: boolean;
   onClose: () => void;
 }
-// ------------------------------------
 
 const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({
-  ability, // Use the ability prop
+  ability,
   isOpen,
   onClose
 }) => {
 
-  // --- FIX: Remove internal fetching state and useEffect ---
-  // const [ability, setAbility] = useState<Ability | null>(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
-  // useEffect(() => { /* ... remove this ... */ }, [abilityName, isOpen]);
-  // -----------------------------------------------------
-
-  // Fix: Replace /n/n with actual line breaks and apply white-space: pre-wrap
   const formatDescription = (text: string | undefined) => {
-    // Replace "/n/n" with actual line breaks if present
     if (!text) return '';
     return text.replace(/\/n\/n/g, '\n\n');
   };
 
-  // Check if the passed ability prop is null
   if (!ability) {
-    // Optionally render nothing or a placeholder if the modal is open but ability is null
      if (isOpen) {
         return (
             <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -71,12 +57,13 @@ const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({
                 <ModalContent bg="gray.800" borderColor="gray.700">
                     <ModalHeader color="gray.100">Ability Details</ModalHeader>
                     <ModalCloseButton color="gray.400"/>
-                    <ModalBody pb={6}><Text color="gray.400">No ability data provided.</Text></ModalBody>
+                    {/* Use the aliased ChakraText */}
+                    <ModalBody pb={6}><ChakraText color="gray.400">No ability data provided.</ChakraText></ModalBody>
                 </ModalContent>
             </Modal>
         );
      }
-     return null; // Don't render if not open
+     return null;
   }
 
 
@@ -85,32 +72,33 @@ const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({
       <ModalOverlay />
       <ModalContent bg="gray.800" borderColor="gray.700">
         <ModalHeader>
-           {/* Use the ability prop directly */}
            <VStack align="start" spacing={2}>
              <Box display="flex" alignItems="center" gap={2}>
-               <Star size={18} className="text-purple-400" /> {/* Adjusted color */}
-               <Text color="gray.100">{ability.name}</Text>
+               <Star size={18} className="text-purple-400" />
+               {/* Use the aliased ChakraText */}
+               <ChakraText color="gray.100">{ability.name}</ChakraText>
              </Box>
              <Badge colorScheme="purple">Ability</Badge>
            </VStack>
         </ModalHeader>
         <ModalCloseButton color="gray.400"/>
         <ModalBody pb={6}>
-           {/* Use the ability prop directly */}
            <VStack align="start" spacing={4}>
              <Box>
-               <Text fontWeight="semibold" mb={1} color="gray.300">Description</Text>
-               <Text whiteSpace="pre-wrap" color="gray.400">
+               {/* Use the aliased ChakraText */}
+               <ChakraText fontWeight="semibold" mb={1} color="gray.300">Description</ChakraText>
+               <ChakraText whiteSpace="pre-wrap" color="gray.400">
                  {formatDescription(ability.description)}
-               </Text>
+               </ChakraText>
              </Box>
 
-             {ability.effect && ability.effect !== '-' && ability.effect !== 'N/A' && ( // Check effect
+             {ability.effect && ability.effect !== '-' && ability.effect !== 'N/A' && (
                 <>
                 <Divider borderColor="gray.600"/>
                 <Box>
-                    <Text fontWeight="semibold" mb={1} color="gray.300">Effect</Text>
-                    <Text whiteSpace="pre-wrap" color="gray.400">{formatDescription(ability.effect)}</Text>
+                    {/* Use the aliased ChakraText */}
+                    <ChakraText fontWeight="semibold" mb={1} color="gray.300">Effect</ChakraText>
+                    <ChakraText whiteSpace="pre-wrap" color="gray.400">{formatDescription(ability.effect)}</ChakraText>
                 </Box>
                 </>
              )}
@@ -118,37 +106,41 @@ const AbilityDetailModal: React.FC<AbilityDetailModalProps> = ({
              <SimpleGrid columns={2} spacing={4} width="100%">
                {ability.range && ability.range !== '-' && ability.range !== 'N/A' && (
                  <Box>
-                   <Text fontWeight="semibold" color="gray.300">Range</Text>
-                   <Text color="gray.400">{ability.range}</Text>
+                   {/* Use the aliased ChakraText */}
+                   <ChakraText fontWeight="semibold" color="gray.300">Range</ChakraText>
+                   <ChakraText color="gray.400">{ability.range}</ChakraText>
                  </Box>
                )}
                {ability.damage && ability.damage !== "N/A" && (
                  <Box>
-                   <Text fontWeight="semibold" color="gray.300">Damage</Text>
-                   <Text color="gray.400">{ability.damage} {ability.damageType}</Text>
+                   {/* Use the aliased ChakraText */}
+                   <ChakraText fontWeight="semibold" color="gray.300">Damage</ChakraText>
+                   <ChakraText color="gray.400">{ability.damage} {ability.damageType}</ChakraText>
                  </Box>
                )}
-                {/* Display cost and cooldown */}
                  <Box>
-                   <Text fontWeight="semibold" color="gray.300">AP Cost</Text>
-                   <Text color="gray.400">{ability.abilitypointcost}</Text>
+                   {/* Use the aliased ChakraText */}
+                   <ChakraText fontWeight="semibold" color="gray.300">AP Cost</ChakraText>
+                   <ChakraText color="gray.400">{ability.abilitypointcost}</ChakraText>
                  </Box>
                  <Box>
-                   <Text fontWeight="semibold" color="gray.300">Cooldown</Text>
-                   <Text color="gray.400">{ability.cooldown}</Text>
+                   {/* Use the aliased ChakraText */}
+                   <ChakraText fontWeight="semibold" color="gray.300">Cooldown</ChakraText>
+                   <ChakraText color="gray.400">{ability.cooldown}</ChakraText>
                  </Box>
              </SimpleGrid>
 
 
-             {/* Special Rules Section (if present in the ability data) */}
              {ability.specialrules && Object.keys(ability.specialrules).length > 0 && (
                <>
                  <Divider borderColor="gray.600"/>
                  <Box width="100%">
-                   <Text fontWeight="semibold" mb={2} color="gray.300">Special Rules</Text>
+                   {/* Use the aliased ChakraText */}
+                   <ChakraText fontWeight="semibold" mb={2} color="gray.300">Special Rules</ChakraText>
                    <VStack align="start" spacing={1}>
                      {Object.entries(ability.specialrules).map(([key, rule]) => (
-                       <Text key={key} fontSize="sm" color="gray.400">{key}. {rule}</Text>
+                       // Use the aliased ChakraText
+                       <ChakraText key={key} fontSize="sm" color="gray.400">{key}. {rule}</ChakraText>
                      ))}
                    </VStack>
                  </Box>
