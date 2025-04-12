@@ -607,16 +607,28 @@ const Crafting: React.FC = () => {
         
         return (
             <VStack spacing={4} align="stretch" h="full">
-                <Heading size="md" color="gray.100">
-                    {selectedRecipe.craftedItemDetails.name}
-                </Heading>
-                
-                <Badge 
-                    colorScheme={getRarityColor(selectedRecipe.craftedItemDetails.rarity)} 
-                    alignSelf="flex-start"
-                >
-                    {selectedRecipe.craftedItemDetails.rarity}
-                </Badge>
+                <HStack justifyContent="space-between" alignItems="center">
+                    <VStack spacing={1} align="start">
+                        <Heading size="md" color="gray.100">
+                            {selectedRecipe.craftedItemDetails.name}
+                        </Heading>
+                        <Badge 
+                            colorScheme={getRarityColor(selectedRecipe.craftedItemDetails.rarity)} 
+                            alignSelf="flex-start"
+                        >
+                            {selectedRecipe.craftedItemDetails.rarity}
+                        </Badge>
+                    </VStack>
+                    <Button 
+                        colorScheme="green" 
+                        leftIcon={<Wrench />} 
+                        isDisabled={!selectedRecipe.isKnown || !selectedRecipe.canCraft || isCrafting} 
+                        isLoading={isCrafting} 
+                        onClick={handleCraftItem}
+                    > 
+                        Craft Item 
+                    </Button>
+                </HStack>
                 
                 {selectedRecipe.craftedItemDetails.description && (
                     <Text fontSize="sm" color="gray.300">
@@ -664,9 +676,7 @@ const Crafting: React.FC = () => {
                     </List>
                 </ScrollArea>
                 
-                <Divider borderColor="gray.600" />
-                
-                {!selectedRecipe.isKnown && (
+                { !selectedRecipe.isKnown && (
                     <Alert 
                         status="warning" 
                         borderRadius="md" 
@@ -678,7 +688,7 @@ const Crafting: React.FC = () => {
                     </Alert>
                 )}
                 
-                {selectedRecipe.isKnown && !selectedRecipe.canCraft && (
+                { selectedRecipe.isKnown && !selectedRecipe.canCraft && (
                     <Alert 
                         status="info" 
                         borderRadius="md" 
@@ -697,17 +707,6 @@ const Crafting: React.FC = () => {
                         </List>
                     </Alert>
                 )}
-                
-                <Button 
-                    mt="auto" 
-                    colorScheme="green" 
-                    leftIcon={<Wrench />} 
-                    isDisabled={!selectedRecipe.isKnown || !selectedRecipe.canCraft || isCrafting} 
-                    isLoading={isCrafting} 
-                    onClick={handleCraftItem}
-                > 
-                    Craft Item 
-                </Button>
             </VStack>
         );
     };
