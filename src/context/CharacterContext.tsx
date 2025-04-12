@@ -1409,34 +1409,106 @@ export function CharacterProvider({ children }: { children: React.ReactNode }) {
 
   // --- Context Value Object ---
   const value: CharacterContextType = {
-    characterName: characterState.characterName, setCharacterName, characterLevel: characterState.characterLevel, setCharacterLevel,
-    baseStats: characterState.baseStats, setBaseStats: (stats) => updateCharacterState({ baseStats: stats }), currentStats,
-    selectedRace: characterState.selectedRace, setSelectedRace: (race) => updateCharacterState({ selectedRace: race }),
-    selectedClass: characterState.selectedClass, setSelectedClass: (cls) => updateCharacterState({ selectedClass: cls }),
-    currentHp: characterState.currentHp, setCurrentHp, getMaxHp, currentMp: characterState.currentMp, setCurrentMp, getMaxMp, currentAp: characterState.currentAp, setCurrentAp, getMaxAp,
-    baseSkills: characterState.baseSkills, currentSkills, abilityLevels: characterState.abilityLevels, setAbilityLevel: (name, level) => updateCharacterState({ abilityLevels: { ...characterState.abilityLevels, [name]: level } }),
-    getEquipmentAbilities, getEquipmentTraits, hasAbility, hasTrait,
-    inventory: characterState.inventory, addToInventory, addItemsWithQuantity, addMultipleItemsToInventory, removeFromInventory, updateInventoryItemQuantity, getInventoryByType, getItemQuantity, hasItem,
-    equippedItems: characterState.equippedItems, equipItem, getEquippedItem, equipMultipleItems, getStatBonus, getSkillBonus,
-    utilitySlots: characterState.utilitySlots, setUtilitySlots, addItemToUtilitySlot, removeItemFromUtilitySlot, updateUtilitySlotQuantity,
-    availableStatPoints: characterState.availableStatPoints, incrementStat, decrementStat, availableSkillPoints: characterState.availableSkillPoints, increaseSkill, decreaseSkill,
-    attacks, getAttacksFromEquipment, executeAttack, learnedSpells: characterState.learnedSpells, addToLearnedSpells, spellList: characterState.learnedSpells,
-    notes: characterState.notes, updateNotes, addNoteCategory, updateNoteCategory, deleteNoteCategory, addNote, updateNote, deleteNote,
-    gold: characterState.gold, setGold, goldTransactionHistory: characterState.goldTransactionHistory, addGold, subtractGold, processTransaction,
+    characterName: characterState.characterName,
+    setCharacterName,
+    characterLevel: characterState.characterLevel,
+    setCharacterLevel,
+    baseStats: characterState.baseStats,
+    setBaseStats: (stats: any) => updateCharacterState({ baseStats: stats }),
+    currentStats,
+    selectedRace: characterState.selectedRace,
+    setSelectedRace: (race: any) => updateCharacterState({ selectedRace: race }),
+    selectedClass: characterState.selectedClass,
+    setSelectedClass: (cls: any) => updateCharacterState({ selectedClass: cls }),
+    currentHp: characterState.currentHp,
+    setCurrentHp,
+    getMaxHp,
+    currentMp: characterState.currentMp,
+    setCurrentMp,
+    getMaxMp,
+    currentAp: characterState.currentAp,
+    setCurrentAp,
+    getMaxAp,
+    baseSkills: characterState.baseSkills,
+    currentSkills,
+    abilityLevels: characterState.abilityLevels,
+    setAbilityLevel: (name: string, level: number) =>
+      updateCharacterState({
+        abilityLevels: { ...characterState.abilityLevels, [name]: level },
+      }),
+    getEquipmentAbilities,
+    getEquipmentTraits,
+    hasAbility,
+    hasTrait,
+    inventory: characterState.inventory,
+    addToInventory,
+    addItemsWithQuantity,
+    addMultipleItemsToInventory,
+    removeFromInventory,
+    updateInventoryItemQuantity,
+    getInventoryByType,
+    getItemQuantity,
+    hasItem,
+    equippedItems: characterState.equippedItems,
+    equipItem,
+    getEquippedItem,
+    equipMultipleItems,
+    getStatBonus,
+    getSkillBonus,
+    utilitySlots: characterState.utilitySlots,
+    setUtilitySlots,
+    addItemToUtilitySlot,
+    removeItemFromUtilitySlot,
+    updateUtilitySlotQuantity,
+    availableStatPoints: characterState.availableStatPoints,
+    incrementStat,
+    decrementStat,
+    availableSkillPoints: characterState.availableSkillPoints,
+    increaseSkill,
+    decreaseSkill,
+    attacks,
+    getAttacksFromEquipment,
+    executeAttack,
+    learnedSpells: characterState.learnedSpells,
+    addToLearnedSpells,
+    spellList: characterState.learnedSpells,
+    notes: characterState.notes,
+    updateNotes,
+    addNoteCategory,
+    updateNoteCategory,
+    deleteNoteCategory,
+    addNote,
+    updateNote,
+    deleteNote,
+    gold: characterState.gold,
+    setGold,
+    goldTransactionHistory: characterState.goldTransactionHistory,
+    addGold,
+    subtractGold,
+    processTransaction,
     craftItem,
-    isDirty, isSaving, lastSaveTime, saveCharacterManually, resetCharacter, deleteCharacter,
+    isDirty,
+    isSaving,
+    lastSaveTime,
+    saveCharacterManually,
+    resetCharacter,
+    deleteCharacter,
     docId: docId,
-    removeItems: function (items: { itemId: string; quantity: number; }[]): Promise<void> {
-      throw new Error('Function not implemented.');
-    }
+    removeItems,
   };
 
   return (
     <CharacterContext.Provider value={value}>
-      {isLoading ? ( <Center h="100vh"><Spinner size="xl" color="brand.500" /></Center> ) : ( children )}
+      {isLoading ? (
+        <Center h="100vh">
+          <Spinner size="xl" color="brand.500" />
+        </Center>
+      ) : (
+        children
+      )}
     </CharacterContext.Provider>
   );
-}
+};
 
 // -------------------------------------------------------------------------
 // Custom Hook & Helper Functions
