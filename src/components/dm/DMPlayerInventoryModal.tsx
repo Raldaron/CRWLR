@@ -4,14 +4,14 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
+  // Removed ModalFooter
   ModalBody,
   ModalCloseButton,
   Box,
   VStack,
   HStack,
   Text,
-  Button,
+  // Removed Button from footer context
   Spinner,
   useToast,
   Table,
@@ -27,7 +27,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Divider,
+  // Removed Divider as it wasn't used
   InputGroup,
   InputLeftElement,
   Input,
@@ -122,7 +122,7 @@ const sanitizeDataForFirestore = (data: any): any => {
       if (value !== undefined) {
         sanitizedObject[key] = sanitizeDataForFirestore(value);
       } else {
-        sanitizedObject[key] = null;
+        sanitizedObject[key] = null; // Ensure undefined fields become null in Firestore
       }
     }
   }
@@ -212,8 +212,14 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
       if (playerDocSnap.exists()) {
         const data = playerDocSnap.data() as DocumentData;
         const rawInventory = Array.isArray(data.inventory) ? data.inventory : [];
+        // Validate inventory structure defensively
         const validatedInventory: PlayerInventoryItem[] = rawInventory
-          .filter(invItem => invItem && typeof invItem === 'object' && invItem.item && typeof invItem.quantity === 'number')
+          .filter(invItem =>
+            invItem &&
+            typeof invItem === 'object' &&
+            invItem.item && typeof invItem.item === 'object' && invItem.item.id && // Ensure item and item.id exist
+            typeof invItem.quantity === 'number' && invItem.quantity >= 0 // Ensure quantity is a non-negative number
+          )
           .map(invItem => ({ item: invItem.item as InventoryItem, quantity: invItem.quantity }));
         setPlayerInventory(validatedInventory);
       } else {
@@ -222,7 +228,7 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
       }
     } catch (error) {
       console.error('Error fetching inventory:', error);
-      toast({ title: 'Error', status: 'error' });
+      toast({ title: 'Error Loading Inventory', status: 'error', description: error instanceof Error ? error.message : undefined });
       setPlayerInventory([]);
     } finally {
       setIsLoadingInventory(false);
@@ -233,41 +239,35 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
   const fetchCatalog = useCallback(async () => {
     setIsLoadingCatalog(true);
     const itemCollections = [
-      'weapons',
-      'armor',
-      'ammunition',
-      'potions',
-      'scrolls',
-      'crafting_components',
-      'traps',
-      'explosives',
-      'miscellaneous_items',
+      'weapons', 'armor', 'ammunition', 'potions', 'scrolls',
+      'crafting_components', 'traps', 'explosives', 'miscellaneous_items',
       'pharmaceuticals'
     ];
     let allFetchedItems: CatalogItem[] = [];
     try {
       for (const collectionName of itemCollections) {
         const itemsRef = collection(db, collectionName);
-        const q = query(itemsRef, limit(1000));
+        const q = query(itemsRef, limit(1000)); // Consider pagination for very large catalogs
         const querySnapshot = await getDocs(q);
         const fetchedItems = querySnapshot.docs.map(docSnap => {
           const data = docSnap.data() as Omit<InventoryItem, 'id'>;
           return {
             id: docSnap.id,
-            collectionName,
+            collectionName, // Store source collection
             ...data,
             itemType: data.itemType || getItemTypeFromCollectionName(collectionName),
-            rarity: data.rarity || 'Common'
+            rarity: data.rarity || 'Common' // Default rarity if missing
           } as CatalogItem;
         });
         allFetchedItems = [...allFetchedItems, ...fetchedItems];
       }
+      // Ensure uniqueness based on ID
       const uniqueItems = Array.from(new Map(allFetchedItems.map(item => [item.id, item])).values());
-      uniqueItems.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      uniqueItems.sort((a, b) => (a.name || '').localeCompare(b.name || '')); // Sort alphabetically by name
       setItemCatalog(uniqueItems);
     } catch (error) {
-      console.error("Error loading catalog:", error);
-      toast({ title: 'Error Loading Catalog', status: 'error' });
+      console.error("Error loading item catalog:", error);
+      toast({ title: 'Error Loading Catalog', status: 'error', description: error instanceof Error ? error.message : undefined });
     } finally {
       setIsLoadingCatalog(false);
     }
@@ -286,6 +286,7 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
         const docId = docSnap.id;
 
         const recipePromise = (async (): Promise<RecipeDefinition | null> => {
+          // Validate required fields
           if (data.name && data.itemType?.toLowerCase() === 'recipe' && data.craftedItemId) {
             const craftedInfo = await findCraftedItemInfoCallback(data.craftedItemId);
 
@@ -293,14 +294,15 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
               id: docId,
               name: data.name,
               itemType: 'Recipe',
-              rarity: data.rarity || 'Common',
+              rarity: data.rarity || 'Common', // Default rarity
               craftedItemId: data.craftedItemId,
               craftedItemName: craftedInfo?.name || 'Unknown Item',
               craftedItemRarity: craftedInfo?.rarity || 'Common'
             };
           } else {
+            // Log specific reasons for skipping a document
             console.warn(
-              `RecipeComponent doc ${docId} missing required fields or wrong itemType ('${data.itemType}'). Required: name, itemType='Recipe', craftedItemId`
+              `RecipeComponent doc ${docId} skipped. Missing required fields (name, craftedItemId) or incorrect itemType (expected 'recipe', got '${data.itemType}'). Data:`, data
             );
             return null;
           }
@@ -310,12 +312,12 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
 
       const resolvedRecipes = await Promise.all(recipesListPromises);
       const validRecipes = resolvedRecipes.filter((r): r is RecipeDefinition => r !== null);
-      validRecipes.sort((a, b) => a.name.localeCompare(b.name));
+      validRecipes.sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
       setRecipeCatalog(validRecipes);
-      console.log(`Loaded and processed ${validRecipes.length} recipe definitions.`);
+      // console.log(`Loaded and processed ${validRecipes.length} recipe definitions.`);
     } catch (error) {
       console.error('Error fetching recipes:', error);
-      toast({ title: 'Error Loading Recipes', status: 'error' });
+      toast({ title: 'Error Loading Recipes', status: 'error', description: error instanceof Error ? error.message : undefined });
     } finally {
       setIsLoadingRecipes(false);
     }
@@ -324,10 +326,20 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
   // Fetch data when modal opens or player changes
   useEffect(() => {
     if (isOpen && player) {
+      // Reset state before fetching new data
+      setPlayerInventory([]);
+      setItemCatalog([]);
+      setRecipeCatalog([]);
+      setCatalogSearchTerm('');
+      setRecipeSearchTerm('');
+      setActiveTabIndex(0); // Reset to first tab
+
       fetchInventory();
+      // Fetch catalog and recipes in parallel
       fetchCatalog();
       fetchRecipes();
-    } else {
+    } else if (!isOpen) {
+      // Clear state when modal closes
       setPlayerInventory([]);
       setItemCatalog([]);
       setRecipeCatalog([]);
@@ -340,186 +352,187 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
     }
   }, [isOpen, player, fetchInventory, fetchCatalog, fetchRecipes]);
 
-  // Get Item Details
-  const getItemDetails = useCallback((itemIdOrName: string): CatalogItem | undefined => {
-    const term = itemIdOrName?.toLowerCase();
-    if (!term) return undefined;
-    return itemCatalog.find(item => item.id === itemIdOrName) ||
-      itemCatalog.find(item => item.name?.toLowerCase() === term);
-  }, [itemCatalog]);
 
-  // Save Inventory Changes
+  // Save Inventory Changes (wrapped in useCallback for stability)
   const saveInventory = useCallback(async (newInventory: PlayerInventoryItem[]) => {
-    if (!player) return;
+    if (!player?.id) {
+      console.error("Cannot save inventory: Player ID is missing.");
+      toast({ title: 'Save Error', description: 'Player information is missing.', status: 'error' });
+      return;
+    }
     setIsSaving(true);
     try {
       const playerDocRef = doc(db, 'characters', player.id);
-      const inventoryToSave = newInventory.map(inv => ({
-        item: sanitizeDataForFirestore(inv.item),
-        quantity: inv.quantity
+      // Ensure data is clean before saving
+      const inventoryToSave = newInventory
+        .filter(inv => inv.item && inv.item.id && typeof inv.quantity === 'number' && inv.quantity >= 0) // Extra check
+        .map(inv => ({
+          item: sanitizeDataForFirestore(inv.item),
+          quantity: inv.quantity
       }));
+
       await updateDoc(playerDocRef, {
         inventory: inventoryToSave,
-        lastUpdated: serverTimestamp()
+        lastUpdated: serverTimestamp() // Track last modification time
       });
-      // Optimistically update local state ONLY after successful save
+
+      // OPTIMISTIC UPDATE: Update local state immediately after successful save
+      // Use the validated `newInventory` passed to the function
       setPlayerInventory(newInventory);
+
     } catch (error) {
       console.error('Error saving player inventory:', error);
       toast({ title: 'Save Error', description: 'Failed to save inventory changes.', status: 'error' });
       // Re-fetch to ensure UI consistency after save failure
-      fetchInventory();
+      fetchInventory(); // Re-sync with DB
     } finally {
       setIsSaving(false);
     }
-  }, [player?.id, toast, fetchInventory]);
+  }, [player?.id, toast, fetchInventory]); // Dependencies: player ID, toast, and fetchInventory for error recovery
 
   // Add Item from Catalog
   const handleAddItem = (itemToAdd: CatalogItem, quantity: number = 1) => {
-    if (quantity <= 0 || !itemToAdd?.id) return;
+    if (quantity <= 0 || !itemToAdd?.id) {
+        console.warn("Attempted to add invalid item or quantity:", itemToAdd, quantity);
+        return;
+    }
+    // Create a minimal but complete InventoryItem object
     const inventoryItemObject: InventoryItem = {
       id: itemToAdd.id,
       name: itemToAdd.name || 'Unknown Item',
       description: itemToAdd.description || '',
       itemType: itemToAdd.itemType || 'Miscellaneous',
       rarity: itemToAdd.rarity || 'Common',
+      // Include other core properties if they exist on the catalog item
       ...(itemToAdd.buyValue !== undefined && { buyValue: itemToAdd.buyValue }),
       ...(itemToAdd.sellValue !== undefined && { sellValue: itemToAdd.sellValue }),
-      ...(itemToAdd.weight !== undefined && { weight: itemToAdd.weight })
+      ...(itemToAdd.weight !== undefined && { weight: itemToAdd.weight }),
+      // Add specific properties based on item type if needed and available
+      // e.g., ...(itemToAdd.damage && { damage: itemToAdd.damage }) for weapons
     };
+
     const existingIndex = playerInventory.findIndex(invItem => invItem.item.id === inventoryItemObject.id);
     let updatedInventory;
+
     if (existingIndex > -1) {
+      // Item exists, update quantity
       updatedInventory = playerInventory.map((invItem, index) =>
         index === existingIndex ? { ...invItem, quantity: invItem.quantity + quantity } : invItem
       );
     } else {
+      // Item doesn't exist, add new entry
       updatedInventory = [...playerInventory, { item: inventoryItemObject, quantity }];
     }
-    saveInventory(updatedInventory); // Save change
-    toast({ title: `Added ${quantity}x ${inventoryItemObject.name}`, status: 'success', duration: 1500 });
+
+    saveInventory(updatedInventory); // Trigger save
+    toast({ title: `Added ${quantity}x ${inventoryItemObject.name}`, status: 'success', duration: 1500, isClosable: true });
   };
 
   // Add Recipe Item
   const handleAddRecipe = (recipeToAdd: RecipeDefinition) => {
     if (!recipeToAdd || !recipeToAdd.id) {
-      toast({ title: 'Error', description: 'Invalid recipe selected.', status: 'error' });
+      toast({ title: 'Error', description: 'Invalid recipe selected.', status: 'error', isClosable: true });
       return;
     }
+    // Check if the player already has this specific recipe
     const alreadyHasRecipe = playerInventory.some(invItem =>
       invItem.item.id === recipeToAdd.id && invItem.item.itemType === 'Recipe'
     );
+
     if (alreadyHasRecipe) {
-      toast({ title: 'Recipe Already Known', status: 'info', duration: 2500 });
+      toast({ title: 'Recipe Already Known', status: 'info', duration: 2500, isClosable: true });
       return;
     }
+
+    // Create the InventoryItem representation for the recipe
     const recipeInventoryItem: InventoryItem = {
       id: recipeToAdd.id,
       name: recipeToAdd.name,
-      itemType: 'Recipe',
+      itemType: 'Recipe', // Explicitly set itemType
       rarity: recipeToAdd.rarity || 'Common',
-      description: `Recipe to craft: ${recipeToAdd.craftedItemName || 'Unknown Item'}`,
-      buyValue: 0,
-      sellValue: 0,
-      weight: 0.1
+      description: `Recipe to craft: ${recipeToAdd.craftedItemName || 'Unknown Item'} (Rarity: ${recipeToAdd.craftedItemRarity || 'N/A'})`,
     };
+
     const updatedInventory = [...playerInventory, { item: recipeInventoryItem, quantity: 1 }];
-    saveInventory(updatedInventory); // Save change
-    toast({ title: `Added Recipe: ${recipeInventoryItem.name}`, status: 'success' });
+    saveInventory(updatedInventory); // Trigger save
+    toast({ title: `Added Recipe: ${recipeInventoryItem.name}`, status: 'success', isClosable: true });
   };
 
-  // Remove Item
+  // Remove Item (by specific quantity)
   const handleRemoveItem = (itemId: string, quantityToRemove: number = 1) => {
-    if (quantityToRemove <= 0) return;
+    if (quantityToRemove <= 0) return; // Cannot remove zero or negative quantity
+
     const existingIndex = playerInventory.findIndex(invItem => invItem.item.id === itemId);
-    if (existingIndex === -1) return;
-    const currentQuantity = playerInventory[existingIndex].quantity;
-    const itemName = playerInventory[existingIndex].item.name;
+    if (existingIndex === -1) {
+      console.warn(`Attempted to remove item ID ${itemId} which is not in inventory.`);
+      return; // Item not found
+    }
+
+    const currentItem = playerInventory[existingIndex];
+    const currentQuantity = currentItem.quantity;
+    const itemName = currentItem.item.name || 'Item'; // Fallback name
+
     let updatedInventory;
     if (currentQuantity <= quantityToRemove) {
+      // Remove the item completely
       updatedInventory = playerInventory.filter((_, index) => index !== existingIndex);
+       toast({ title: `Removed ${itemName}`, status: 'info', duration: 1500, isClosable: true });
     } else {
+      // Decrease the quantity
       updatedInventory = playerInventory.map((invItem, index) =>
         index === existingIndex ? { ...invItem, quantity: invItem.quantity - quantityToRemove } : invItem
       );
+       toast({ title: `Removed ${quantityToRemove}x ${itemName}`, status: 'info', duration: 1500, isClosable: true });
     }
-    saveInventory(updatedInventory); // Save change
-    toast({ title: `Removed ${quantityToRemove}x ${itemName}`, status: 'info', duration: 1500 });
+
+    saveInventory(updatedInventory); // Trigger save
   };
 
-  // Update Quantity
-  const handleUpdateQuantity = async (itemId: string, newQuantity: number) => {
+  // Update Quantity via NumberInput
+  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
+     // Debounce or delay this if needed to avoid rapid fire updates
     if (newQuantity < 0 || isNaN(newQuantity)) {
-      return; // Invalid quantity
+      console.warn(`Invalid quantity provided for item ${itemId}: ${newQuantity}`);
+      return; // Prevent negative or NaN quantities
     }
 
-    try {
-      // Find the item in the player's inventory
-      const existingIndex = playerInventory.findIndex(invItem => invItem.item.id === itemId);
-      if (existingIndex === -1) {
-        console.error(`Item ID ${itemId} not found in inventory`);
-        return;
-      }
-
-      const currentItem = playerInventory[existingIndex];
-      const currentQuantity = currentItem.quantity;
-
-      // If quantity is the same, no change needed
-      if (newQuantity === currentQuantity) {
-        return;
-      }
-
-      // Create updated inventory
-      let updatedInventory;
-      if (newQuantity === 0) {
-        // Remove the item if quantity is 0
-        updatedInventory = playerInventory.filter(invItem => invItem.item.id !== itemId);
-      } else {
-        // Update the quantity
-        updatedInventory = playerInventory.map(invItem =>
-          invItem.item.id === itemId ? { ...invItem, quantity: newQuantity } : invItem
-        );
-      }
-
-      // Save the updated inventory
-      await saveInventory(updatedInventory);
-
-      // Show confirmation toast
-      if (newQuantity === 0) {
-        toast({
-          title: "Item Removed",
-          description: `${currentItem.item.name} has been removed from inventory`,
-          status: "info"
-        });
-      } else if (newQuantity < currentQuantity) {
-        toast({
-          title: "Quantity Updated",
-          description: `${currentItem.item.name} quantity decreased to ${newQuantity}`,
-          status: "info"
-        });
-      } else {
-        toast({
-          title: "Quantity Updated",
-          description: `${currentItem.item.name} quantity increased to ${newQuantity}`,
-          status: "info"
-        });
-      }
-    } catch (error) {
-      console.error('Error updating item quantity:', error);
-      toast({
-        title: "Update Failed",
-        description: error instanceof Error ? error.message : "Unknown error",
-        status: "error"
-      });
-      // Refresh to ensure UI is consistent
-      fetchInventory();
+    const existingIndex = playerInventory.findIndex(invItem => invItem.item.id === itemId);
+    if (existingIndex === -1) {
+      console.error(`Item ID ${itemId} not found in inventory for quantity update.`);
+      return;
     }
+
+    const currentItem = playerInventory[existingIndex];
+
+    // Avoid saving if quantity hasn't changed
+    if (newQuantity === currentItem.quantity) {
+        return;
+    }
+
+    let updatedInventory;
+    if (newQuantity === 0) {
+      // Remove item if quantity becomes 0
+      updatedInventory = playerInventory.filter(invItem => invItem.item.id !== itemId);
+      toast({ title: "Item Removed", description: `${currentItem.item.name} removed from inventory.`, status: "info", duration: 1500 });
+    } else {
+      // Update quantity for the specific item
+      updatedInventory = playerInventory.map(invItem =>
+        invItem.item.id === itemId ? { ...invItem, quantity: newQuantity } : invItem
+      );
+      // Optionally provide feedback on quantity change (can be noisy)
+      // toast({ title: "Quantity Updated", description: `${currentItem.item.name} quantity set to ${newQuantity}.`, status: "info", duration: 1000 });
+    }
+
+    // Directly call saveInventory - no need for async here as saveInventory handles it
+    saveInventory(updatedInventory);
   };
 
-  // Filter Catalogs
+
+  // Filter Catalogs (Memoized for performance)
   const filteredCatalogItems = useMemo(() => {
     if (!catalogSearchTerm) return itemCatalog;
-    const lowerSearch = catalogSearchTerm.toLowerCase();
+    const lowerSearch = catalogSearchTerm.toLowerCase().trim();
+    if (!lowerSearch) return itemCatalog;
     return itemCatalog.filter(item =>
       (item.name?.toLowerCase().includes(lowerSearch) ?? false) ||
       (item.description?.toLowerCase().includes(lowerSearch) ?? false) ||
@@ -529,14 +542,28 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
 
   const filteredRecipeCatalog = useMemo(() => {
     if (!recipeSearchTerm) return recipeCatalog;
-    const lowerSearch = recipeSearchTerm.toLowerCase();
+    const lowerSearch = recipeSearchTerm.toLowerCase().trim();
+     if (!lowerSearch) return recipeCatalog;
     return recipeCatalog.filter(recipe =>
       (recipe.name?.toLowerCase().includes(lowerSearch) ?? false) ||
       (recipe.craftedItemName?.toLowerCase().includes(lowerSearch) ?? false)
     );
   }, [recipeCatalog, recipeSearchTerm]);
 
-  // Main view rendered as 3 tabs for better mobile experience
+  // Debounced handler for NumberInput onChange
+  // (Optional but recommended for performance if users rapidly click steppers)
+  // Example using a simple timeout:
+  const quantityUpdateTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const handleDebouncedUpdateQuantity = (itemId: string, valueAsString: string, valueAsNumber: number) => {
+      if (quantityUpdateTimeoutRef.current) {
+          clearTimeout(quantityUpdateTimeoutRef.current);
+      }
+      quantityUpdateTimeoutRef.current = setTimeout(() => {
+          handleUpdateQuantity(itemId, isNaN(valueAsNumber) ? 0 : Math.max(0, valueAsNumber));
+      }, 300); // 300ms delay
+  };
+
+  // Main view rendered as 3 tabs
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -547,57 +574,64 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
     }
 
     return (
+      // Adjusted Tabs styling for compactness
       <Tabs isFitted colorScheme="brand" variant="soft-rounded" size="sm" index={activeTabIndex} onChange={setActiveTabIndex}>
-        <TabList mb={4}>
+        <TabList mb={3}> {/* Reduced margin-bottom */}
           <Tab>
             <HStack spacing={1}>
               <Package size={14} />
-              <Text>Inventory</Text>
+              <Text fontSize="xs">Inventory</Text>
             </HStack>
           </Tab>
           <Tab>
             <HStack spacing={1}>
               <Plus size={14} />
-              <Text>Add Items</Text>
+              <Text fontSize="xs">Add Items</Text>
             </HStack>
           </Tab>
           <Tab>
             <HStack spacing={1}>
               <BookOpen size={14} />
-              <Text>Recipes</Text>
+              <Text fontSize="xs">Add Recipes</Text>
             </HStack>
           </Tab>
         </TabList>
         <TabPanels>
           {/* INVENTORY TAB */}
           <TabPanel p={0}>
-            <Box bg="gray.800" p={3} borderRadius="md" borderWidth="1px" borderColor="gray.700">
-              <Heading size="xs" mb={3} color="gray.300">
+             {/* Reduced padding */}
+            <Box bg="gray.800" p={2} borderRadius="md" borderWidth="1px" borderColor="gray.700">
+              <Heading size="xs" mb={2} color="gray.300">
                 Current Items ({playerInventory.reduce((sum, item) => sum + item.quantity, 0)})
               </Heading>
-              <ScrollArea className="h-[60vh] max-h-[500px]">
+               {/* Adjusted ScrollArea height */}
+              <ScrollArea className="h-[auto] max-h-[450px]">
                 {playerInventory.length === 0 ? (
                   <Center h="100px">
-                    <Text color="gray.500">Inventory is empty.</Text>
+                    <Text color="gray.500" fontSize="sm">Inventory is empty.</Text>
                   </Center>
                 ) : (
                   <TableContainer>
                     <Table variant="simple" size="sm">
                       <Thead bg="gray.750" position="sticky" top={0} zIndex={1}>
                         <Tr>
-                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={2}>Item</Th>
-                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={2} isNumeric width="60px">Qty</Th>
-                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={2} width="40px"></Th>
+                           {/* Adjusted table cell padding */}
+                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={1.5} py={1}>Item</Th>
+                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={1.5} py={1} isNumeric width="70px">Qty</Th> {/* Slightly wider for number input */}
+                          <Th color="gray.300" borderColor="gray.600" fontSize="xs" px={1} py={1} width="40px"></Th>
                         </Tr>
                       </Thead>
                       <Tbody>
                         {playerInventory.map(({ item, quantity }) => (
                           <Tr key={item.id} _hover={{ bg: 'gray.700' }} borderColor="gray.600">
-                            <Td borderColor="gray.600" px={2} py={1.5}>
+                             {/* Adjusted table cell padding */}
+                            <Td borderColor="gray.600" px={1.5} py={1}>
                               <VStack align="start" spacing={0}>
-                                <Text fontWeight="medium" color="gray.200" fontSize="xs">
+                                <Tooltip label={item.description || item.name} placement="top-start" openDelay={500}>
+                                <Text fontWeight="medium" color="gray.200" fontSize="xs" noOfLines={1}>
                                   {item.name}
                                 </Text>
+                                </Tooltip>
                                 <HStack spacing={1} mt={0.5}>
                                   <Badge colorScheme={getRarityColor(item.rarity)} fontSize="2xs">
                                     {item.rarity || 'Common'}
@@ -608,29 +642,32 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                                 </HStack>
                               </VStack>
                             </Td>
-                            <Td isNumeric borderColor="gray.600" px={1} py={1.5}>
+                             {/* Adjusted table cell padding */}
+                            <Td isNumeric borderColor="gray.600" px={1} py={1}>
                               <NumberInput
                                 size="xs"
                                 value={quantity}
-                                onChange={(_, valueNumber) => {
-                                  const newQuantity = isNaN(valueNumber) ? 0 : Math.max(0, valueNumber);
-                                  handleUpdateQuantity(item.id, newQuantity);
-                                }}
+                                // Use the debounced handler here
+                                onChange={(valueAsString, valueAsNumber) => handleDebouncedUpdateQuantity(item.id, valueAsString, valueAsNumber)}
+                                // Or use the direct handler if debounce isn't needed:
+                                // onChange={(_, valueNumber) => handleUpdateQuantity(item.id, isNaN(valueNumber) ? 0 : Math.max(0, valueNumber))}
                                 min={0}
-                                maxW="55px"
+                                maxW="60px" // Adjusted width
                                 bg="gray.750"
                                 borderColor="gray.600"
                                 borderRadius="md"
                                 isDisabled={isSaving}
+                                allowMouseWheel // Optional: allow quantity change with scroll wheel
                               >
-                                <NumberInputField textAlign="center" py={1} fontSize="xs" />
+                                <NumberInputField textAlign="center" py={0.5} px={1} fontSize="xs" /> {/* Adjusted padding */}
                                 <NumberInputStepper>
-                                  <NumberIncrementStepper bg="gray.700" borderColor="gray.600" />
-                                  <NumberDecrementStepper bg="gray.700" borderColor="gray.600" />
+                                  <NumberIncrementStepper bg="gray.700" borderColor="gray.600" children='+' />
+                                  <NumberDecrementStepper bg="gray.700" borderColor="gray.600" children='-' />
                                 </NumberInputStepper>
                               </NumberInput>
                             </Td>
-                            <Td borderColor="gray.600" px={1} py={1.5} textAlign="right">
+                            {/* Adjusted table cell padding */}
+                            <Td borderColor="gray.600" px={1} py={1} textAlign="right">
                               <Tooltip label="Remove 1">
                                 <IconButton
                                   aria-label="Remove one item"
@@ -655,16 +692,17 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
 
           {/* ADD ITEMS TAB */}
           <TabPanel p={0}>
-            <Box bg="gray.800" p={3} borderRadius="md" borderWidth="1px" borderColor="gray.700">
-              <Heading size="xs" mb={3} color="gray.300">
-                Add Items
+             {/* Reduced padding */}
+            <Box bg="gray.800" p={2} borderRadius="md" borderWidth="1px" borderColor="gray.700">
+              <Heading size="xs" mb={2} color="gray.300">
+                Add Items from Catalog
               </Heading>
-              <InputGroup size="sm" mb={3}>
+              <InputGroup size="sm" mb={2}>
                 <InputLeftElement pointerEvents="none" height="32px">
                   <Search size={14} color="gray.400" />
                 </InputLeftElement>
                 <Input
-                  placeholder="Search items..."
+                  placeholder="Search items by name, type, description..."
                   value={catalogSearchTerm}
                   onChange={(e) => setCatalogSearchTerm(e.target.value)}
                   bg="gray.700"
@@ -673,15 +711,14 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                   fontSize="xs"
                 />
               </InputGroup>
-              <ScrollArea className="h-[60vh] max-h-[500px]">
+              {/* Adjusted ScrollArea height */}
+              <ScrollArea className="h-[auto] max-h-[450px]">
                 {isLoadingCatalog ? (
-                  <Center h="100px">
-                    <Spinner />
-                  </Center>
+                  <Center h="100px"><Spinner /></Center>
                 ) : filteredCatalogItems.length === 0 ? (
                   <Center h="100px">
                     <Text color="gray.500" fontSize="sm">
-                      No items match search.
+                      {catalogSearchTerm ? 'No items match search.' : 'Catalog empty or loading...'}
                     </Text>
                   </Center>
                 ) : (
@@ -689,18 +726,20 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                     {filteredCatalogItems.map((item) => (
                       <Flex
                         key={item.id}
-                        p={2}
+                        p={1.5} // Reduced padding
                         bg="gray.750"
                         borderRadius="md"
                         justify="space-between"
                         align="center"
                         _hover={{ bg: 'gray.700' }}
                       >
-                        <Box flex={1} mr={2}>
-                          <Text fontWeight="medium" color="gray.200" fontSize="xs" noOfLines={1}>
-                            {item.name}
-                          </Text>
-                          <HStack spacing={1} mt={1}>
+                        <Box flex={1} mr={2} overflow="hidden">
+                           <Tooltip label={item.description || item.name} placement="top-start" openDelay={500}>
+                            <Text fontWeight="medium" color="gray.200" fontSize="xs" noOfLines={1}>
+                              {item.name}
+                            </Text>
+                          </Tooltip>
+                          <HStack spacing={1} mt={0.5}>
                             <Badge colorScheme={getRarityColor(item.rarity)} fontSize="2xs">
                               {item.rarity || 'Common'}
                             </Badge>
@@ -712,7 +751,7 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                         <HStack spacing={1}>
                           <Tooltip label="Add 1 to Inventory">
                             <IconButton
-                              aria-label="Add item"
+                              aria-label={`Add ${item.name}`}
                               icon={<Plus size={12} />}
                               size="xs"
                               colorScheme="green"
@@ -732,16 +771,17 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
 
           {/* RECIPES TAB */}
           <TabPanel p={0}>
-            <Box bg="gray.800" p={3} borderRadius="md" borderWidth="1px" borderColor="gray.700">
-              <Heading size="xs" mb={3} color="gray.300">
+            {/* Reduced padding */}
+            <Box bg="gray.800" p={2} borderRadius="md" borderWidth="1px" borderColor="gray.700">
+              <Heading size="xs" mb={2} color="gray.300">
                 Add Recipes
               </Heading>
-              <InputGroup size="sm" mb={3}>
+              <InputGroup size="sm" mb={2}>
                 <InputLeftElement pointerEvents="none" height="32px">
                   <Search size={14} color="gray.400" />
                 </InputLeftElement>
                 <Input
-                  placeholder="Search recipes..."
+                  placeholder="Search recipes by name or crafted item..."
                   value={recipeSearchTerm}
                   onChange={(e) => setRecipeSearchTerm(e.target.value)}
                   bg="gray.700"
@@ -750,15 +790,14 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                   fontSize="xs"
                 />
               </InputGroup>
-              <ScrollArea className="h-[60vh] max-h-[500px]">
+              {/* Adjusted ScrollArea height */}
+              <ScrollArea className="h-[auto] max-h-[450px]">
                 {isLoadingRecipes ? (
-                  <Center h="100px">
-                    <Spinner />
-                  </Center>
+                  <Center h="100px"><Spinner /></Center>
                 ) : filteredRecipeCatalog.length === 0 ? (
                   <Center h="100px">
                     <Text color="gray.500" fontSize="sm">
-                      No recipes match search.
+                     {recipeSearchTerm ? 'No recipes match search.' : 'No recipes found or loading...'}
                     </Text>
                   </Center>
                 ) : (
@@ -770,37 +809,38 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
                       return (
                         <Flex
                           key={recipe.id}
-                          p={2}
+                          p={1.5} // Reduced padding
                           bg="gray.750"
                           borderRadius="md"
                           justify="space-between"
                           align="center"
                           _hover={{ bg: 'gray.700' }}
                         >
-                          <Box flex={1} mr={2}>
-                            <Text fontWeight="medium" color="gray.200" fontSize="xs" noOfLines={1}>
-                              {recipe.name}
+                          <Box flex={1} mr={2} overflow="hidden">
+                             <Tooltip label={`Recipe ID: ${recipe.id}`} placement="top-start" openDelay={500}>
+                                <Text fontWeight="medium" color="gray.200" fontSize="xs" noOfLines={1}>
+                                {recipe.name}
+                                </Text>
+                              </Tooltip>
+                            <Text fontSize="2xs" color="gray.400" noOfLines={1}>
+                              Crafts: {recipe.craftedItemName || '...'} ({recipe.craftedItemRarity || 'N/A'})
                             </Text>
-                            <Text fontSize="2xs" color="gray.400">
-                              Crafts: {recipe.craftedItemName || '...'}
-                            </Text>
-                            <HStack spacing={1} mt={1}>
+                            <HStack spacing={1} mt={0.5}>
                               <Badge colorScheme={getRarityColor(recipe.rarity)} fontSize="2xs">
-                                {recipe.rarity || 'Common'}
+                                {recipe.rarity || 'Common'} Recipe
                               </Badge>
-                              {recipe.craftedItemRarity && recipe.craftedItemRarity !== recipe.rarity && (
-                                <Badge colorScheme={getRarityColor(recipe.craftedItemRarity)} fontSize="2xs">
-                                  ({recipe.craftedItemRarity} Item)
-                                </Badge>
-                              )}
+                               {/* Show crafted item rarity only if different or notable */}
+                              {/* <Badge colorScheme={getRarityColor(recipe.craftedItemRarity)} fontSize="2xs">
+                                  ({recipe.craftedItemRarity || 'N/A'} Item)
+                              </Badge> */}
                             </HStack>
                           </Box>
                           <Tooltip label={alreadyHas ? "Player already has this recipe" : "Add Recipe to Inventory"}>
                             <IconButton
-                              aria-label={alreadyHas ? "Recipe already added" : "Add recipe"}
+                              aria-label={alreadyHas ? `Recipe ${recipe.name} already added` : `Add recipe ${recipe.name}`}
                               icon={alreadyHas ? <CheckCircle size={12} /> : <Plus size={12} />}
                               size="xs"
-                              colorScheme={alreadyHas ? "gray" : "green"}
+                              colorScheme={alreadyHas ? "gray" : "blue"} // Changed add color for visibility
                               variant="ghost"
                               onClick={() => !alreadyHas && handleAddRecipe(recipe)}
                               isDisabled={isSaving || alreadyHas}
@@ -820,19 +860,18 @@ const DMPlayerInventoryModal: React.FC<DMPlayerInventoryModalProps> = ({ isOpen,
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6xl" scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent bg="gray.800" borderColor="gray.600" borderWidth="1px">
-        <ModalHeader>
-          Player Inventory - {player?.characterName || 'Unknown Player'}
+    // Adjusted modal size and removed footer
+    <Modal isOpen={isOpen} onClose={onClose} size="5xl" scrollBehavior="inside">
+      <ModalOverlay bg="blackAlpha.600" /> {/* Slightly darker overlay */}
+      <ModalContent bg="gray.800" borderColor="gray.600" borderWidth="1px" mx={2}>
+        <ModalHeader fontSize="lg" fontWeight="semibold" pb={2}> {/* Reduced padding-bottom */}
+          {player?.characterName || 'Unknown Player'} - Inventory
+          <ModalCloseButton />
         </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>{renderContent()}</ModalBody>
-        <ModalFooter>
-          <Button onClick={onClose} colorScheme="blue">
-            Close
-          </Button>
-        </ModalFooter>
+        <ModalBody pt={2} pb={4}> {/* Adjusted padding */}
+           {renderContent()}
+        </ModalBody>
+         {/* ModalFooter removed */}
       </ModalContent>
     </Modal>
   );
