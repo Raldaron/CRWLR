@@ -133,10 +133,12 @@ async function findCraftedItemInfo(itemId: string): Promise<{ name: string; rari
 const Crafting: React.FC = () => {
     const {
         inventory,
-        addItemsWithQuantity,
-        removeItems,
-        getItemQuantity,
-    } = useCharacter();
+    addItemsWithQuantity,
+    removeItems,
+    getItemQuantity,
+    craftItem, // Make sure this is here!
+    saveCharacterManually
+  } = useCharacter();
     
     const { currentUser } = useAuth(); // Get current user
     const toast = useToast();
@@ -443,77 +445,60 @@ const Crafting: React.FC = () => {
 
     // Handle crafting
     const handleCraftItem = async () => {
-        if (!currentUser) {
-            toast({ 
-                title: 'Not Logged In', 
-                description: 'You must be logged in to craft items.', 
-                status: 'error' 
-            });
-            return;
-        }
-        
-        if (!removeItems || !addItemsWithQuantity) { 
-            toast({ 
-                title: 'Error', 
-                description: 'Inventory functions unavailable.', 
-                status: 'error' 
-            }); 
-            return; 
+        if (!craftItem) {
+          toast({ 
+            title: 'Error', 
+            description: 'Crafting function unavailable.', 
+            status: 'error' 
+          }); 
+          return; 
         }
         
         if (!selectedRecipe || !selectedRecipe.canCraft || isCrafting || !selectedRecipe.craftedItemDetails) { 
-            toast({ title: "Cannot Craft", status: "warning" }); 
-            return; 
+          toast({ title: "Cannot Craft", status: "warning" }); 
+          return; 
         }
-
+      
         setIsCrafting(true);
-        
         try {
-            // Prepare items to remove
-            const itemsToRemove = selectedRecipe.recipeDefinition.requiredComponents.map(comp => ({
-                itemId: comp.id,
-                quantity: comp.quantity,
-            }));
-
-            // Remove components
-            await removeItems(itemsToRemove);
-            console.log("Components removed successfully");
-            
-            // Add crafted item
-            const craftedItemData: InventoryItem = {
-                ...selectedRecipe.craftedItemDetails,
-                id: selectedRecipe.craftedItemDetails.id,
-                quantity: undefined, // Let addItemsWithQuantity handle quantity logic
-                collectionName: undefined,
-            };
-
-            // Add crafted item to inventory
-            addItemsWithQuantity(craftedItemData, 1);
-            console.log("Crafted item added successfully");
-
-            // Show success message
+          const itemsToRemove = selectedRecipe.recipeDefinition.requiredComponents.map(comp => ({
+            itemId: comp.id,
+            quantity: comp.quantity,
+          }));
+      
+          const craftedItemData: InventoryItem = {
+            ...selectedRecipe.craftedItemDetails,
+            id: selectedRecipe.craftedItemDetails.id,
+            quantity: undefined,
+            collectionName: undefined,
+          };
+      
+          // Use the new direct crafting function
+          const success = await craftItem(itemsToRemove, craftedItemData);
+      
+          if (success) {
             toast({
-                title: 'Item Crafted!',
-                description: `Successfully crafted 1 × ${selectedRecipe.craftedItemDetails.name}.`,
-                status: 'success',
-                duration: 3000,
-                isClosable: true,
+              title: 'Item Crafted!',
+              description: `Successfully crafted 1 x ${selectedRecipe.craftedItemDetails.name}.`,
+              status: 'success',
+              duration: 3000,
+              isClosable: true,
             });
-
-            // Reset selection for a cleaner UX
+      
             setSelectedRecipe(null);
+          }
         } catch (error) {
-            console.error("Crafting failed:", error);
-            toast({ 
-                title: 'Crafting Failed', 
-                description: error instanceof Error ? error.message : 'Could not craft item.', 
-                status: 'error', 
-                duration: 5000 
-            });
+          console.error("Crafting failed:", error);
+          toast({ 
+            title: 'Crafting Failed', 
+            description: error instanceof Error ? error.message : 'Could not craft item.', 
+            status: 'error', 
+            duration: 5000 
+          });
         } finally {
-            setIsCrafting(false);
+          setIsCrafting(false);
         }
-    };
+      };
 
     // Render the recipe list
     const renderRecipeList = () => (
