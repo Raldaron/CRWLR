@@ -32,13 +32,23 @@ import {
   AlertDialogOverlay,
   useToast,
   Spacer,
-  HStack, // Added HStack
-  Tooltip // Added Tooltip
+  HStack,
+  Tooltip
 } from '@chakra-ui/react';
-// Added Coins icon
 import { Flame, Coins, ShieldCheck, Zap, Star, Shield } from 'lucide-react';
 import { useCharacter } from '@/context/CharacterContext';
 import SaveIndicator from '../common/SaveIndicator';
+import type { WeaponItem } from '@/types/weapon';
+import type { ArmorItem } from '@/types/armor';
+
+// Type guard function to check if an item is an ArmorItem
+function isArmorItem(item: WeaponItem | ArmorItem | null): item is ArmorItem {
+  return item !== null && typeof item === 'object' && 'armorRating' in item;
+}
+
+function hasTankModifier(item: WeaponItem | ArmorItem | null): item is (WeaponItem | ArmorItem) & { tankModifier: number } {
+  return item !== null && typeof item === 'object' && 'tankModifier' in item;
+}
 
 // Unified compact stat card component
 const CompactStatCard = ({
@@ -47,16 +57,16 @@ const CompactStatCard = ({
   max,
   color,
   onClick,
-  tooltipLabel, // Added tooltipLabel prop
-  icon: IconComponent // Added icon prop
+  tooltipLabel,
+  icon: IconComponent
 }: {
   label: string;
   current: number;
-  max?: number; // Made max optional for stats like Gold, AR, Tank
+  max?: number;
   color: string;
-  onClick?: () => void; // Made onClick optional
-  tooltipLabel?: string; // Optional tooltip
-  icon: React.ElementType; // Added icon prop type
+  onClick?: () => void;
+  tooltipLabel?: string;
+  icon: React.ElementType;
 }) => (
   <Tooltip label={tooltipLabel} placement="bottom" isDisabled={!tooltipLabel} hasArrow bg="gray.700" color="white">
     <Box
@@ -84,13 +94,11 @@ const CompactStatCard = ({
       </HStack>
       <Text fontSize="md" fontWeight="bold" color={color}>
         {current}
-        {/* Only show max if it's provided and greater than 0 */}
         {max && max > 0 && <Text as="span" color="gray.500" fontSize="sm">/{max}</Text>}
       </Text>
     </Box>
   </Tooltip>
 );
-
 
 const CharacterHeader = () => {
   const {
@@ -110,7 +118,7 @@ const CharacterHeader = () => {
     setCurrentMp,
     currentAp,
     setCurrentAp,
-    gold // <<< Get gold from context
+    gold
   } = useCharacter();
 
   const toast = useToast();
@@ -141,15 +149,15 @@ const CharacterHeader = () => {
     const raceAR = selectedRace?.armorrating || 0;
     const classAR = selectedClass?.armorrating || 0;
     const equippedAR = Object.values(equippedItems)
-      .filter(item => item && 'armorRating' in item)
-      .reduce((total, item) => total + (item?.armorRating || 0), 0);
+      .filter(isArmorItem)
+      .reduce((total, item) => total + item.armorRating, 0);
     return raceAR + classAR + equippedAR;
   };
 
   const calculateTotalTank = () => {
     return Object.values(equippedItems)
-      .filter(item => item && 'tankModifier' in item)
-      .reduce((total, item) => total + (item?.tankModifier || 0), 0);
+      .filter(hasTankModifier)
+      .reduce((total, item) => total + item.tankModifier, 0);
   };
 
   const totalAR = calculateTotalAR();
@@ -193,7 +201,6 @@ const CharacterHeader = () => {
 
   return (
     <Box mb={3}>
-      {/* Character Name and Controls */}
       <Flex alignItems="center" mb={3}>
         <Editable
           value={characterName}
@@ -203,7 +210,7 @@ const CharacterHeader = () => {
           placeholder="Click to add character name"
           flex="1"
           color="brand.300"
-          mr={4} // Add margin to separate from save indicator
+          mr={4}
         >
           <EditablePreview
             _hover={{ bg: "gray.700" }}
@@ -218,10 +225,8 @@ const CharacterHeader = () => {
           />
         </Editable>
 
-        {/* Save Indicator */}
         <SaveIndicator />
 
-        {/* Rest Button */}
         <Tooltip label="Rest (Restore HP/MP/AP)" placement="bottom">
             <IconButton
                 aria-label="Rest and restore"
@@ -229,12 +234,11 @@ const CharacterHeader = () => {
                 colorScheme="accent"
                 size="sm"
                 onClick={onRestClick}
-                ml={2} // Ensure spacing
+                ml={2}
             />
         </Tooltip>
       </Flex>
 
-      {/* Stat Cards - Adjusted grid columns */}
       <SimpleGrid columns={{ base: 3, md: 6 }} spacing={2} justifyContent="center">
         <CompactStatCard
           label="HP"
@@ -242,7 +246,7 @@ const CharacterHeader = () => {
           max={maxHp}
           color="accent.400"
           onClick={() => openStatEditor('hp')}
-          icon={ShieldCheck} // Use appropriate icons
+          icon={ShieldCheck}
           tooltipLabel="Hit Points"
         />
         <CompactStatCard
@@ -251,7 +255,7 @@ const CharacterHeader = () => {
           max={maxMp}
           color="brand.400"
           onClick={() => openStatEditor('mp')}
-          icon={Zap} // Use appropriate icons
+          icon={Zap}
           tooltipLabel="Mana Points"
         />
         <CompactStatCard
@@ -260,37 +264,32 @@ const CharacterHeader = () => {
           max={maxAp}
           color="purple.400"
           onClick={() => openStatEditor('ap')}
-          icon={Star} // Use appropriate icons
+          icon={Star}
           tooltipLabel="Action Points"
         />
-        {/* Added Gold Card */}
         <CompactStatCard
           label="Gold"
-          current={gold || 0} // Display gold from context, default to 0
+          current={gold || 0}
           color="yellow.400"
-          icon={Coins} // Use Coins icon
+          icon={Coins}
           tooltipLabel="Your current gold amount"
-          // No onClick needed for just viewing
         />
         <CompactStatCard
           label="AR"
           current={totalAR}
           color="teal.400"
-          icon={Shield} // Use appropriate icons
+          icon={Shield}
           tooltipLabel="Armor Rating"
-          // No onClick needed for just viewing
         />
         <CompactStatCard
           label="Tank"
           current={totalTank}
-          color="orange.400" // Changed color
-          icon={Shield} // Use appropriate icons
+          color="orange.400"
+          icon={Shield}
           tooltipLabel="Tank Modifier"
-          // No onClick needed for just viewing
         />
       </SimpleGrid>
 
-      {/* Edit Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xs">
         <ModalOverlay />
         <ModalContent bg="gray.800" borderColor="gray.700">
@@ -326,12 +325,11 @@ const CharacterHeader = () => {
         </ModalContent>
       </Modal>
 
-      {/* Rest Confirmation Dialog */}
       <AlertDialog
         isOpen={isRestAlertOpen}
         leastDestructiveRef={cancelRestRef}
         onClose={() => setIsRestAlertOpen(false)}
-         isCentered // Center the dialog
+         isCentered
       >
         <AlertDialogOverlay>
           <AlertDialogContent bg="gray.800" borderColor="gray.700">

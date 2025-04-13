@@ -1,189 +1,156 @@
-import React, { useState, useEffect } from 'react';
+// --- START OF FILE components/actions/Spells.tsx ---
+'use client'; // Add if not present
+
+import React, { useState } from 'react';
 import {
   Box,
   SimpleGrid,
-  VStack,
   Text,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  Badge,
   Spinner,
   Center,
+  VStack,
+  Alert,
+  AlertIcon,
+  HStack, // Added HStack
+  Icon, // Added Icon
 } from '@chakra-ui/react';
+import { Search, ScrollText } from 'lucide-react'; // Added ScrollText icon
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SpellCard from '@/components/ItemCards/SpellCard'
+import SpellDetailModal from '@/components/Modals/SpellDetailModal';
 import { useCharacter } from '@/context/CharacterContext';
-import type { Spell } from '@/types/spell';
-import SpellDetailModal from '../Modals/SpellDetailModal';
-import SpellCard from './SpellCard';
-
-// Import Firebase utilities if you're using them
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase/firebaseConfig';
-
-interface SpellWithSource {
-  spell: Spell;
-  sourceItem: string;
-}
+import type { ActionSpell } from '@/context/CharacterContext'; // Import ActionSpell type
 
 const Spells: React.FC = () => {
-  const { 
-    equippedItems, 
-    learnedSpells, 
-    abilityLevels, 
-    setAbilityLevel,
-    saveCharacterManually 
-  } = useCharacter();
-  
-  const [allSpells, setAllSpells] = useState<SpellWithSource[]>([]);
-  const [selectedSpell, setSelectedSpell] = useState<SpellWithSource | null>(null);
-  const [selectedSpellLevel, setSelectedSpellLevel] = useState<number>(1);
+  // Use the NEW combined spell list from context
+  const { allCharacterSpells } = useCharacter();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [schoolFilter, setSchoolFilter] = useState('');
+  const [selectedSpell, setSelectedSpell] = useState<ActionSpell | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Get spell level from character state
-  const getSpellLevel = (spellName: string) => {
-    return abilityLevels[spellName] || 1;  // Default to level 1 if not set
-  };
+  // Extract unique schools (handle nulls/undefined)
+  const uniqueSchools = Array.from(
+    new Set(allCharacterSpells.map(spell => spell.school).filter(Boolean)) // Filter out null/undefined
+  ).sort();
 
-  useEffect(() => {
-    const loadSpells = async () => {
-      setIsLoading(true);
-      try {
-        const allLoadedSpells: SpellWithSource[] = [];
-        
-        // Get all spells from the spells collection
-        const spellsRef = collection(db, 'spells');
-        const spellsSnapshot = await getDocs(spellsRef);
-        
-        // Create a map of spell IDs to spell objects for quick lookup
-        const spellsMap = new Map();
-        spellsSnapshot.forEach((doc) => {
-          const spell = {
-            id: doc.id,
-            ...doc.data() as Spell
-          };
-          spellsMap.set(doc.id.toLowerCase(), spell);
-        });
-        
-        // Add spells from equipped items
-        Object.entries(equippedItems).forEach(([slot, item]) => {
-          if (item?.spellsGranted && Array.isArray(item.spellsGranted)) {
-            item.spellsGranted.forEach(async (spellId: string) => {
-              // Try to find the spell in our map
-              const normalizedSpellId = spellId.toLowerCase();
-              
-              if (spellsMap.has(normalizedSpellId)) {
-                const spell = spellsMap.get(normalizedSpellId);
-                allLoadedSpells.push({
-                  spell,
-                  sourceItem: `Granted by: ${item.name}`
-                });
-              } else {
-                // If not found in the map, try to fetch it directly
-                try {
-                  const spellDoc = await getDoc(doc(db, 'spells', normalizedSpellId));
-                  if (spellDoc.exists()) {
-                    const spell = {
-                      id: spellDoc.id,
-                      ...spellDoc.data() as Spell
-                    };
-                    allLoadedSpells.push({
-                      spell,
-                      sourceItem: `Granted by: ${item.name}`
-                    });
-                  }
-                } catch (error) {
-                  console.warn(`Failed to load spell ${spellId} from item ${item.name}:`, error);
-                }
-              }
-            });
-          }
-        });
+  // Filter spells based on search and school
+  const filteredSpells = allCharacterSpells.filter(spell => {
+    const matchesSearch = searchTerm === '' ||
+      spell.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (spell.spelldescription && spell.spelldescription.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (spell.effectdescription && spell.effectdescription.toLowerCase().includes(searchTerm.toLowerCase()));
 
-        // Add learned spells
-        learnedSpells.forEach(spell => {
-          allLoadedSpells.push({
-            spell,
-            sourceItem: 'Learned from Arcana'
-          });
-        });
+    const matchesSchool = schoolFilter === '' || spell.school === schoolFilter;
 
-        setAllSpells(allLoadedSpells);
-      } catch (error) {
-        console.error('Error loading spells:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    return matchesSearch && matchesSchool;
+  });
 
-    loadSpells();
-  }, [equippedItems, learnedSpells]);
-
-  const handleSpellClick = (spellData: SpellWithSource) => {
-    setSelectedSpell(spellData);
-    setSelectedSpellLevel(getSpellLevel(spellData.spell.name));
+  const handleSpellClick = (spell: ActionSpell) => {
+    setSelectedSpell(spell);
     setIsModalOpen(true);
   };
 
-  // Handle spell level change
-  const handleSpellLevelChange = (spellName: string, level: number) => {
-    setAbilityLevel(spellName, level);
-    setSelectedSpellLevel(level);
-    
-    // Trigger a save to persist the changes
-    if (saveCharacterManually) {
-      setTimeout(() => {
-        saveCharacterManually();
-      }, 500);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <Center h="400px">
-        <VStack spacing={4}>
-          <Spinner size="xl" color="brand.500" />
-          <Text color="gray.300">Loading spells...</Text>
-        </VStack>
-      </Center>
-    );
-  }
+  // --- Loading state check (optional, context might handle it) ---
+  // const { isLoading } = useCharacter(); // Assuming context provides loading state
+  // if (isLoading) { return <Center h="400px"><Spinner size="xl" /></Center>; }
 
   return (
     <Box p={4}>
-      {allSpells.length === 0 ? (
-        <VStack spacing={4} py={8}>
-          <Text color="gray.400">No spells available</Text>
-          <Text color="gray.500" fontSize="sm">
-            Learn spells from the Arcana tab or equip items that grant spells
+      <VStack spacing={4} mb={4} align="stretch">
+        <HStack spacing={4} direction={{ base: 'column', md: 'row' }}>
+          <InputGroup size="sm" flex={1}>
+            <InputLeftElement pointerEvents="none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </InputLeftElement>
+            <Input
+              placeholder="Search spells by name or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              bg="gray.800"
+              borderColor="gray.700"
+              _hover={{ borderColor: 'gray.600' }}
+              pl={8}
+            />
+          </InputGroup>
+          <Select
+            placeholder="Filter by school"
+            value={schoolFilter}
+            onChange={(e) => setSchoolFilter(e.target.value)}
+            bg="gray.800"
+            borderColor="gray.700"
+            _hover={{ borderColor: 'gray.600' }}
+            size="sm"
+            maxW={{ base: 'full', md: '200px' }}
+            iconColor="gray.400"
+          >
+            {uniqueSchools.map(school => (
+              <option key={school} value={school} style={{ backgroundColor: "#2D3748" }}>
+                {school}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+      </VStack>
+
+      {filteredSpells.length === 0 ? (
+        <Center h="200px" bg="gray.800" borderRadius="md">
+          <Text color="gray.400">
+            {allCharacterSpells.length === 0 ? 'No spells learned or scrolls equipped.' : 'No spells match your current filter.'}
           </Text>
-        </VStack>
+        </Center>
       ) : (
         <ScrollArea className="h-[600px]">
-          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-            {allSpells.map(({ spell, sourceItem }) => (
-              <SpellCard
-                key={`${spell.name}-${sourceItem}`}
-                spell={spell}
-                sourceItem={sourceItem}
-                onClick={() => handleSpellClick({ spell, sourceItem })}
-                spellLevel={getSpellLevel(spell.name)}
-              />
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing={4}>
+            {filteredSpells.map((spell) => (
+              <Box key={spell.id} position="relative"> {/* Ensure unique key */}
+                {/* Conditionally render scroll icon badge */}
+                {spell.source === 'scroll' && (
+                  <Badge
+                    position="absolute"
+                    top={2}
+                    right={2}
+                    zIndex={1}
+                    colorScheme="orange"
+                    variant="solid"
+                    borderRadius="full"
+                    px={0}
+                    py={0}
+                    minW="20px"
+                    h="20px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    title="From Scroll"
+                  >
+                    <Icon as={ScrollText} boxSize={3} />
+                  </Badge>
+                )}
+                <SpellCard
+                  spell={spell} // Pass the ActionSpell object
+                  onClick={() => handleSpellClick(spell)}
+                />
+              </Box>
             ))}
           </SimpleGrid>
         </ScrollArea>
       )}
 
+      {/* The SpellDetailModal should ideally accept ActionSpell now */}
+      {/* If it strictly requires Spell, you might need casting or adjustment */}
       <SpellDetailModal
-        spell={selectedSpell?.spell || null}
-        sourceItem={selectedSpell?.sourceItem}
-        spellLevel={selectedSpellLevel}
-        onLevelChange={handleSpellLevelChange}
+        spell={selectedSpell} // Pass ActionSpell, Modal might need adjustment
         isOpen={isModalOpen}
-        onClose={() => {
-          setSelectedSpell(null);
-          setIsModalOpen(false);
-        }}
+        onClose={() => setIsModalOpen(false)}
       />
     </Box>
   );
 };
 
 export default Spells;
+// --- END OF FILE components/actions/Spells.tsx ---

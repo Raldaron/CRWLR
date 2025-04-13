@@ -19,8 +19,7 @@ import {
 } from '@chakra-ui/react';
 // Import relevant icons
 import { ScrollText, Clock, Zap, Crosshair, BarChart, Target, Wand2, DollarSign, Info, ChevronUp, ChevronDown } from 'lucide-react';
-import type { ScrollItem, ScrollScaling } from '@/types/scroll';
-import TruncatedTextWithModal from '../ui/TruncatedTextWithModal';
+import type { ScrollItem } from '@/types/scroll';
 
 interface ScrollDetailModalProps {
   scroll: ScrollItem | null;
@@ -58,8 +57,18 @@ const getDamageTypeColor = (type?: string): string => {
   }
 };
 
+// Enhanced Helper: Normalize scroll properties with fallbacks for different field names
+const getScrollProperty = (scroll: any, properties: string[]): any => {
+  for (const prop of properties) {
+    if (scroll && prop in scroll && scroll[prop] !== undefined && scroll[prop] !== null) {
+      return scroll[prop];
+    }
+  }
+  return null;
+};
+
 // Helper function to format values, replacing undefined/null/empty/"N/A" with '-'
-const formatValue = (value: string | number | undefined | null): string => {
+const formatValue = (value: any): string => {
   // Check for explicitly "N/A" string as well
   if (value === undefined || value === null || String(value).trim() === '' || String(value).toUpperCase() === 'N/A') {
     return "-";
@@ -68,6 +77,8 @@ const formatValue = (value: string | number | undefined | null): string => {
 };
 
 const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, isOpen, onClose }) => {
+  console.log("Scroll data:", scroll); // Debug: log all scroll data to console
+  
   const [currentLevel, setCurrentLevel] = useState(1);
   
   useEffect(() => {
@@ -79,27 +90,68 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
 
   if (!scroll) return null;
 
+  // --- Extract scroll properties with fallbacks for different naming conventions ---
+  const scrollName = getScrollProperty(scroll, ['name']) || 'Unknown Scroll';
+  const scrollDescription = getScrollProperty(scroll, ['description']) || '';
+  const scrollEffect = getScrollProperty(scroll, ['effect', 'spellEffect', 'effectDescription']) || '';
+  const scrollRarity = getScrollProperty(scroll, ['rarity']) || 'Common';
+  
+  // Time-based properties
+  const castingTime = getScrollProperty(scroll, ['castingTime', 'castTime']) || '-';
+  const duration = getScrollProperty(scroll, ['duration', 'spellDuration']) || '-';
+  const cooldown = getScrollProperty(scroll, ['cooldown', 'spellCooldown']) || '-';
+  
+  // Resource properties
+  const manaCost = getScrollProperty(scroll, ['manaPointCost', 'manaCost', 'mpCost']) || '-';
+  const modifier = getScrollProperty(scroll, ['spellCastingModifier', 'castingModifier', 'modifier']) || '-';
+  
+  // Combat properties
+  const range = getScrollProperty(scroll, ['range', 'spellRange']) || '-';
+  const damageAmount = getScrollProperty(scroll, ['damageAmount', 'damage']) || '-';
+  const damageType = getScrollProperty(scroll, ['damageType', 'damagetype', 'damage_type']) || '-';
+  
+  // Value properties
+  const buyValue = getScrollProperty(scroll, ['buyValue', 'buy_value', 'value']) || '-';
+  const sellValue = getScrollProperty(scroll, ['sellValue', 'sell_value']) || '-';
+  
+  // --- Scaling Data ---
+  let scrollScaling = getScrollProperty(scroll, ['scaling']) || null;
+  if (typeof scrollScaling === 'string') {
+    try {
+      scrollScaling = JSON.parse(scrollScaling);
+    } catch (e) {
+      console.error("Error parsing scaling string:", e);
+      scrollScaling = null;
+    }
+  }
+
   // --- Scaling Processing Logic ---
   const getScalingEffects = (level: number): { level: number; effect: string }[] => {
     const effects: { level: number; effect: string }[] = [];
-    if (!scroll.scaling) return effects;
+    if (!scrollScaling || typeof scrollScaling !== 'object') return effects;
 
     // Convert scaling object to array of { level, effect } entries
-    const scalingObj = typeof scroll.scaling === 'object' && !Array.isArray(scroll.scaling) 
-      ? scroll.scaling as ScrollScaling
-      : {};
-
     for (let i = 1; i <= level; i++) {
-      const levelKey = Object.keys(scalingObj).find(key => {
-        // Match level X or level X+ format
-        const levelPattern = new RegExp(`^level\\s*${i}(\\+|\\s*$)`, 'i');
-        return levelPattern.test(key);
-      });
-
-      if (levelKey && scalingObj[levelKey]) {
-        effects.push({ level: i, effect: scalingObj[levelKey] });
+      // Try multiple possible formatting patterns for level keys
+      const possibleKeys = [
+        `level ${i}`, 
+        `level${i}`,
+        `Level ${i}`, 
+        `Level${i}`,
+        `lvl ${i}`,
+        `lvl${i}`,
+        `${i}`
+      ];
+      
+      // Find a matching key in the scaling object
+      for (const key of possibleKeys) {
+        if (scrollScaling[key]) {
+          effects.push({ level: i, effect: scrollScaling[key] });
+          break;
+        }
       }
     }
+    
     return effects;
   };
 
@@ -107,19 +159,28 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
   
   // Determine max level from scaling object
   const getMaxLevel = (): number => {
-    if (!scroll.scaling || typeof scroll.scaling !== 'object' || Array.isArray(scroll.scaling)) {
+    if (!scrollScaling || typeof scrollScaling !== 'object') {
       return 1;
     }
     
-    const scalingObj = scroll.scaling as ScrollScaling;
     let maxLevel = 1;
     
-    Object.keys(scalingObj).forEach(key => {
-      const levelMatch = key.match(/level\s*(\d+)/i);
-      if (levelMatch && levelMatch[1]) {
-        const level = parseInt(levelMatch[1], 10);
-        if (!isNaN(level) && level > maxLevel) {
-          maxLevel = level;
+    // Examine all keys in the scaling object to find the highest level number
+    Object.keys(scrollScaling).forEach(key => {
+      // Try to extract level number with different patterns
+      const patterns = [
+        /level\s*(\d+)/i,   // "level X"
+        /lvl\s*(\d+)/i,     // "lvl X"
+        /^(\d+)$/           // just the number
+      ];
+      
+      for (const pattern of patterns) {
+        const match = key.match(pattern);
+        if (match && match[1]) {
+          const level = parseInt(match[1], 10);
+          if (!isNaN(level) && level > maxLevel) {
+            maxLevel = level;
+          }
         }
       }
     });
@@ -142,10 +203,9 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
   };
 
   // Check if scroll has any scaling data
-  const hasScalingData = scroll.scaling && 
-    typeof scroll.scaling === 'object' && 
-    !Array.isArray(scroll.scaling) && 
-    Object.keys(scroll.scaling).length > 0;
+  const hasScalingData = scrollScaling && 
+    typeof scrollScaling === 'object' && 
+    Object.keys(scrollScaling).length > 0;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
@@ -156,10 +216,10 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
            <HStack>
             <Icon as={ScrollText} color="orange.400" boxSize={6} />
             <VStack align="start" spacing={0}>
-              <Text fontSize="xl" fontWeight="bold">{scroll.name}</Text>
+              <Text fontSize="xl" fontWeight="bold">{scrollName}</Text>
               <HStack spacing={2}>
-                <Badge colorScheme={getRarityScheme(scroll.rarity)}>
-                  {scroll.rarity || 'Common'}
+                <Badge colorScheme={getRarityScheme(scrollRarity)}>
+                  {scrollRarity}
                 </Badge>
                 <Badge variant="outline" colorScheme="orange">Scroll</Badge>
               </HStack>
@@ -173,26 +233,20 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
           <VStack spacing={4} align="stretch">
 
             {/* Description */}
-            {scroll.description && (
-              <TruncatedTextWithModal
-                text={scroll.description}
-                modalTitle={`${scroll.name} - Description`}
-                charLimit={200}
-                label="Description"
-              />
+            {scrollDescription && (
+              <Box>
+                <Text fontWeight="semibold" color="gray.300" mb={1}>Description</Text>
+                <Text color="gray.400" whiteSpace="pre-wrap">{scrollDescription}</Text>
+              </Box>
             )}
 
             {/* Effect */}
-            {(scroll.effect && formatValue(scroll.effect) !== '-') && (
+            {(scrollEffect && formatValue(scrollEffect) !== '-') && (
               <>
                 <Divider borderColor="gray.600" />
                 <Box>
-                  <TruncatedTextWithModal
-                     label="Effect"
-                     text={scroll.effect}
-                     modalTitle={`${scroll.name} - Effect`}
-                     charLimit={180}
-                  />
+                  <Text fontWeight="semibold" color="gray.300" mb={1}>Effect</Text>
+                  <Text color="gray.400" whiteSpace="pre-wrap">{scrollEffect}</Text>
                 </Box>
               </>
             )}
@@ -206,57 +260,57 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
                     <Icon as={Clock} size={14} color="cyan.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Casting Time</Text>
                 </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.castingTime)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(castingTime)}</Text>
               </Box>
               <Box>
                 <HStack alignItems="center" spacing={1} mb={0.5}>
                     <Icon as={Zap} size={14} color="blue.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Mana Cost</Text>
                 </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.manaPointCost)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(manaCost)}</Text>
               </Box>
               <Box>
                  <HStack alignItems="center" spacing={1} mb={0.5}>
                     <Icon as={Crosshair} size={14} color="green.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Range</Text>
                  </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.range)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(range)}</Text>
               </Box>
               <Box>
                  <HStack alignItems="center" spacing={1} mb={0.5}>
                      <Icon as={Clock} size={14} color="yellow.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Duration</Text>
                  </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.duration)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(duration)}</Text>
               </Box>
               <Box>
                  <HStack alignItems="center" spacing={1} mb={0.5}>
                      <Icon as={Clock} size={14} color="red.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Cooldown</Text>
                  </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.cooldown)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(cooldown)}</Text>
               </Box>
               <Box>
                  <HStack alignItems="center" spacing={1} mb={0.5}>
                      <Icon as={Wand2} size={14} color="purple.400"/>
                     <Text fontWeight="semibold" color="gray.300" fontSize="sm">Modifier</Text>
                  </HStack>
-                <Text color="gray.200" fontSize="sm">{formatValue(scroll.spellCastingModifier)}</Text>
+                <Text color="gray.200" fontSize="sm">{formatValue(modifier)}</Text>
               </Box>
             </SimpleGrid>
 
             {/* Damage Section */}
-            {(scroll.damageAmount && formatValue(scroll.damageAmount) !== '-') && (
+            {(damageAmount && formatValue(damageAmount) !== '-') && (
               <>
                 <Divider borderColor="gray.600" />
                 <Box width="100%">
                    <Text fontWeight="semibold" mb={1} color="gray.300">Damage</Text>
                   <HStack>
                     <Icon as={Target} color="red.400" />
-                    <Text fontSize="md" fontWeight="bold" color="gray.100">{formatValue(scroll.damageAmount)}</Text>
-                    {scroll.damageType && (
-                      <Badge colorScheme={getDamageTypeColor(scroll.damageType)}>
-                        {scroll.damageType}
+                    <Text fontSize="md" fontWeight="bold" color="gray.100">{formatValue(damageAmount)}</Text>
+                    {damageType && (
+                      <Badge colorScheme={getDamageTypeColor(damageType)}>
+                        {damageType}
                       </Badge>
                     )}
                   </HStack>
@@ -328,7 +382,7 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
             )}
 
             {/* Value Section */}
-            {(formatValue(scroll.buyValue) !== '-' || formatValue(scroll.sellValue) !== '-') && (
+            {(formatValue(buyValue) !== '-' || formatValue(sellValue) !== '-') && (
                 <>
                  <Divider borderColor="gray.600" />
                  <SimpleGrid columns={2} spacing={4} width="100%" pt={2}>
@@ -337,14 +391,14 @@ const ImprovedScrollDetailModal: React.FC<ScrollDetailModalProps> = ({ scroll, i
                             <Icon as={DollarSign} size={14} color="yellow.400"/>
                             <Text fontWeight="semibold" color="gray.300" fontSize="sm">Buy Value</Text>
                          </HStack>
-                         <Text color="yellow.300" fontSize="sm">{formatValue(scroll.buyValue)} GP</Text>
+                         <Text color="yellow.300" fontSize="sm">{formatValue(buyValue)} GP</Text>
                     </Box>
                     <Box>
                          <HStack alignItems="center" spacing={1} mb={0.5}>
                              <Icon as={DollarSign} size={14} color="yellow.400"/>
                              <Text fontWeight="semibold" color="gray.300" fontSize="sm">Sell Value</Text>
                          </HStack>
-                         <Text color="yellow.300" fontSize="sm">{formatValue(scroll.sellValue)} GP</Text>
+                         <Text color="yellow.300" fontSize="sm">{formatValue(sellValue)} GP</Text>
                     </Box>
                  </SimpleGrid>
                 </>

@@ -1,5 +1,3 @@
-// types/character.ts
-
 export interface CharacterStats {
   strength: number;
   dexterity: number;
@@ -10,12 +8,14 @@ export interface CharacterStats {
   charisma: number;
 }
 
+// Updated Skill interface to include attribute
 export interface Skill {
-  id: string;
-  name: string;
-  level: number;
-  description: string;
+  name: string; // Keep name as primary identifier if used as keys
+  attribute: keyof CharacterStats; // Link to a specific stat
+  level: number; // Current allocated points
+  // Description removed as it's not used in context logic, keep if needed elsewhere
 }
+
 
 export interface Trait {
   id: string;
@@ -32,13 +32,16 @@ export interface SkillBonus {
   [key: string]: number;
 }
 
+// Race interface remains the same conceptually, but ensure `statbonus` keys match CharacterStats keys
 export interface Race {
   name: string;
   description: string;
-  statbonus: StatBonus;
+  statbonus: Partial<Record<keyof CharacterStats, number>>; // Use partial record for clarity
   skillbonus: SkillBonus;
   abilities: string[];
   traits: string[];
   lore: string;
-  armorrating: number;
+  armorrating: number; // Keep armorrating if it's used
+  hpbonus?: number; // Added for consistency
+  mpbonus?: number; // Added for consistency
 }

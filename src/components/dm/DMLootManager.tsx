@@ -58,6 +58,7 @@ import {
   InputLeftElement,
   Center, // Added Center
   TableContainer, // Added TableContainer
+  useDisclosure, // Added useDisclosure
 } from '@chakra-ui/react';
 import {
   Gift,
@@ -92,6 +93,23 @@ import {
 import { db } from '@/firebase/firebaseConfig';
 import { useAuth } from '@/context/AuthContext'; // Assuming auth context exists
 import { ScrollArea } from '@/components/ui/scroll-area'; // Assuming ScrollArea exists
+import DMCopyInventoryTool from '../admin/loot/DMCopyInventoryTool'; // Import the new component
+
+// --- Helper Function to Get Milliseconds Safely ---
+const getTimeValue = (timestampValue: any): number => {
+    if (timestampValue instanceof Timestamp) { // Check if it's a Firestore Timestamp
+        return timestampValue.toMillis();
+    } else if (timestampValue instanceof Date) { // Check if it's a JS Date
+        return timestampValue.getTime();
+    } else if (typeof timestampValue === 'number') { // Check if it's already milliseconds
+        // Add a basic check to ensure it's likely a timestamp (e.g., greater than year 2000)
+        // This avoids misinterpreting small numbers as timestamps.
+        return timestampValue > 946684800000 ? timestampValue : 0;
+    }
+    // Fallback for null, undefined, or other types
+    return 0; // Return 0 for sorting consistency if value is invalid
+};
+// --- End Helper Function ---
 
 // Item interfaces
 interface LootItem {
@@ -245,6 +263,14 @@ interface LootDistribution {
     // Active tab state
     const [activeTab, setActiveTab] = useState(0);
 
+    // Disclosure for Copy Inventory modal
+    const { isOpen: isCopyModalOpen, onOpen: onOpenCopyModal, onClose: onCloseCopyModal } = useDisclosure();
+
+    // Callback for when the copy tool finishes
+    const handleLootBoxCreatedFromCopy = () => {
+        toast({ title: "Loot Box list updated (may require refresh)", status: "info", duration: 2000 });
+    };
+
     // Helper function to map collection names to item types
      const getItemTypeFromCollection = (collection: string): string => {
        switch (collection) {
@@ -346,11 +372,11 @@ interface LootDistribution {
              setIsLoadingPackages(false);
              setLootPackages([]);
              return;
-         }
+        }
         try {
           setIsLoadingPackages(true);
           const packagesRef = collection(db, 'lootPackages');
-          const q = query(packagesRef, where("dmId", "==", currentUser.uid)); // Query by DM ID
+          const q = query(packagesRef, where("dmId", "==", currentUser.uid));
           const packagesSnapshot = await getDocs(q);
 
           const packagesList: LootPackage[] = [];
@@ -361,16 +387,16 @@ interface LootDistribution {
               name: data.name || 'Unnamed Package',
               description: data.description || '',
               items: data.items || [],
-              createdAt: data.createdAt || Timestamp.now(), // Ensure Timestamp
-              lastUpdated: data.lastUpdated, // Optional Timestamp
+              createdAt: data.createdAt || Timestamp.now(),
+              lastUpdated: data.lastUpdated,
               dmId: data.dmId || '',
               dmName: data.dmName || 'Unknown DM',
               sponsor: data.sponsor || SPONSORS[0]
             });
           });
 
-          // Sort by created date, newest first
-           packagesList.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+          // Use the helper function for sorting
+          packagesList.sort((a, b) => getTimeValue(b.createdAt) - getTimeValue(a.createdAt));
 
           setLootPackages(packagesList);
           setIsLoadingPackages(false);
@@ -388,7 +414,7 @@ interface LootDistribution {
       };
 
       fetchLootPackages();
-    }, [toast, currentUser]); // Added currentUser dependency
+    }, [toast, currentUser]);
 
     // Fetch loot distributions sent by the current DM
     useEffect(() => {
@@ -408,9 +434,7 @@ interface LootDistribution {
           distributionsSnapshot.forEach((doc) => {
             const data = doc.data();
             // --- FIX: Convert Timestamp to number here ---
-            const distributedAtMillis = data.distributedAt instanceof Timestamp
-                                        ? data.distributedAt.toMillis()
-                                        : typeof data.distributedAt === 'number' ? data.distributedAt : Date.now();
+            const distributedAtMillis = getTimeValue(data.distributedAt);
             distributionsList.push({
               id: doc.id,
               packageId: data.packageId || '',
@@ -498,7 +522,7 @@ interface LootDistribution {
          const newLootPackage = { id: newDocSnap.id, ...newDocSnap.data() } as LootPackage;
 
         // Add to local state and re-sort
-         setLootPackages(prev => [newLootPackage, ...prev].sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()));
+         setLootPackages(prev => [newLootPackage, ...prev].sort((a, b) => getTimeValue(b.createdAt) - getTimeValue(a.createdAt)));
 
 
         // Reset form
@@ -754,15 +778,14 @@ interface LootDistribution {
       }
     };
 
-     // Format date for display (using number)
-     const formatDate = (timestamp: number | undefined): string => {
-        if (!timestamp) return 'N/A';
-        return new Date(timestamp).toLocaleDateString('en-US', {
+     // Format date using the helper
+     const formatDate = (timestampValue: any): string => {
+        const millis = getTimeValue(timestampValue);
+        if (millis === 0) return 'N/A';
+        return new Date(millis).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
-            // hour: '2-digit', // Optional: Add time if needed
-            // minute: '2-digit',
         });
     };
 
@@ -815,6 +838,15 @@ interface LootDistribution {
           <TabPanels>
             {/* Create Loot Package Tab */}
             <TabPanel p={0} pt={{base: 4, md: 6}}> {/* Responsive Padding */}
+               <Button
+                  leftIcon={<Copy size={16} />}
+                  colorScheme="teal" // Different color to distinguish
+                  onClick={onOpenCopyModal}
+                  size="sm"
+                  mb={4} // Add some margin if needed
+                >
+                  Copy Inventory to Box
+                </Button>
                <Grid templateColumns={{ base: "1fr", lg: "1.5fr 1fr" }} gap={{base: 4, md: 6}}> {/* Adjusted ratio and responsive gap */}
                 {/* Left side: Form */}
                 <Box>
@@ -1015,7 +1047,7 @@ interface LootDistribution {
               ) : filteredPackages.length === 0 ? (
                 <Card bg="gray.800" borderColor="gray.700">
                   <CardBody py={8} textAlign="center">
-                    <Gift size={40} className="mx-auto mb-4 text-gray-500" />
+                    <Gift size={40} className="mx-auto mb-4 text-gray.500" />
                     <Text color="gray.500">No loot packages found</Text>
                     {searchTerm ? (
                       <Text fontSize="sm" color="gray.500" mt={2}>
@@ -1055,7 +1087,7 @@ interface LootDistribution {
 
                             <HStack spacing={2} fontSize="xs" color="gray.500">
                                 <Calendar size={12} />
-                                 <Text>Created: {formatDate(pkg.createdAt instanceof Timestamp ? pkg.createdAt.toMillis() : pkg.createdAt)}</Text> {/* Ensure conversion */}
+                                 <Text>Created: {formatDate(pkg.createdAt)}</Text> {/* Ensure conversion */}
                             </HStack>
 
                              <HStack spacing={1} width="full"> {/* Reduced spacing */}
@@ -1129,7 +1161,7 @@ interface LootDistribution {
               ) : lootDistributions.length === 0 ? (
                 <Card bg="gray.800" borderColor="gray.700">
                   <CardBody py={8} textAlign="center">
-                    <History size={40} className="mx-auto mb-4 text-gray-500" />
+                    <History size={40} className="mx-auto mb-4 text-gray.500" />
                     <Text color="gray.500">No distribution history</Text>
                     <Text fontSize="sm" color="gray.500" mt={2}>
                       Distribute loot packages to players to see history
@@ -1193,7 +1225,7 @@ interface LootDistribution {
             <ModalBody py={4}> {/* Add padding */}
               <InputGroup mb={4}>
                 <InputLeftElement pointerEvents="none">
-                  <Search className="h-4 w-4 text-gray-400" />
+                  <Search className="h-4 w-4 text-gray.400" />
                 </InputLeftElement>
                 <Input
                   placeholder="Search items..."
@@ -1474,6 +1506,13 @@ interface LootDistribution {
             </AlertDialogContent>
           </AlertDialogOverlay>
         </AlertDialog>
+
+        {/* Copy Inventory Modal */}
+        <DMCopyInventoryTool
+            isOpen={isCopyModalOpen}
+            onClose={onCloseCopyModal}
+            onLootBoxCreated={handleLootBoxCreatedFromCopy}
+        />
 
       </Box>
     );

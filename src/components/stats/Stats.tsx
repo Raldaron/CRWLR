@@ -1,181 +1,84 @@
-// Updated Stats.tsx with fixed decrement functionality
+// --- START OF FILE components/stats/Stats.tsx ---
 import React from 'react';
-import { 
-  Box, 
-  SimpleGrid, 
-  Text, 
-  VStack, 
-  HStack, 
-  IconButton, 
-  Tooltip,
-  Badge
+import {
+    Box,
+    Heading,
+    SimpleGrid,
+    Stat,
+    StatLabel,
+    StatNumber,
+    StatHelpText,
+    VStack,
+    Text,
+    Tooltip,
+    HStack,
+    Icon,
 } from '@chakra-ui/react';
-import { Plus, Minus } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Info } from 'lucide-react';
 import { useCharacter } from '@/context/CharacterContext';
-import type { CharacterStats } from '@/types/character';
-
-interface StatCardProps {
-  name: string;
-  statKey: keyof CharacterStats;
-  baseValue: number;
-  currentValue: number;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ 
-  name, 
-  statKey, 
-  baseValue, 
-  currentValue 
-}) => {
-  const { incrementStat, decrementStat, availableStatPoints } = useCharacter();
-  const bonus = currentValue - baseValue;
-
-  return (
-    <Box
-      bg="gray.800"
-      borderRadius="lg"
-      boxShadow="sm"
-      borderWidth="1px"
-      borderColor="gray.700"
-      p={4}
-      transition="all 0.2s"
-      _hover={{ borderColor: "brand.600", boxShadow: "md" }}
-    >
-      <VStack spacing={2} alignItems="center" position="relative">
-        <Text fontSize="lg" fontWeight="bold" color="gray.200">{name}</Text>
-        
-        {/* Stat Value Display */}
-        <HStack spacing={2} align="center">
-          <IconButton
-            icon={<Minus />}
-            size="xs"
-            colorScheme="accent"
-            aria-label="Decrease stat"
-            onClick={() => decrementStat(statKey)}
-            isDisabled={baseValue <= 0} // Only disable if base value is 0 or less
-          />
-          
-          <Text fontSize="2xl" fontWeight="bold" color="gray.200">
-            {currentValue}
-            {bonus > 0 && (
-              <Text as="span" color="green.400" fontSize="md">
-                {' '}(+{bonus})
-              </Text>
-            )}
-          </Text>
-          
-          <IconButton
-            icon={<Plus />}
-            size="xs"
-            colorScheme="brand"
-            aria-label="Increase stat"
-            onClick={() => incrementStat(statKey)}
-            isDisabled={availableStatPoints === 0}
-          />
-        </HStack>
-        
-        {/* Base Value Tooltip */}
-        <Tooltip 
-          label={`Base value: ${baseValue}`} 
-          placement="top"
-          bg="gray.700"
-          color="gray.200"
-        >
-          <Text fontSize="sm" color="gray.500">
-            Base: {baseValue}
-          </Text>
-        </Tooltip>
-      </VStack>
-    </Box>
-  );
-};
+import DarkThemedCard from '@/components/ui/DarkThemedCard'; // Assuming path is correct
 
 const Stats: React.FC = () => {
-  const { 
-    baseStats, 
-    currentStats, 
-    availableStatPoints,
-    characterLevel 
+  const {
+    baseStats, // Get base stats (raw investment from skills)
+    currentStats, // Get derived stats (base + race/class/equipment)
+    selectedRace,
+    selectedClass,
+    getStatBonus, // Equipment bonus getter
   } = useCharacter();
-  
-  type StatGroupKey = keyof typeof statGroups;
-  type StatName = keyof CharacterStats;
 
-  const statGroups = {
-    physical: ['strength', 'dexterity', 'stamina'] as StatName[],
-    mental: ['intelligence', 'perception', 'wit'] as StatName[],
-    social: ['charisma'] as StatName[]
+  // Function to capitalize the first letter of a string
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Function to generate the breakdown tooltip
+  const getStatBreakdown = (stat: keyof typeof baseStats): string => {
+      const base = baseStats[stat] || 0;
+      const raceBonus = selectedRace?.statbonus?.[stat] || 0;
+      const classBonus = selectedClass?.statbonus?.[stat] || 0;
+      const equipBonus = getStatBonus(stat); // Uses the context function
+
+      let breakdown = `Base (Skill Investment): ${base}`;
+      if (raceBonus !== 0) breakdown += `\nRace: ${raceBonus > 0 ? '+' : ''}${raceBonus}`;
+      if (classBonus !== 0) breakdown += `\nClass: ${classBonus > 0 ? '+' : ''}${classBonus}`;
+      if (equipBonus !== 0) breakdown += `\nEquipment: ${equipBonus > 0 ? '+' : ''}${equipBonus}`;
+      breakdown += `\n--------------------`;
+      breakdown += `\nTotal: ${currentStats[stat] || 0}`;
+      return breakdown;
   };
 
   return (
     <Box p={4}>
-      {/* Available Stat Points Display */}
-      <Box 
-        bg="brand.900" 
-        borderRadius="lg" 
-        p={4} 
-        mb={4} 
-        textAlign="center"
-        position="relative"
-        borderWidth="1px"
-        borderColor="brand.800"
-      >
-        <Text fontSize="xl" fontWeight="bold" color="gray.200">
-          Available Stat Points
-        </Text>
-        <Badge 
-          colorScheme="brand" 
-          fontSize="2xl" 
-          borderRadius="full" 
-          px={4} 
-          py={2}
-          bg="brand.700"
-          color="white"
-        >
-          {availableStatPoints}
-        </Badge>
-        <Text fontSize="sm" color="gray.400" mt={2}>
-          Level {characterLevel}
-        </Text>
-      </Box>
+      <Heading size="lg" mb={6} color="gray.100">
+        Character Stats
+      </Heading>
 
-      {/* Stat Groups */}
-      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-        {(Object.entries(statGroups) as [StatGroupKey, StatName[]][]).map(([group, stats]) => (
-          <Box 
-            key={group} 
-            bg="gray.800" 
-            p={4} 
-            borderRadius="lg" 
-            boxShadow="sm"
-            borderWidth="1px"
-            borderColor="gray.700"
-          >
-            <Text 
-              fontSize="xl" 
-              fontWeight="bold" 
-              textAlign="center" 
-              mb={4} 
-              pb={2} 
-              borderBottomWidth={1}
-              borderColor="gray.700"
-              color="gray.200"
-            >
-              {group.charAt(0).toUpperCase() + group.slice(1)}
-            </Text>
-            <VStack spacing={4}>
-              {stats.map((stat) => (
-                <StatCard
-                  key={stat}
-                  name={stat.charAt(0).toUpperCase() + stat.slice(1)}
-                  statKey={stat}
-                  baseValue={baseStats[stat]}
-                  currentValue={currentStats[stat]}
-                />
-              ))}
-            </VStack>
-          </Box>
+      <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={5}>
+        {Object.entries(currentStats).map(([stat, value]) => (
+          <Stat key={stat}> {/* Wrap the entire card content in <Stat> */}
+            <DarkThemedCard p={4} borderColor="gray.700">
+              <HStack justify="space-between" align="center" mb={2}>
+                <StatLabel
+                  fontSize="md"
+                  fontWeight="medium"
+                  color="brand.300"
+                  textTransform="uppercase"
+                >
+                  {capitalize(stat)}
+                </StatLabel>
+                <Tooltip label={<Text whiteSpace="pre-line">{getStatBreakdown(stat as keyof typeof baseStats)}</Text>} placement="top" hasArrow bg="gray.700" color="white" px={3} py={2}>
+                  <Box cursor="help">
+                    <Info size={16} color="gray.500" />
+                  </Box>
+                </Tooltip>
+              </HStack>
+              <StatNumber fontSize="3xl" fontWeight="bold" color="gray.100">
+                {value}
+              </StatNumber>
+              <StatHelpText fontSize="sm" color="gray.400">
+                Base: {baseStats[stat as keyof typeof baseStats] || 0}
+              </StatHelpText>
+            </DarkThemedCard>
+          </Stat>
         ))}
       </SimpleGrid>
     </Box>
@@ -183,3 +86,4 @@ const Stats: React.FC = () => {
 };
 
 export default Stats;
+// --- END OF FILE components/stats/Stats.tsx ---

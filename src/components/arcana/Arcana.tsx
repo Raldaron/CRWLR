@@ -77,17 +77,18 @@ const Arcana: React.FC = () => {
 
         spellsSnapshot.forEach((doc) => {
           const spellData = doc.data() as Spell; // Get the data
-          const spellId = doc.id; // Get the ID
+          const spellId = doc.id; // Get the Firestore Document ID
 
-          // --- ADDED DEBUG LOG HERE ---
-          // Log the descriptions right after fetching, before adding to state
+          // --- Debug logs can remain if needed ---
           console.log(`DEBUG Firestore Fetch (Arcana.tsx - ID: ${spellId}): spelldescription =`, JSON.stringify(spellData.spelldescription));
           console.log(`DEBUG Firestore Fetch (Arcana.tsx - ID: ${spellId}): effectdescription =`, JSON.stringify(spellData.effectdescription));
           // --- END DEBUG LOG ---
 
           spellsArray.push({
-            id: spellId,
-            ...spellData
+             // --- FIX: Spread data first, then overwrite ID ---
+            ...spellData,   // Spread the existing spell data
+            id: spellId,    // Explicitly set the ID to the Firestore Document ID
+             // --- END FIX ---
           });
         });
 

@@ -21,9 +21,12 @@ interface ScrollCardProps {
 
 export const ScrollCard: React.FC<ScrollCardProps> = ({ item, onClick }) => {
   // Helper function to determine badge color based on mana cost
-  const getManaCostColor = (cost: string) => {
-    const manaValue = parseInt(cost);
-    if (manaValue === 0) return 'gray';
+  const getManaCostColor = (cost: string | number) => {
+    // Convert cost to number if it's a string
+    const manaValue = typeof cost === 'string' ? parseInt(cost) : cost;
+    
+    // Check for NaN in case parseInt fails
+    if (isNaN(manaValue) || manaValue === 0) return 'gray';
     if (manaValue <= 2) return 'blue';
     if (manaValue <= 5) return 'purple';
     return 'red';
